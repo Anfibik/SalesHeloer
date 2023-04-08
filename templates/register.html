@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %} {{super()}}-{{title}} {% endblock %}
+{% block information %} 
+  {% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{cat}}">{{msg}}</div>
+  {% endfor %} 
+{% endblock %}
+
+
+{% block content %}
+<div class="login-content">
+  <h1>Registration</h1>
+  <form method="POST" class="login-form">
+    {{ form.csrf_token }}
+    <div>
+      {{ form.username.label }} {{ form.username(size=30) }}
+    </div>
+    <div>
+        {{ form.email.label }} {{ form.email(size=20) }}
+    </div>
+    <div>
+      {{ form.password.label }} {{ form.password(size=20) }}
+    </div>
+    <div>
+        {{ form.confirm_password.label }} {{ form.confirm_password(size=20) }}
+      </div>
+    <div>
+      {{ form.submit }}
+      <a class="button-login-2" href="/login">Login</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

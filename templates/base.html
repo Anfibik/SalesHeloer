@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}SalesHelp{% endblock %}</title>
+  <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+  <!-- Верхняя часть страницы - информационная панель ------------------------------------------->
+  <div class="info-panel">
+    {% block information %} This is my main page{% endblock %}
+  </div>
+  <!---------------------------------------------->
+
+  <!-- Панель с кнопками для перехода в разделы сайта ------------------------------------------->
+  {% block menu %}
+  <ul class="navigation">
+    {% for m in menu %}
+    <li><a class="nav-button" href="{{m.url}}">{{ m.name }}</a></li>
+    {% endfor %}
+    <li class="convert-button-menu">
+      <!-- Кнопка конвертации ------------------------------------------------------------------->
+      {% block convertion_num %}
+      <button class="convert-button" onclick="openModal()">Fast function</button>
+      <div id="myModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <h3>Введите текст:</h3>
+          <div class="input-container">
+            <input type="text" id="input-field">
+            <button class="convert-button-right" onclick="convertInput()">Конвертировать</button>
+          </div>
+          <br>
+          <h3>Вывод:</h3>
+          <p id="output-field"></p>
+        </div>
+      </div>
+      {% endblock convertion_num%}
+    </li>
+  </ul>
+  {% endblock menu %}
+  <!---------------------------------->
+
+  <!-- Main content section of the page --------------------------------------------->
+  {% block content %}
+  <div class="main-content">
+    <nav class="buttons-log_reg">
+      <a class="button-login" href="/login">Login</a>
+      <a class="button-Registration" href="/register">Register</a>
+    </nav>
+  </div>
+  {% endblock %}
+  <!----------------------------------->
+
+  <!-- Нижняя часть страницы - футер ------------------------------------------------>
+  {% block footer %}
+  <div class="footer">
+    <h4>Created by Andrey Filobokov & ChatGPT3</h4>
+  </div>
+  {% endblock %}
+  <!----------------------------------->
+
+  <!-- Подключение скриптов для страницы --------------------------------------------->
+  {% block add_script %}
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% endblock add_script %}
+  <!----------------------------------->
+
+</body>
+</html>

@@ -1,0 +1,498 @@
+/* Стили для информационной панели */
+.info-panel {
+	background-color: rgba(35, 163, 112, 0.773);
+	color: white;
+	font-size: 16px;
+	padding: 5px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+
+.navigation {
+	white-space: nowrap;
+}
+
+
+/* Стили для панели меню */
+
+.navigation {
+	padding-left: 15px;
+}
+
+.navigation li {
+	display: inline-block;
+}
+
+.nav-button {
+	font-weight: 600;
+	background-color: #34b5e0;
+	border-radius: 20px;
+	color: #000;
+	padding: 8px 16px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.nav-button:hover {
+	background-color: #38d599;
+	animation: button-hover 0.2s ease-out forwards;
+}
+
+.nav-button:active {
+	animation: button-active 0.1s ease-in-out forwards;
+}
+
+@keyframes button-hover {
+	from {
+		transform: translateY(0);
+	}
+
+	to {
+		transform: translateY(-2px);
+	}
+}
+
+@keyframes button-active {
+	from {
+		transform: translateY(-2px);
+	}
+
+	to {
+		transform: translateY(2px);
+	}
+}
+
+/* Стили для основного содержимого страницы */
+.main-content {
+	font-size: 18px;
+}
+
+/* Стили для футера */
+.footer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	background-color: #00890099;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.footer h4 {
+	color: rgb(0, 0, 0);
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+}
+
+
+
+/* Стили для таблицы */
+
+table {
+	width: 90%;
+	/* ширина таблицы на 100% от ширины родительского элемента */
+	border-collapse: collapse;
+	/* схлопывание границ таблицы в одну */
+	margin-bottom: 20px;
+	/* отступ снизу */
+}
+
+th {
+	background-color: #a7a1a1;
+	/* цвет фона для заголовков таблицы */
+	font-weight: bold;
+	/* жирный шрифт для заголовков таблицы */
+}
+
+td,
+th {
+	padding: 10px;
+	/* отступы внутри ячеек таблицы */
+	text-align: center;
+	/* выравнивание текста по центру */
+	border: 1px solid #ccc;
+	/* границы ячеек таблицы */
+}
+
+
+/* Стили для модального окна ===========================================================*/
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 10% auto;
+	padding: 20px;
+	border: 1px solid #888;
+	width: 80%;
+}
+
+.close {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+/* Стили для кнопки модального окна ===============================================================*/
+.convert-button {
+	background-color: #4caf93;
+	border: none;
+	color: white;
+	padding: 10px 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.convert-button:hover {
+	background-color: #3e8e41;
+	/* меняем цвет при наведении */
+}
+
+.convert-button:active {
+	background-color: #4CAF50;
+	/* возвращаем цвет при нажатии */
+	transform: translateY(4px);
+}
+
+/* Стили для поля вывода================================================================== */
+#output-field {
+	font-size: 18px;
+	margin-top: 10px;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	hyphens: auto;
+	padding: 10px;
+	background-color: #f2f2f2;
+	border-radius: 5px;
+}
+
+.convert-button-menu {
+	float: right;
+	margin-right: 30px;
+}
+
+.button-logout {
+	float: right;
+	margin-right: 23px;
+	
+}
+
+.button-logout {
+	padding-bottom: 5px;
+	padding-top: 2px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #fff;
+	color: #000;
+	text-decoration: none;
+	border: 1px solid #000;
+	border-radius: 4px;
+}		
+
+.button-logout:hover {
+	background-color: #060a06;
+	color: #f8f8f8;
+}
+
+
+
+/*Дизайн кнопок логина и регистрации --------------------------------------------------------------------------*/
+.main-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 60vh;
+}
+
+.buttons-log_reg {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.buttons-log_reg a {
+	display: inline-block;
+	padding: 12px 24px;
+	border-radius: 4px;
+	margin: 0 8px;
+	font-size: 16px;
+	font-weight: 600;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #1E90FF;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: all 0.2s ease-in-out;
+}
+
+.buttons-log_reg a:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.buttons-log_reg a:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/*Дизайн формы Логина================================================================*/
+.login-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 60vh;
+}
+
+.login-content div {
+	width: 300px;
+}
+
+h1 {
+	font-size: 28px;
+	text-align: center;
+	margin-bottom: 24px;
+	padding-right: 30px;
+}
+
+.login-form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 24px;
+	border-radius: 4px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	background-color: #fff;
+	width: 300px;
+	padding-left: 20px;
+}
+
+.login-content label {
+	display: inline-block;
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+.login-content input[type="text"],
+.login-content input[type="password"] {
+	display: block;
+	width: 90%;
+	padding: 12px;
+	border-radius: 4px;
+	border: none;
+	margin-bottom: 16px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	font-size: 16px;
+	text-align: left;
+}
+
+.login-content input[type="submit"] {
+	display: inline-block;
+	padding: 12px 24px;
+	border-radius: 4px;
+	margin-top: 16px;
+	font-size: 16px;
+	font-weight: 600;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #1E90FF;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: all 0.2s ease-in-out;
+}
+
+.login-content input[type="submit"]:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.login-content input[type="submit"]:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button-Registration-2 {
+	display: inline-block;
+	padding: 12px 24px;
+	border-radius: 4px;
+	margin-top: 16px;
+	font-size: 16px;
+	font-weight: 600;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #1E90FF;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: all 0.2s ease-in-out;
+}
+
+.button-Registration-2:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button-Registration-2:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button-login-2 {
+	display: inline-block;
+	padding: 12px 24px;
+	border-radius: 4px;
+	margin-top: 16px;
+	font-size: 16px;
+	font-weight: 600;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #1E90FF;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	transition: all 0.2s ease-in-out;
+}
+
+.button-login-2:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button-login-2:active {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Стили для страницы лидов ===================================================================================*/
+/* Стили для Leads.html */
+.input-leads {
+	white-space: nowrap;
+}
+
+#add-leads-table input[type="text"] {
+	display: inline-block;
+	width: 140px;
+	margin-right: 10px;
+}
+
+/*Кнопка добавить------------------------------------*/
+#add-leads-table input[type="submit"] {
+	display: inline-block;
+	padding: 6px 35px;
+	border-radius: 4px;
+	margin: 5px;
+	font-size: 10px;
+	font-weight: 600;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #005ab5;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+}
+
+#add-leads-table input[type="submit"]:hover {
+	background-color: #007FFF;
+}
+
+#add-leads-table input[type="submit"]:active {
+	background-color: #003366;
+}
+
+.button-delete-lead {
+	display: inline-block;
+	padding: 6px 35px;
+	border-radius: 4px;
+	margin: 5px;
+	font-size: 10px;
+	font-weight: 600;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #005ab5;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+}
+
+.button-delete-lead :hover {
+	background-color: #007FFF;
+}
+
+.button-delete-lead:active {
+	background-color: #003366;
+}
+
+/*--------------------------------------------------------------------------------*/
+
+
+/* Стили для таблицы */
+#my-table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+/* Стили для заголовка таблицы */
+#my-table th {
+	background-color: #008CBA;
+	/* цвет фона - голубой */
+	color: white;
+	/* цвет текста - белый */
+	font-weight: bold;
+	padding: 12px;
+	text-align: left;
+	border-bottom: 1px solid #ddd;
+}
+
+/* Стили для ячеек в теле таблицы */
+#my-table td {
+	border-bottom: 1px solid #ddd;
+	padding: 8px;
+	text-align: left;
+	font-size: 14px;
+	vertical-align: top;
+	background-color: white;
+	/* цвет фона - белый */
+}
+
+/* убираем стили ссылок в ячейках таблицы */
+table td a {
+	text-decoration: none;
+	color: inherit;
+}
+
+/* добавляем анимацию при наведении на ячейки таблицы */
+table td a:hover {
+	background-color: #d1d1d1;
+	transition: background-color 0.2s ease;
+}

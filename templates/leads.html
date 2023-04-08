@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title}} {% endblock %}
+{% block information %}
+Profile: {{ current_user }} <a href="{{url_for('logout')}}" class="button-logout" > Logout </a>
+{% endblock %}
+
+{% block menu %}
+{{ super() }}
+{% endblock menu %}
+
+
+{% block content %}
+<form action="{{url_for('leads')}}" method="POST" id="add-leads-table" class="form-table-leads">
+  <div class="input-leads">
+    {% for l in title_table_leads %}
+    <input type="text" id="{{l.name}}" name="{{l.name}}" placeholder="{{l.placeholder}}" {% if l.name in ['company', 'name', 'project'] %}required{% endif %}>
+    {% endfor %}
+  </div>
+  <br>
+  <div class="button-leads">
+    <input type="submit" name="button-add-lead" value="Добавить" />
+  </div>
+</form>
+
+
+<form action="{{url_for('leads')}}" method="POST">
+  <div class="button-leads">
+    <input type="submit" name="button-delete-lead" value="Удалить" class="button-delete-lead">
+  </div>
+  <table id="my-table">
+    <thead>
+      <tr>
+        <th> </th>
+        <th>№</th>
+        {% for title_col in title_table_leads %}
+        <th>{{ title_col.placeholder }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody class="table-result">
+      {% for row in get_new_lead %}
+      <tr>
+        <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ row[0] }}"></td>
+        <td><a href="{{ url_for('show_info_lead', alias=row[1])}}">{{ get_new_lead.index(row)+1 }}</a></td>
+        {% for cell in row[1::] %}
+        <td><a href="{{ url_for('show_info_lead', alias=row[1])}}">{{ cell }}</a></td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</form>
+{% endblock %}
