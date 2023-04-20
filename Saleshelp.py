@@ -363,7 +363,7 @@ def pricing():
             #
             pass
 
-    return setting_view(menu, choose_project)
+    return pricing_view(menu, choose_project)
 
 
 # <-------------------------------------------------------------------------------->
