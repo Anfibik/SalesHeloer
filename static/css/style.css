@@ -4,16 +4,16 @@
 	color: white;
 	font-size: 16px;
 	padding: 5px;
-	padding-bottom: 10px;
+	padding-bottom: 15px;
 	margin-bottom: 10px;
 }
 
+/* Стили для панели меню */
 .navigation {
 	white-space: nowrap;
+	margin-bottom: 10px;
+	margin-top: 5px;
 }
-
-
-/* Стили для панели меню */
 
 .navigation {
 	padding-left: 15px;
@@ -205,7 +205,7 @@ th {
 .button-logout {
 	float: right;
 	margin-right: 23px;
-	
+
 }
 
 .button-logout {
@@ -218,7 +218,7 @@ th {
 	text-decoration: none;
 	border: 1px solid #000;
 	border-radius: 4px;
-}		
+}
 
 .button-logout:hover {
 	background-color: #060a06;
@@ -272,7 +272,7 @@ th {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 60vh;
+	height: 70vh;
 }
 
 .login-content div {
@@ -297,6 +297,15 @@ h1 {
 	background-color: #fff;
 	width: 300px;
 	padding-left: 20px;
+}
+
+.button-login-main {
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.button-login-main input {
+	width: 300px;
 }
 
 .login-content label {
@@ -344,26 +353,29 @@ h1 {
 }
 
 .button-Registration-2 {
-	display: inline-block;
-	padding: 12px 24px;
-	border-radius: 4px;
-	margin-top: 16px;
-	font-size: 16px;
-	font-weight: 600;
-	text-decoration: none;
-	text-transform: uppercase;
-	color: #fff;
-	background-color: #1E90FF;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	transition: all 0.2s ease-in-out;
+	text-align: center;
 }
 
-.button-Registration-2:hover {
+.button-Registration-2 a {
+	display: inline-block;
+	padding: 2px 4px;
+	font-size: 16px;
+	border-radius: 10px;
+	text-decoration: none;
+	text-transform: lowercase;
+	color: #000000;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.642);
+	transition: all 0.2s ease-in-out;
+	font-weight: 600;
+	margin-top: 15px;
+}
+
+.button-Registration-2 a:hover {
 	transform: translateY(-2px);
 	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
-.button-Registration-2:active {
+.button-Registration-2 a:active {
 	transform: translateY(0);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -430,19 +442,22 @@ h1 {
 	background-color: #003366;
 }
 
+.button-delete-lead-th {
+	padding: 0px;
+	width: 20px;
+	white-space: nowrap;
+}
+
 .button-delete-lead {
-	display: inline-block;
-	padding: 6px 35px;
-	border-radius: 4px;
-	margin: 5px;
+	width: 45px;
+	height: 20px;
+	border-radius: 1px;
 	font-size: 10px;
-	font-weight: 600;
-	text-decoration: none;
-	text-transform: uppercase;
-	color: #fff;
-	background-color: #005ab5;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	cursor: pointer;
+	padding: 0;
+	border-radius: 5px;
+	margin-bottom: 2px;
+	margin-left: 2px;
+	margin-right: 2px;
 }
 
 .button-delete-lead :hover {
@@ -451,11 +466,10 @@ h1 {
 
 .button-delete-lead:active {
 	background-color: #003366;
+	color: white;
 }
 
 /*--------------------------------------------------------------------------------*/
-
-
 /* Стили для таблицы */
 #my-table {
 	border-collapse: collapse;
@@ -469,16 +483,15 @@ h1 {
 	color: white;
 	/* цвет текста - белый */
 	font-weight: bold;
-	padding: 12px;
-	text-align: left;
+	padding: 2px;
 	border-bottom: 1px solid #ddd;
 }
 
 /* Стили для ячеек в теле таблицы */
 #my-table td {
 	border-bottom: 1px solid #ddd;
-	padding: 8px;
-	text-align: left;
+	padding: 2px;
+	text-align: center;
 	font-size: 14px;
 	vertical-align: top;
 	background-color: white;
@@ -495,4 +508,182 @@ table td a {
 table td a:hover {
 	background-color: #d1d1d1;
 	transition: background-color 0.2s ease;
+}
+
+/*Стили для страницы PRICING=========================================================================*/
+/* Зона дополнительных настроек склада - проект, температурный режим*/
+
+.warehouse-setting {
+	display: flex;
+	flex-direction: row;
+	padding: 2px;
+	background-color: rgb(181, 222, 239);
+	border: 1px solid #d2deff;
+	border-radius: 10px;
+	box-shadow: 2px 2px 5px #a9a6a6;
+	margin-bottom: 5px;
+}
+
+.warehouse-setting select {
+	padding: 2px;
+	border: 2px solid #ccc;
+	border-radius: 4px;
+	max-width: 200px;
+	margin-right: 10px;
+}
+
+.temperature-radio {
+	margin-right: 20px;
+}
+
+/* Вертикальная линия */
+.vertical-line::before {
+	content: "";
+	display: block;
+	height: 180px;
+	border-left: 2px solid rgb(186, 179, 179);
+}
+
+.vertical-line2::before {
+	content: "";
+	display: block;
+	height: 70px;
+	border-left: 2px solid rgb(186, 179, 179);
+}
+
+hr {
+	margin: 0;
+}
+
+.output-forms-pricing-page hr {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+
+/* Стили для основного контейнера страницы */
+.global-div-pricing-page,
+.div-percent-input-output {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+/* Стили для левой колонки - форм ввода */
+.input-forms-pricing-page,
+.div-precent-input {
+	width: 50%;
+}
+
+/* Стили для правой колонки - вывода результатов */
+.output-forms-pricing-page,
+.div-precent-output {
+	width: 60%;
+}
+
+/* Стили для форм ввода */
+.form-inpute-dimension,
+.form-inpute-pricing,
+.form-inpute-option {
+	margin-bottom: 15px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.form-inpute-dimension input,
+.form-inpute-pricing input,
+.form-inpute-option input {
+	width: 80px;
+	margin-right: 5px;
+}
+
+.form-inpute-dimension label,
+.form-inpute-pricing label,
+.form-inpute-option label {
+	display: inline-block;
+	width: 80px;
+	text-align: right;
+}
+
+
+/* Стили для кнопок "применить" */
+.button-accept {
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: 4px;
+	font-size: 12px;
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #113ec7;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	/* Добавляем анимацию для всех свойств */
+}
+
+
+.button-accept:hover {
+	background-color: #30fdf3;
+	color: #000000;
+}
+
+.button-accept:active {
+	background-color: #1277fb;
+	color: rgb(0, 0, 0);
+}
+
+
+/* Стили для вывода результатов */
+
+.output-pricing {
+	display: flex;
+	flex-direction: column;
+
+}
+
+.output-cost {
+	width: 70%;
+	text-align: left;
+}
+
+.output-div {
+	display: flex;
+	flex-direction: row;
+	margin: 4px;
+}
+
+.output-div .title1 {
+	display: flex;
+	width: 40%;
+	text-align: left;
+	align-items: center;
+}
+
+.output-div .title-2-3 {
+	display: block;
+	width: 50%;
+}
+
+
+
+
+
+
+.output-dimension {
+	display: flex;
+	flex-direction: row;
+}
+
+/*Стиль для формы кнопок сохранить, обновить*/
+.form-buttons-save {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.form-buttons-save button {
+	width: 200px;
+	padding: 2px;
+	margin: 5px;
+	color: #000000;
+	background-color: #0bf8a1;
+	font-weight: bold;
 }

@@ -22,3 +22,6 @@ class UserLogin:
 
     def get_user_name(self):
         return str(self.__user['name'])
+
+    def get_user_email(self):
+        return str(self.__user['email'])
