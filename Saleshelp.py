@@ -1,3 +1,5 @@
+import sqlite3
+import os
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
@@ -7,8 +9,6 @@ from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
 from Utils.form import LoginForm, RegistrationForm
 from Utils.Pricing_View import pricing_view
-import sqlite3
-import os
 
 # Конфигурация
 DATABASE = '/tmp/SH_site.db'
@@ -57,16 +57,6 @@ def close_db(error):
     if hasattr(g, 'link_db'):
         g.link_db.close()
 
-
-# dbase = None
-#
-#
-# @app.before_request
-# def before_request():
-#     """Установление соединения с БД перед выполнением запроса"""
-#     global dbase
-#     db = get_db()
-#     dbase = FDataBase(db)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -208,134 +198,48 @@ def show_info_lead(alias):
 @login_required
 def pricing():
     dbase = FDataBase(get_db())
-
     choose_project = [{"project": row['project'], "lead": row['company']}
                       for row in dbase.get_info_records('lead', current_user.get_user_email())]
 
     if request.method == 'POST':
 
         if "button-accept-settings" in request.form:
-            product = request.form['product']
-            project = request.form['project']
-            temperature = request.form['temperature']
+            settings = dict(list(request.form.items())[1:-1])
+            dbase.add_record('warehouse', settings)
 
-            dbase.add_records('warehouse', temperature=temperature, project=project)
-
-            return pricing_view(menu, choose_project, accept_index=1,
-                                project=project, product=product, temperature=temperature
-                                )
+            return pricing_view(menu, choose_project, settings, accept_index=1)
 
         if "button-accept-dimension" in request.form:
-            width = int(request.form['width'])
-            length = int(request.form['length'])
-            height = int(request.form['height'])
-            area = width * length
-            volume = width * length * height
-            project = dbase.get_last_warehouse()['project']
-            temperature = dbase.get_last_warehouse()['temperature']
+            dimension = dict(list(request.form.items())[:-1])
+            dimension['area'] = int(dimension['width']) * int(dimension['length'])
+            dimension['volume'] = int(dimension['width']) * int(dimension['length']) * int(dimension['height'])
+            dbase.update_record_by_id('warehouse', dbase.get_last_record("warehouse")['id'], dimension)
 
-            dimension = {key: vol for key, vol in list(request.form.items())[:-1]}
-            dbase.update_record_by_id('warehouse', dbase.get_last_warehouse()['id'], dimension)
-
-            return pricing_view(menu, choose_project, accept_index=2,
-                                project=project, temperature=temperature,
-                                width=width, length=length, height=height, area=area, volume=volume,
-                                )
-
-            # get_title_table_dimension[0]['result'] = f"W: {width}m | L: {length}m | H: {height}m"
-            # get_title_table_dimension[1]['result'] = f"{area} m²"
-            # get_title_table_dimension[2]['result'] = f"{volume} m³"
-            #
-            # dbase.add_warehouse_dimension(width, length, height, area, volume, temperature, project)
-            #
-            # set_title_table_dimension[0]['current_vol'] = width
-            # set_title_table_dimension[1]['current_vol'] = length
-            # set_title_table_dimension[2]['current_vol'] = height
+            return pricing_view(menu, choose_project, dimension, accept_index=2)
 
         if "button-accept-pricing" in request.form:
-            accept_1 = 'block'
-            accept_2 = 'block'
-            # price = {p['name']: request.form[p['name']] for p in set_title_table_pricing}
-            # print(price)
-            # dbase.update_warehouse_by_id(dbase.get_last_warehouse()['id'], price)
-            #
-            # area = dbase.get_last_warehouse()['area']
-            # volume = dbase.get_last_warehouse()['volume']
-            # width = dbase.get_last_warehouse()['width']
-            # length = dbase.get_last_warehouse()['length']
-            # height = dbase.get_last_warehouse()['height']
-            #
-            # price_square_meters = round(int(price['price_warehouse']) / area, 2)
-            # price_cubic_meters = round(int(price['price_warehouse']) / volume, 2)
-            # price_Protan = int(price['price_warehouse'])
-            #
-            # get_title_table_pricing[0]['result'] = f"{price_Protan} euro"
-            # get_title_table_pricing[1]['result'] = f"{price_square_meters} euro"
-            # get_title_table_pricing[2]['result'] = f"{price_cubic_meters} euro"
-            #
-            # get_title_table_dimension[0]['result'] = f"W: {width}m | L: {length}m | H: {height}m"
-            # get_title_table_dimension[1]['result'] = f"{area} m²"
-            # get_title_table_dimension[2]['result'] = f"{volume} m³"
-            #
-            # set_title_table_dimension[0]['current_vol'] = width
-            # set_title_table_dimension[1]['current_vol'] = length
-            # set_title_table_dimension[2]['current_vol'] = height
-            #
-            # for i, vol_pricing in enumerate(list(price.values())):
-            #     set_title_table_pricing[i]['current_vol'] = vol_pricing
+            price = dict(list(request.form.items())[:-1])
+            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], price)
+            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
+            last_data["price_square_meters"] = round(last_data['price_warehouse'] / last_data['area'], 2)
+            last_data["price_cubic_meters"] = round(last_data['price_warehouse'] / last_data['volume'], 2)
+
+            return pricing_view(menu, choose_project, last_data, accept_index=3)
 
         if "button-accept-cost" in request.form:
-            accept_1 = 'block'
-            accept_2 = 'block'
-            accept_3 = 'block'
-
-            # cost_dict = request.form.copy()
-            # cost_dict.popitem()
-            # dbase.update_warehouse_by_id(dbase.get_last_warehouse()['id'], cost_dict)
-            #
-            # area = dbase.get_last_warehouse()['area']
-            # volume = dbase.get_last_warehouse()['volume']
-            # width = dbase.get_last_warehouse()['width']
-            # length = dbase.get_last_warehouse()['length']
-            # height = dbase.get_last_warehouse()['height']
-            #
-            # price_square_meters = round(dbase.get_last_warehouse()['price_warehouse'] / area, 2)
-            # price_cubic_meters = round(dbase.get_last_warehouse()['price_warehouse'] / volume, 2)
-            # price_Protan = dbase.get_last_warehouse()['price_warehouse']
-            #
-            # get_title_table_pricing[0]['result'] = f"{price_square_meters} euro"
-            # get_title_table_pricing[1]['result'] = f"{price_cubic_meters} euro"
-            # get_title_table_pricing[2]['result'] = f"{price_Protan} euro"
-            #
-            # get_title_table_dimension[0]['result'] = f"W: {width}m | L: {length}m | H: {height}m"
-            # get_title_table_dimension[1]['result'] = f"{area} m²"
-            # get_title_table_dimension[2]['result'] = f"{volume} m³"
-            #
-            # set_title_table_dimension[0]['current_vol'] = width
-            # set_title_table_dimension[1]['current_vol'] = length
-            # set_title_table_dimension[2]['current_vol'] = height
-            #
-            # price = {p['name']: dbase.get_last_warehouse()[p['name']] for p in set_title_table_pricing}
-            # for i, vol_pricing in enumerate(list(price.values())):
-            #     set_title_table_pricing[i]['current_vol'] = vol_pricing
-            #
-            # price_customs = price_Protan * 1 / 100
-            # price_VAT = price_Protan * 20 / 100
-            # price_cost = price_customs + price_VAT + price_Protan
-            #
-            # get_title_table_cost[0]['result'] = price_Protan * 1 / 100
-            # get_title_table_cost[1]['result'] = price_Protan * 20 / 100
-            # get_title_table_cost[2]['result'] = price_cost
-            #
-            # set_title_table_second_pricing[0]['current_vol'] = dbase.get_last_warehouse()['price_foundation']
-            # set_title_table_second_pricing[1]['current_vol'] = dbase.get_last_warehouse()['price_light']
-            # set_title_table_second_pricing[2]['current_vol'] = dbase.get_last_warehouse()['price_rack']
+            advance_price = dict(list(request.form.items())[:-1])
+            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], advance_price)
+            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
+            pw = last_data["price_warehouse"]
+            pc = last_data["price_customs"] = pw * 1 / 100
+            pV = last_data["price_VAT"] = pw * 20 / 100
+            last_data["price_square_meters"] = round(pw / last_data['area'], 2)
+            last_data["price_cubic_meters"] = round(pw / last_data['volume'], 2)
+            return pricing_view(menu, choose_project, last_data, accept_index=4)
 
         if "button-accept-percent" in request.form:
-            accept_1 = 'block'
-            accept_2 = 'block'
-            accept_3 = 'block'
-            accept_4 = 'block'
+            cost_percent = request.form["percent_input"]
+            print(cost_percent)
 
             # price_Protan = dbase.get_last_warehouse()['price_warehouse']
             # percent = request.form['percent_input']
@@ -363,7 +267,7 @@ def pricing():
             #
             pass
 
-    return pricing_view(menu, choose_project)
+    return pricing_view(menu, choose_project, )
 
 
 # <-------------------------------------------------------------------------------->

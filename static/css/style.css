@@ -633,16 +633,11 @@ hr {
 
 
 /* Стили для вывода результатов */
-
-.output-pricing {
+.output-cost,
+.output-pricing,
+.output-dimension {
 	display: flex;
-	flex-direction: column;
-
-}
-
-.output-cost {
-	width: 70%;
-	text-align: left;
+	flex-direction: row;
 }
 
 .output-div {
@@ -653,24 +648,17 @@ hr {
 
 .output-div .title1 {
 	display: flex;
-	width: 40%;
+	width: 35%;
 	text-align: left;
 	align-items: center;
 }
 
-.output-div .title-2-3 {
-	display: block;
-	width: 50%;
+.output-div .title1 b{
+	margin-right: 5px;
 }
 
-
-
-
-
-
-.output-dimension {
-	display: flex;
-	flex-direction: row;
+.output-div .title-2-3 {
+	display: block;
 }
 
 /*Стиль для формы кнопок сохранить, обновить*/

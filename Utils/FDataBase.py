@@ -109,10 +109,19 @@ class FDataBase:
 
     # =================================================================================================
 
-    def add_records(self, name_table, **kwargs):
+    def add_record(self, name_table, dict_records=None, **kwargs):
         """Добавление записи в выбранную таблицу по выбранным столбцам"""
-        title_table = tuple(kwargs.keys())
-        values = tuple(kwargs.values())
+        if dict_records is None:
+            title_table = tuple(kwargs.keys())
+            values = tuple(kwargs.values())
+        else:
+            title_table = []
+            values = []
+            for t, v in dict_records.items():
+                title_table.append(t)
+                values.append(v)
+            title_table = tuple(title_table)
+            values = tuple(values)
         try:
             self.__cur.execute(f"INSERT INTO {name_table} {title_table} VALUES {values}")
             self.__db.commit()
@@ -121,27 +130,13 @@ class FDataBase:
             return False
         return True
 
-    def get_warehouse_dimension(self, warehouse_id):
+    def get_last_record(self, name_table):
         try:
-            self.__cur.execute(f"SELECT width, length, height, areas, volume FROM warehouse "
-                               f"WHERE id = '{warehouse_id}'")
-            res = self.__cur.fetchone()
-            if not res:
-                print("Размеры склада не найдены")
-                return False
-            return res
-
-        except sqlite3.Error as e:
-            print("Ошибка получения размеров из БД " + str(e))
-            return False
-
-    def get_last_warehouse(self):
-        try:
-            self.__cur.execute("SELECT * FROM warehouse ORDER BY id DESC LIMIT 1;")
+            self.__cur.execute(f"SELECT * FROM {name_table} ORDER BY id DESC LIMIT 1;")
             last_record = self.__cur.fetchone()
             return last_record
         except sqlite3.Error as e:
-            print("Ошибка получения последней строки из БД " + str(e))
+            print("Ошибка получения последней записи из БД " + str(e))
             return False
 
     def update_record_by_id(self, name_table, id_record, columns_values):
@@ -149,7 +144,6 @@ class FDataBase:
         for title, values in columns_values.items():
             new_val = new_val + title + '=' + str(values) + ', '
         new_val = new_val.rstrip(', ')
-        print(new_val)
         try:
             self.__cur.execute(f"UPDATE {name_table} SET {new_val} WHERE id={id_record}")
             self.__db.commit()

@@ -27,6 +27,7 @@
         {% endfor %}
       </select>
     </div>
+    <!---Выбор теипературы-->
     <div class="temperature-radio">Температурный режим: <!---Выбор температуры-->
       <label> <input type="radio" name="temperature" value="hot" required> Теплый </label>
       <label> <input type="radio" name="temperature" value="cold" required> Холодный </label>
@@ -35,15 +36,18 @@
   </div>
 </form>
 <hr>
-<div class="global-div-pricing-page">
-  <!--++++++++++-   Ввод размеров склада   ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-  <div class="input-forms-pricing-page" style="display: {{set_title_table_dimension[0]}};">
+
+<div class="global-div-pricing-page"> <!-- Блок ввода и вывода данных левая и правая часть> IIIIIIIIIIIIIIIIIIIIIIIII-->
+
+  <div class="input-forms-pricing-page" style="display: {{ accept_1 }};"> <!--+++++ ЛЕВЫЙ БЛОК ВВОДА ДАННЫХ -->
+
+    <!------------------Ввод размеров склада--------------->
     <form action="{{url_for('pricing')}}" method="POST" id="form-dimension">
       <div class="form-inpute-dimension">
         <b>Размеры склада</b>
         <div>
-          {% for d in set_title_table_dimension[1::] %}
+          {% for d in set_title_table_dimension %}
           <label for="{{ d.name }}">{{ d.title }}</label>
           <input type="number" name="{{ d.name }}" id="{{ d.name }}" placeholder="{{ d.placeholder }}" {% if
             d.current_vol %} value="{{ d.current_vol }}" {% endif %} required>
@@ -52,13 +56,12 @@
         </div>
       </div>
     </form>
-
-    <!--++++++++++++   Ввод стоимости склада - доставки - монтажа    +++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <div class="form-inpute-pricing" style="display: {{set_title_table_pricing[0]}};">
+    <!---------------Ввод стоимости склада - доставки - монтажа------------------------>
+    <div class="form-inpute-pricing" style="display: {{accept_2}};">
       <b>Стоимость - ключевые параметры</b>
       <form action="{{url_for('pricing')}}" method="POST" id="form-prircing">
         <div>
-          {% for p in set_title_table_pricing[1::] %}
+          {% for p in set_title_table_pricing %}
           <label for="{{ p.name }}">{{ p.title }}</label>
           <input type="number" id="{{ p.name }}" name="{{ p.name }}" placeholder="{{ p.placeholder }}" {% if
             p.current_vol %} value="{{ p.current_vol }}" {% endif %} required>
@@ -67,12 +70,12 @@
         </div>
       </form>
     </div>
-    <!--++++++++++++   Ввод стоимости фундамента - освещения - стеллажей  ++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <div class="form-inpute-option" style="display: {{set_title_table_second_pricing[0]}};">
+    <!--------------Ввод стоимости фундамента - освещения - стеллажей ------------------->
+    <div class="form-inpute-option" style="display: {{accept_3}};">
       <b>Стоимость - дополнительные параметры</b>
       <form action="{{url_for('pricing')}}" method="POST" id="form-prircing">
         <div>
-          {% for p in set_title_table_second_pricing[1::] %}
+          {% for p in set_title_table_second_pricing %}
           <label for="{{ p.name }}">{{ p.title }}</label>
           <input type="number" id="{{ p.name }}" name="{{ p.name }}" placeholder="{{ p.placeholder }}" {% if
             p.current_vol %} value="{{ p.current_vol }}" {% endif %}>
@@ -82,14 +85,17 @@
       </form>
     </div>
   </div>
-  <!--================================================================================================================-->
-  <div class="vertical-line" style="display: {{ set_title_table_dimension[0] }};"></div>
-  <!--================================================================================================================-->
-  <!--Вывод результатов в правой панели-->
+  <!--+++++++++++ ЗАКРЫВАЮЩИЙ ДИВ ЛЕВОГО БЛОКА +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-  <div class="output-forms-pricing-page">
-    <div class="output-dimension" style="display: {{ set_title_table_pricing[0] }};">
-      <!--Вывод площади и объема склада-->
+  <!--================================================================================================================-->
+  <div class="vertical-line" style="display: {{ accept_1 }};"></div>
+  <!--Вертикальная черта между левым и правым блоком
+  <!--================================================================================================================-->
+
+  <div class="output-forms-pricing-page"> <!--++++++++++++++ ПРАВЫЙ БЛОК ВЫВОДА ИНФОРМАЦИИ+++++++++++++++++++++++++++-->
+
+    <!---------------  Вывод площади и объема склада ---------------->
+    <div class="output-dimension" style="display: {{ accept_2 }};">
       <div class="output-div">
         <div class="title1">
           <b>{{ get_title_table_dimension[0].title }}</b> <output class="number">{{ get_title_table_dimension[0].result
@@ -103,61 +109,67 @@
           {% endfor %}
         </div>
       </div>
-
     </div>
-    <hr style="display: {{ set_title_table_dimension[0] }}">
-    <!---------------------------------------------------------------------------------->
-    <div class="output-pricing-cost">
-      <div class="output-pricing" style="display: {{ set_title_table_second_pricing[0] }};">
+    <hr style="display: {{ accept_1 }}">
 
-        <div class="output-div">
-          <div class="title1">
-            <b>{{ get_title_table_pricing[0].title }} </b> <output class="number">{{
-              get_title_table_pricing[0].result}}</output>
-          </div>
-          <div class="title-2-3">
-            {% for p in get_title_table_pricing[1::] %}
-            <div class="title">
-              <b>{{ p.title }} </b> <output class="number">{{ p.result }}</output>
-            </div>
-            {% endfor %}
-          </div>
+    <!--------- Вывод стоимости склада, доставки, монтажа ----------------------------->
+    <div class="output-pricing" style="display: {{ accept_3 }};">
+      <div class="output-div">
+        <div class="title1">
+          <b>{{ get_title_table_pricing[0].title }} </b> <output class="number">{{
+            get_title_table_pricing[0].result}}</output>
         </div>
-        <hr style="display: {{ set_title_table_dimension[0] }}">
-        <!---------------------------------------------------------------------------------->
-      </div>
-      <div class="output-cost" style="display: {{ set_title_table_second_pricing[0] }};">
-        <div class="output-div">
-          {% for p in get_title_table_cost %}
-          <div class="title"><b>{{ p.title }} </b></div> <output class="number">{{ p.result }}</output>
+        <div class="title-2-3">
+          {% for p in get_title_table_pricing[1::] %}
+          <div class="title">
+            <b>{{ p.title }} </b> <output class="number">{{ p.result }}</output>
+          </div>
           {% endfor %}
         </div>
-
       </div>
     </div>
-  </div>
+    <hr style="display: {{ accept_1 }}">
 
-</div>
-<hr style="display: {{ set_title_table_dimension[0] }}">
-<!---IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII-->
+    <!-------- Вывод себестоимости, таможни и НДС ---------------------------------------->
+    <div class="output-cost" style="display: {{ accept_4 }};">
+      <div class="output-div">
+        <div class="title1">
+          <b>{{ get_title_table_cost[0].title }} </b> <output class="number">{{
+            get_title_table_cost[0].result}}</output>
+        </div>
+        <div class="title-2-3">
+          {% for p in get_title_table_cost[1::] %}
+          <div class="title">
+            <b>{{ p.title }} </b> <output class="number">{{ p.result }}</output>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div> <!--++ ЗАКРЫВАЮЩИЙ ДИВ ПРАВОГО БЛОКА ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+</div> <!--III  ЗАКРЫВАЮЩИЙ ДИВ ЛЕВОГО И ПРАВОГО БЛОКА IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII-->
+<hr style="display: {{ accept_1 }}"> <!-- Итоговая черта таблицы -->
+
+<!---IIIIIIII НАЧАЛО БЛОКА С МОРЖЕНАЛЬНОСТЬЮ  IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII-->
 <div class="div-percent-input-output">
 
   <div class="div-precent-input">
-    <form action="{{ url_for('pricing') }}" method="POST" id="form-precent-cost" style="display: {{ set_title_table_second_pricing[0] }}">
+    <form action="{{ url_for('pricing') }}" method="POST" id="form-precent-cost" style="display: {{ accept_4 }}">
       <label for="percent_cost">Процент моржи</label>
       <input type="number" , id="precent_cost" name="percent_input" placeholder="морженальность %" required>
       <button type="submit" name="button-accept-percent" class="button-accept" value="block">применить</button>
     </form>
 
-    <form class="form-buttons-save" action="{{ url_for('pricing') }}" method="POST" style="display: {{ set_title_table_second_pricing[0] }};">
+    <form class="form-buttons-save" action="{{ url_for('pricing') }}" method="POST" style="display: {{ accept_5 }};">
       <button type="submit" class="button-accept" name="button-save-pricing">сохранить</button>
       <button type="submit" class="button-accept" name="button-update-pricing">новый рассчет</button>
     </form>
   </div>
   <!--================================================================================================================-->
-  <div class="vertical-line2" style="display: {{ set_title_table_dimension[0] }};"></div>
+  <div class="vertical-line2" style="display: {{ accept_1 }};"></div>
   <!--================================================================================================================-->
-  <div class="div-precent-output" style="display: {{ set_title_table_second_pricing[0] }};">
+  <div class="div-precent-output" style="display: {{ accept_5 }};">
     {% for p in get_title_table_total_coast %}
     <div class="output-div">
       <div class="title"><b>{{ p.title }} </b></div> <output class="number">{{ p.result }}</output>
@@ -167,14 +179,14 @@
 </div>
 <hr>
 
-<div style="display: {{ title_table[0] }}">
+<div style="display: {{ accept_6 }}">
   <table id="my-table">
     <h3>Table</h3>
     <tr>
       <th class="button-delete-lead-th">
         <input type="submit" name="button-delete-lead" value="удалить" class="button-delete-lead">
       </th>
-      {% for t in title_table[1::] %}
+      {% for t in title_table %}
       <th>{{ t.title }}</th>
       {% endfor %}
     </tr>

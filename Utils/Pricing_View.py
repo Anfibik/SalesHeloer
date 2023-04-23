@@ -1,51 +1,63 @@
-
 from flask import render_template
 
 
-def pricing_view(menu, choose_project, accept_index=None,
-                 **kwargs):
-
+def pricing_view(menu, choose_project, update_dict=None, accept_index=None):
     accepts = ['none'] * 6
     if accept_index is not None:
-        for a in range(accept_index):
-            accepts[a] = "block"
+        for i in range(accept_index):
+            accepts[i] = "block"
     accept_1, accept_2, accept_3, accept_4, accept_5, accept_6 = accepts
 
+    m_dict = {'width': False, 'length': False, 'height': False, 'area': False, 'volume': False,
+              'price_Protan': False, 'price_square_meters': False, 'price_cubic_meters': False,
+              'price_cost': False, "price_customs": False, 'price_VAT': False,
+              'cost_price': False, 'profit': False, 'selling_price': False,
+              'price_delivery': False, 'price_warehouse': False, 'price_building': False,
+              'price_foundation': False, 'price_light': False, 'price_rack': False}
+    if update_dict is not None:
+        for key, vol in update_dict.items():
+            m_dict[key] = vol
+
     set_title_table_dimension = [
-        {"name": 'width', "title": 'ширина', "placeholder": 'метры', "current_vol": False},
-        {"name": 'length', "title": 'длинна', "placeholder": 'метры', "current_vol": False},
-        {"name": 'height', "title": 'высота', "placeholder": 'метры', "current_vol": False}
+        {"name": 'width', "title": 'ширина', "placeholder": 'метры', "current_vol": m_dict['width']},
+        {"name": 'length', "title": 'длинна', "placeholder": 'метры', "current_vol": m_dict['length']},
+        {"name": 'height', "title": 'высота', "placeholder": 'метры', "current_vol": m_dict['height']}
     ]
 
     set_title_table_pricing = [
-        {"name": 'price_warehouse', "title": 'склад', "placeholder": 'евро', "current_vol": False},
-        {"name": 'price_delivery', "title": 'доставка', "placeholder": 'евро', "current_vol": False},
-        {"name": 'price_building', "title": 'монтаж', "placeholder": 'евро', "current_vol": False},
+        {"name": 'price_warehouse', "title": 'склад', "placeholder": 'евро', "current_vol": m_dict['price_warehouse']},
+        {"name": 'price_delivery', "title": 'доставка', "placeholder": 'евро', "current_vol": m_dict['price_delivery']},
+        {"name": 'price_building', "title": 'монтаж', "placeholder": 'евро', "current_vol": m_dict['price_building']},
     ]
     set_title_table_second_pricing = [
-        {"name": 'price_foundation', "title": 'фундамент', "placeholder": 'евро', "current_vol": False},
-        {"name": 'price_light', "title": 'освещение', "placeholder": 'евро', "current_vol": False},
-        {"name": 'price_option', "title": 'стеллажи', "placeholder": 'евро', "current_vol": False}
-    ]
-    get_title_table_pricing = [
-        {"name": 'price_Protan', "title": 'Цена Protan: ', "result": f'{0} euro'},
-        {"name": 'price_square_meters', "title": 'Цена за 1 [m²]: ', "result": f'{0} euro'},
-        {"name": 'price_cubic_meters', "title": 'Цена за 1 [m³]: ', "result": f'{0} euro'},
-    ]
-    get_title_table_cost = [
-        {"name": 'price_cost', "title": 'Себестоимость: ', "result": f'{0} euro'},
-        {"name": 'price_customs', "title": 'Таможня: ', "result": f'{0} euro'},
-        {"name": 'price_VAT', "title": 'НДС: ', "result": f'{0} euro'},
+        {"name": 'price_foundation', "title": 'фундамент', "placeholder": 'евро',
+         "current_vol": m_dict['price_foundation']},
+        {"name": 'price_light', "title": 'освещение', "placeholder": 'евро', "current_vol": m_dict['price_light']},
+        {"name": 'price_rack', "title": 'стеллажи', "placeholder": 'евро', "current_vol": m_dict['price_rack']}
     ]
     get_title_table_dimension = [
-        {"result": f"W: {kwargs['width']}m | L: {kwargs['length']}m | H: {kwargs['height']}m", "title": 'Размеры: '},
-        {"result": f"{kwargs['area']} m²", "title": 'Площадь: '},
-        {"result": f"{kwargs['volume']} m³", "title": 'Объем: '},
+        {"result": f"W: {m_dict['width']}m | L: {m_dict['length']}m | H: {m_dict['height']}m", "title": 'Размеры: '},
+        {"result": f"{m_dict['area']} m²", "title": 'Площадь: '},
+        {"result": f"{m_dict['volume']} m³", "title": 'Объем: '},
     ]
+    get_title_table_pricing = [
+        {"name": 'price_Protan', "title": 'Цена Protan: ', "result": f"{m_dict['price_warehouse']} euro"},
+        {"name": 'price_delivery', "title": 'Цена Доставка: ', "result": f"{m_dict['price_delivery']} euro"},
+        {"name": 'price_building', "title": 'Цена Монтаж: ', "result": f"{m_dict['price_building']} euro"},
+
+        {"name": 'price_square_meters', "title": 'Цена за 1 [m²]: ', "result": f"{m_dict['price_square_meters']} euro"},
+        {"name": 'price_cubic_meters', "title": 'Цена за 1 [m³]: ', "result": f"{m_dict['price_cubic_meters']} euro"},
+    ]
+    get_title_table_cost = [
+        {"name": 'price_cost', "title": 'Себестоимость: ', "result": f"{m_dict['price_cost']} euro"},
+        {"name": 'price_customs', "title": 'Таможня: ', "result": f"{m_dict['price_customs']} euro"},
+        {"name": 'price_VAT', "title": 'НДС: ', "result": f"{m_dict['price_VAT']} euro"},
+    ]
+
     get_title_table_total_coast = [
-        {"name": 'cost_price', "title": 'Себестоимость: ', "result": f'{0} euro'},
-        {"name": 'profit', "title": 'Маржинальность: ', "result": f'{0} euro'},
-        {"name": 'selling_price', "title": 'Цена продажи: ', "result": f'{0} euro'},
+        {"name": 'cost_price', "title": 'Себестоимость: ', "result": f"{m_dict['cost_price']} euro"},
+        {"name": 'profit', "title": 'Маржинальность: ', "result": f"{m_dict['profit']} euro"},
+        {"name": 'selling_price', "title": 'Цена продажи: ', "result": f"{m_dict['selling_price']} euro"},
     ]
     title_table = [
         {"name": 'width', "title": 'Ширина'},
@@ -94,4 +106,3 @@ def pricing_view(menu, choose_project, accept_index=None,
                            choose_project=choose_project,
                            choose_product=choose_product
                            )
-
