@@ -565,20 +565,25 @@ hr {
 .global-div-pricing-page,
 .div-percent-input-output {
 	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
 }
 
 /* Стили для левой колонки - форм ввода */
+
 .input-forms-pricing-page,
 .div-precent-input {
-	width: 50%;
+	width: 45%;
 }
+
+.title-final-cost {
+	display: block;
+	text-align: center;
+}
+
 
 /* Стили для правой колонки - вывода результатов */
 .output-forms-pricing-page,
-.div-precent-output {
-	width: 60%;
+.output-cost {
+	width: 55%;
 }
 
 /* Стили для форм ввода */
@@ -633,33 +638,40 @@ hr {
 
 
 /* Стили для вывода результатов */
-.output-cost,
-.output-pricing,
-.output-dimension {
-	display: flex;
-	flex-direction: row;
-}
 
 .output-div {
 	display: flex;
 	flex-direction: row;
-	margin: 4px;
+	flex-wrap: nowrap;
+	margin: 2px;
+	padding-left: 10px;
 }
 
-.output-div .title1 {
+.title  {
+    display: flex;
+    flex-direction: column;
+    width: 32%;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.title div {
 	display: flex;
-	width: 35%;
-	text-align: left;
-	align-items: center;
 }
 
-.output-div .title1 b{
+
+.title b {
+	width: 112px;
+	text-align: left;
 	margin-right: 5px;
 }
 
-.output-div .title-2-3 {
-	display: block;
+.title .title-dimension {
+	width: 125px;
 }
+
 
 /*Стиль для формы кнопок сохранить, обновить*/
 .form-buttons-save {

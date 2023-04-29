@@ -1,5 +1,7 @@
 import sqlite3
 import os
+from math import ceil
+
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
@@ -203,71 +205,117 @@ def pricing():
 
     if request.method == 'POST':
 
-        if "button-accept-settings" in request.form:
+        if "button-accept-settings" in request.form:  # Выбор продукта, проекта, формата склада
             settings = dict(list(request.form.items())[1:-1])
+            for d in choose_project:
+                for key, vol in d.items():
+                    if settings["project"] == vol:
+                        settings["client"] = d["lead"]
+
+            settings['selected'] = True
             dbase.add_record('warehouse', settings)
 
             return pricing_view(menu, choose_project, settings, accept_index=1)
 
-        if "button-accept-dimension" in request.form:
+        if "button-accept-dimension" in request.form:  # Ввод размеров и вывод площадей
             dimension = dict(list(request.form.items())[:-1])
             dimension['area'] = int(dimension['width']) * int(dimension['length'])
             dimension['volume'] = int(dimension['width']) * int(dimension['length']) * int(dimension['height'])
             dbase.update_record_by_id('warehouse', dbase.get_last_record("warehouse")['id'], dimension)
+            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
 
-            return pricing_view(menu, choose_project, dimension, accept_index=2)
+            return pricing_view(menu, choose_project, last_data, accept_index=2)
 
-        if "button-accept-pricing" in request.form:
+        if "button-accept-pricing" in request.form:  # Ввод и вывод основных стоимостей
             price = dict(list(request.form.items())[:-1])
             dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], price)
             last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
-            last_data["price_square_meters"] = round(last_data['price_warehouse'] / last_data['area'], 2)
-            last_data["price_cubic_meters"] = round(last_data['price_warehouse'] / last_data['volume'], 2)
 
-            return pricing_view(menu, choose_project, last_data, accept_index=3)
-
-        if "button-accept-cost" in request.form:
-            advance_price = dict(list(request.form.items())[:-1])
-            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], advance_price)
-            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
             pw = last_data["price_warehouse"]
             pc = last_data["price_customs"] = pw * 1 / 100
             pV = last_data["price_VAT"] = pw * 20 / 100
-            last_data["price_square_meters"] = round(pw / last_data['area'], 2)
-            last_data["price_cubic_meters"] = round(pw / last_data['volume'], 2)
+
+            last_data["cost_price"] = pw + pc + pV
+            last_data["price_square_meters"] = round(last_data["cost_price"] / last_data['area'], 2)
+            last_data["price_cubic_meters"] = round(last_data["cost_price"] / last_data['volume'], 2)
+            last_data["price_project"] = last_data["cost_price"] + last_data["price_delivery"] + last_data[
+                "price_building"]
+
+            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
+
+            return pricing_view(menu, choose_project, last_data, accept_index=3)
+
+# ------ Ввод и вывод дополнительных стоимостей ----------------------------------------------------------------------
+        if "button-accept-cost" in request.form:
+            advance_price = dict(list(request.form.items())[:-1])
+            for key in advance_price:
+                if advance_price[key] == '':
+                    advance_price[key] = 0
+            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], advance_price)
+            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
+
+            if last_data['price_foundation'] != '':
+                wf = last_data['width'] + 1
+                lf = last_data['length'] + 1
+                last_data['dimension_found'] = f"Ш: {wf}m | Д: {lf}m"
+                area_found = last_data['area_found'] = wf * lf
+                last_data['price_sq_met_found'] = round(last_data["price_foundation"] / area_found, 2)
+                dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
+
+            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
             return pricing_view(menu, choose_project, last_data, accept_index=4)
 
-        if "button-accept-percent" in request.form:
-            cost_percent = request.form["percent_input"]
-            print(cost_percent)
+        if "button-accept-percent" in request.form:  # Ввод и вывод финальных расчетов
+            lst = list(dict(dbase.get_last_record("warehouse")).items())[1::]
+            last_data = dict(lst)
+            print(last_data)
 
-            # price_Protan = dbase.get_last_warehouse()['price_warehouse']
-            # percent = request.form['percent_input']
-            # price_customs = price_Protan * 1 / 100
-            # price_VAT = price_Protan * 20 / 100
-            #
-            # cost_price = price_customs + price_VAT + price_Protan
-            # profit = cost_price * int(percent) / 100
-            # selling_price = cost_price + profit
-            #
-            # get_title_table_total_coast[0]['result'] = '{:,.2f}'.format(cost_price).replace(',', " ")
-            # get_title_table_total_coast[1]['result'] = '{:,.2f}'.format(profit).replace(',', " ")
-            # get_title_table_total_coast[2]['result'] = '{:,.2f}'.format(selling_price).replace(',', " ")
+            last_data["percent_w"] = int(request.form["percent_w"])
+            last_data["percent_f"] = int(request.form["percent_f"])
+            last_data["percent_o"] = int(request.form["percent_o"])
+
+            last_data["exchange_rates_from"] = request.form['exchange_rates_from']
+            last_data["exchange_rates_TO"] = request.form['exchange_rates_TO']
+            profit = int(last_data["cost_price"]) * int(last_data["percent_w"]) / 100
+            price_selling_EU = int(last_data["price_project"]) + profit
+            cost_square_meters_EU = ceil(price_selling_EU / last_data["area"])
+
+            last_data["cost_square_meters_EU"] = cost_square_meters_EU
+            last_data["price_selling_EU"] = cost_square_meters_EU * last_data["area"]
+            last_data["cost_cubic_meters_EU"] = round(last_data["price_selling_EU"] / last_data["volume"], 2)
+            last_data["profit_EU"] = last_data["price_selling_EU"] - last_data["price_project"]
+
+            last_data["price_selling_UA"] = last_data["price_selling_EU"] * int(last_data["exchange_rates_TO"])
+            last_data["profit_UA"] = last_data["price_selling_UA"] - int(last_data["price_project"]) * int(last_data["exchange_rates_from"])
+            last_data["cost_square_meters_UA"] = last_data["price_selling_UA"] / int(last_data["area"])
+            last_data["cost_cubic_meters_UA"] = last_data["price_selling_UA"] / last_data["volume"]
+
+            last_data["profit_percent"] = last_data["profit_EU"] / last_data["price_selling_EU"] * 100
+
+            profit_f = last_data["price_foundation"] * int(last_data["percent_f"]) / 100
+            print(type(last_data["price_light"]), last_data["price_rack"], type(last_data["percent_o"]))
+            profit_o = (last_data["price_light"] + last_data["price_rack"]) * last_data["percent_o"] / 100
+            last_data["cost_foundation"] = (last_data["price_foundation"] + profit_f) * int(last_data["exchange_rates_TO"])
+            last_data["cost_option"] = (last_data["price_light"] + last_data["price_rack"] + profit_o) * int(last_data["exchange_rates_TO"])
+            last_data["cost_sq_met_found"] = round(last_data["cost_foundation"] / last_data["area_found"], 2)
+
+            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
+
+            return pricing_view(menu, choose_project, last_data, accept_index=5)
 
         if "button-save-pricing" in request.form:
-            accept_1 = 'block'
-            accept_2 = 'block'
-            accept_3 = 'block'
-            accept_4 = 'block'
-            accept_5 = 'block'
-            # dbase.save_warehouse()
-            # value_warehouse = list(dict(dbase.get_last_warehouse()).values())[1::]
+            dbase.save_warehouse()
+
+            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
+
+            return pricing_view(menu, choose_project, last_data, accept_index=5)
 
         if "button-update-pricing" in request.form:
-            #
-            pass
+            dbase.del_records('warehouse', dbase.get_last_record('warehouse')['id'])
 
-    return pricing_view(menu, choose_project, )
+            return pricing_view(menu, choose_project, accept_index=0)
+
+    return pricing_view(menu, choose_project)
 
 
 # <-------------------------------------------------------------------------------->

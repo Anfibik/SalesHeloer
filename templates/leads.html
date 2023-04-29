@@ -14,7 +14,8 @@ Profile: {{ current_user }} <a href="{{url_for('logout')}}" class="button-logout
 <form action="{{url_for('leads')}}" method="POST" id="add-leads-table" class="form-table-leads">
   <div class="input-leads">
     {% for l in title_table_leads %}
-    <input type="{{ l.type }}" id="{{l.name}}" name="{{l.name}}" placeholder="{{l.placeholder}}" required>
+    <input type="{{ l.type }}" id="{{l.name}}" name="{{l.name}}" placeholder="{{l.placeholder}}" 
+          {% if l.name !='mail' %} required {% endif %}>
     {% endfor %}
     <input type="submit" name="button-add-lead" value="Добавить" />
   </div>
@@ -35,6 +36,8 @@ Profile: {{ current_user }} <a href="{{url_for('logout')}}" class="button-logout
 
       </tr>
     </thead>
+    
+    <!--Тело таблицы: перечень лидов--------------------------------------------------------->
     <tbody class="table-result">
       {% for row in get_new_lead %}
       <tr>

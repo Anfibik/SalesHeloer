@@ -142,7 +142,11 @@ class FDataBase:
     def update_record_by_id(self, name_table, id_record, columns_values):
         new_val = ''
         for title, values in columns_values.items():
-            new_val = new_val + title + '=' + str(values) + ', '
+            new_val = new_val + title
+            if type(values) == int:
+                new_val = new_val + '=' + str(values) + ', '
+            else:
+                new_val = new_val + '=' + f"'{values}'" + ', '
         new_val = new_val.rstrip(', ')
         try:
             self.__cur.execute(f"UPDATE {name_table} SET {new_val} WHERE id={id_record}")
@@ -155,7 +159,7 @@ class FDataBase:
     def save_warehouse(self):
         try:
             self.__cur.execute(f"INSERT INTO my_warehouse "
-                               f"SELECT * FROM warehouse WHERE id = {self.get_last_warehouse()['id']}")
+                               f"SELECT * FROM warehouse WHERE id = {self.get_last_record('warehouse')['id']}")
             self.__db.commit()
         except sqlite3.Error as e:
             print("Ошибка копирования склада в БД " + str(e))
