@@ -10,4 +10,7 @@
     {% for cell in current_lead[1::] %}    
     {{cell}}
     {% endfor %}
+    <form action="{{ url_for('pricing') }}" method="post">
+        <button name="button_get_last_calculating"> Вычисление </button>
+    </form>
 {% endblock %}  

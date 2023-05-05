@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title}} {% endblock %}
+{% block information %} Рассчет стоимости продукта {% endblock %}
+
+{% block content %}
+{% block settings %}
+
+<form action="{{url_for('calculation_product', alias=product)}}" method="POST" id="form-setting">
+    <div class="warehouse-setting">
+        <div class="temperature-radio">Температурный режим:
+            <label> <input type="radio" name="temperature" value="Теплый" required> Теплый </label>
+            <label> <input type="radio" name="temperature" value="Холодный" required> Холодный </label>
+        </div>
+        <button name="button-accept-settings" class="button-accept" value="block">применить</button>
+    </div>
+</form>
+
+{% endblock settings %}
+
+<hr style="display: {{ accept_1 }};">
+<b style="display: {{ accept_1 }}" class="title-final-cost">БЛОК ВВОДА ОСНОВНЫХ ПАРАМЕТРОВ</b>
+<hr style="display: {{ accept_1 }}"> <!-- Итоговая черта таблицы -->
+
+
+{% endblock %}

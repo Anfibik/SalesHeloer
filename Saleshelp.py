@@ -1,16 +1,16 @@
 import sqlite3
 import os
-from math import ceil
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
-from Utils.UserLogin import UserLogin
 
+from Utils.Calculate_BVZ import calculate_BVZ
+from Utils.UserLogin import UserLogin
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
 from Utils.form import LoginForm, RegistrationForm
-from Utils.Pricing_View import pricing_view
+from Utils.View_BVZ import view_BVZ
 
 # Конфигурация
 DATABASE = '/tmp/SH_site.db'
@@ -156,10 +156,8 @@ def leads():
         button_add = request.form.get('button-add-lead')
 
         if checkbox_value and button_delete:
-            print(f"Выполняем процедуру {button_delete} для строк с id: {checkbox_value}")
-            res = dbase.del_records('lead', checkbox_value)
-        else:
-            print(f"Выполняем процедуру {button_add}")
+            dbase.del_records('lead', checkbox_value)
+        if button_add:
             res = dbase.set_new_lead(request.form.get('company'), request.form.get('name'), request.form.get('phone'),
                                      request.form.get('mail'), request.form.get('project'),
                                      current_user.get_user_email())
@@ -167,12 +165,12 @@ def leads():
                 flash('Ошибка добавления лида', category='error')
             else:
                 flash('Лид добавлен успешно', category='success')
-            # else:
-            #     flash('Ошибка добавления лида', category='error')
 
     # Чтение лидов из базы данных
     get_new_lead = dbase.get_info_records('lead', current_user.get_user_email())
     get_new_lead = [[row[column_name] for column_name in row.keys()] for row in get_new_lead]
+
+    print(get_new_lead)
 
     return render_template('leads.html',
                            title='My LEADS',
@@ -184,7 +182,7 @@ def leads():
 
 
 # ---Экран информации о лиде----------------------------------
-@app.route("/lead/<alias>")
+@app.route("/lead/<alias>", methods=["POST", "GET"])
 def show_info_lead(alias):
     dbase = FDataBase(get_db())
 
@@ -192,130 +190,44 @@ def show_info_lead(alias):
     if not current_lead:
         abort(404)
 
+    if request.method == 'POST':
+        if "button_get_last_calculating" in request.form:
+            if dbase.check_records('my_warehouse'):
+                choose_project = [{"project": row['project'], "lead": row['company']}
+                                  for row in dbase.get_info_records('lead', current_user.get_user_email())]
+                last_data = dict(list(dict(dbase.get_last_record("my_warehouse")).items())[1::])
+                return view_BVZ(menu, choose_project, last_data, accept_index=6)
+
     return render_template('lead.html', menu=menu, title=current_lead, current_lead=current_lead)
 
 
 # -----PRICING форма расчетов----------------------------------------------------->
+@app.route('/pricing/<alias>', methods=["POST", "GET"])
+@login_required
+def calculation_product(alias):
+    dbase = FDataBase(get_db())
+    if request.method == 'POST':
+        if request.form['product'] == 'warehouse':
+
+
+            return view_BVZ(dbase, menu, current_user)
+
+
+
 @app.route('/pricing', methods=["POST", "GET"])
 @login_required
 def pricing():
     dbase = FDataBase(get_db())
-    choose_project = [{"project": row['project'], "lead": row['company']}
-                      for row in dbase.get_info_records('lead', current_user.get_user_email())]
-
     if request.method == 'POST':
+        try:
+            product = dict(request.form)['product']
+        except KeyError:
+            product = dbase.get_last_record('warehouse')['product']
+        if product == 'Warehouse':
+            request_form = request.form
+            return calculate_BVZ(dbase, request_form, menu, current_user)
 
-        if "button-accept-settings" in request.form:  # Выбор продукта, проекта, формата склада
-            settings = dict(list(request.form.items())[1:-1])
-            for d in choose_project:
-                for key, vol in d.items():
-                    if settings["project"] == vol:
-                        settings["client"] = d["lead"]
-
-            settings['selected'] = True
-            dbase.add_record('warehouse', settings)
-
-            return pricing_view(menu, choose_project, settings, accept_index=1)
-
-        if "button-accept-dimension" in request.form:  # Ввод размеров и вывод площадей
-            dimension = dict(list(request.form.items())[:-1])
-            dimension['area'] = int(dimension['width']) * int(dimension['length'])
-            dimension['volume'] = int(dimension['width']) * int(dimension['length']) * int(dimension['height'])
-            dbase.update_record_by_id('warehouse', dbase.get_last_record("warehouse")['id'], dimension)
-            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
-
-            return pricing_view(menu, choose_project, last_data, accept_index=2)
-
-        if "button-accept-pricing" in request.form:  # Ввод и вывод основных стоимостей
-            price = dict(list(request.form.items())[:-1])
-            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], price)
-            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
-
-            pw = last_data["price_warehouse"]
-            pc = last_data["price_customs"] = pw * 1 / 100
-            pV = last_data["price_VAT"] = pw * 20 / 100
-
-            last_data["cost_price"] = pw + pc + pV
-            last_data["price_square_meters"] = round(last_data["cost_price"] / last_data['area'], 2)
-            last_data["price_cubic_meters"] = round(last_data["cost_price"] / last_data['volume'], 2)
-            last_data["price_project"] = last_data["cost_price"] + last_data["price_delivery"] + last_data[
-                "price_building"]
-
-            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
-
-            return pricing_view(menu, choose_project, last_data, accept_index=3)
-
-# ------ Ввод и вывод дополнительных стоимостей ----------------------------------------------------------------------
-        if "button-accept-cost" in request.form:
-            advance_price = dict(list(request.form.items())[:-1])
-            for key in advance_price:
-                if advance_price[key] == '':
-                    advance_price[key] = 0
-            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], advance_price)
-            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
-
-            if last_data['price_foundation'] != '':
-                wf = last_data['width'] + 1
-                lf = last_data['length'] + 1
-                last_data['dimension_found'] = f"Ш: {wf}m | Д: {lf}m"
-                area_found = last_data['area_found'] = wf * lf
-                last_data['price_sq_met_found'] = round(last_data["price_foundation"] / area_found, 2)
-                dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
-
-            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
-            return pricing_view(menu, choose_project, last_data, accept_index=4)
-
-        if "button-accept-percent" in request.form:  # Ввод и вывод финальных расчетов
-            lst = list(dict(dbase.get_last_record("warehouse")).items())[1::]
-            last_data = dict(lst)
-            print(last_data)
-
-            last_data["percent_w"] = int(request.form["percent_w"])
-            last_data["percent_f"] = int(request.form["percent_f"])
-            last_data["percent_o"] = int(request.form["percent_o"])
-
-            last_data["exchange_rates_from"] = request.form['exchange_rates_from']
-            last_data["exchange_rates_TO"] = request.form['exchange_rates_TO']
-            profit = int(last_data["cost_price"]) * int(last_data["percent_w"]) / 100
-            price_selling_EU = int(last_data["price_project"]) + profit
-            cost_square_meters_EU = ceil(price_selling_EU / last_data["area"])
-
-            last_data["cost_square_meters_EU"] = cost_square_meters_EU
-            last_data["price_selling_EU"] = cost_square_meters_EU * last_data["area"]
-            last_data["cost_cubic_meters_EU"] = round(last_data["price_selling_EU"] / last_data["volume"], 2)
-            last_data["profit_EU"] = last_data["price_selling_EU"] - last_data["price_project"]
-
-            last_data["price_selling_UA"] = last_data["price_selling_EU"] * int(last_data["exchange_rates_TO"])
-            last_data["profit_UA"] = last_data["price_selling_UA"] - int(last_data["price_project"]) * int(last_data["exchange_rates_from"])
-            last_data["cost_square_meters_UA"] = last_data["price_selling_UA"] / int(last_data["area"])
-            last_data["cost_cubic_meters_UA"] = last_data["price_selling_UA"] / last_data["volume"]
-
-            last_data["profit_percent"] = last_data["profit_EU"] / last_data["price_selling_EU"] * 100
-
-            profit_f = last_data["price_foundation"] * int(last_data["percent_f"]) / 100
-            print(type(last_data["price_light"]), last_data["price_rack"], type(last_data["percent_o"]))
-            profit_o = (last_data["price_light"] + last_data["price_rack"]) * last_data["percent_o"] / 100
-            last_data["cost_foundation"] = (last_data["price_foundation"] + profit_f) * int(last_data["exchange_rates_TO"])
-            last_data["cost_option"] = (last_data["price_light"] + last_data["price_rack"] + profit_o) * int(last_data["exchange_rates_TO"])
-            last_data["cost_sq_met_found"] = round(last_data["cost_foundation"] / last_data["area_found"], 2)
-
-            dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
-
-            return pricing_view(menu, choose_project, last_data, accept_index=5)
-
-        if "button-save-pricing" in request.form:
-            dbase.save_warehouse()
-
-            last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
-
-            return pricing_view(menu, choose_project, last_data, accept_index=5)
-
-        if "button-update-pricing" in request.form:
-            dbase.del_records('warehouse', dbase.get_last_record('warehouse')['id'])
-
-            return pricing_view(menu, choose_project, accept_index=0)
-
-    return pricing_view(menu, choose_project)
+    return view_BVZ(dbase, menu, current_user)
 
 
 # <-------------------------------------------------------------------------------->

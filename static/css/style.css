@@ -540,14 +540,14 @@ table td a:hover {
 .vertical-line::before {
 	content: "";
 	display: block;
-	height: 180px;
+	height: 170px;
 	border-left: 2px solid rgb(186, 179, 179);
 }
 
 .vertical-line2::before {
 	content: "";
 	display: block;
-	height: 70px;
+	height: 127px;
 	border-left: 2px solid rgb(186, 179, 179);
 }
 
@@ -574,9 +574,44 @@ hr {
 	width: 45%;
 }
 
+#form-precent-cost {
+	display: flex !important;
+	padding: 5px;
+}
+
+.title-m {
+	width: 50%;
+}
+
+.title-m div {
+	display: contents;
+}
+
+
+#form-precent-cost .button-accept-precent {
+	display: flex;
+	align-items: center;
+}
+
+#form-precent-cost .button-accept-precent button {
+	padding: 8px;
+	font-size: 14px;
+}
+
+#form-precent-cost input {
+	width: 50px;
+}
+
+#form-precent-cost label {
+	display: inline-block;
+	width: 80px;
+}
+
+
 .title-final-cost {
 	display: block;
 	text-align: center;
+	background-color: #dbdee1;
 }
 
 
@@ -589,7 +624,8 @@ hr {
 /* Стили для форм ввода */
 .form-inpute-dimension,
 .form-inpute-pricing,
-.form-inpute-option {
+.form-inpute-option,
+.div-precent-input {
 	margin-bottom: 15px;
 	font-family: Arial, Helvetica, sans-serif;
 }
@@ -607,6 +643,11 @@ hr {
 	display: inline-block;
 	width: 80px;
 	text-align: right;
+}
+
+.main-title {
+	display: flex;
+	margin-bottom: 2px;
 }
 
 
@@ -647,14 +688,14 @@ hr {
 	padding-left: 10px;
 }
 
-.title  {
-    display: flex;
-    flex-direction: column;
-    width: 32%;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    justify-content: flex-start;
-    align-items: flex-start;
+.title {
+	display: flex;
+	flex-direction: column;
+	width: 32%;
+	flex-wrap: wrap;
+	align-content: flex-start;
+	justify-content: flex-start;
+	align-items: flex-start;
 }
 
 .title div {
@@ -670,6 +711,37 @@ hr {
 
 .title .title-dimension {
 	width: 125px;
+}
+
+/*СТИЛИ ДЛЯ ФИНАЛЬНОГО ВЫВОДА СТОИМОСТЕЙ*/
+
+
+.final-title {
+	display: flex;
+	width: 32%;
+	margin: 5px;
+	border-radius: 5px;
+	padding: 2px;
+	flex-direction: column;
+	align-items: center;
+	background-color: #31eab2;
+	/* задаем цвет фона */
+	box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+	/* добавляем тень для создания объемного эффекта */
+	transform: translate(-2px, -2px);
+	/* сдвигаем блок немного вверх и влево */
+}
+
+.final-output-div {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	margin: 2px;
+	padding-left: 10px;
+}
+
+.final-output-div div:nth-last-of-type(-n+2) {
+	width: 15%;
 }
 
 

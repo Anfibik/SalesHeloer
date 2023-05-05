@@ -5,12 +5,24 @@ def format_price(price):
     return '{:,.2f}'.format(price).replace(',', " ")
 
 
-def pricing_view(menu, choose_project, update_dict=None, accept_index=None, selected=False):
+def view_BVZ(dbase, menu, current_user, update_dict=None, accept_index=None):
     accepts = ['none'] * 6
     if accept_index is not None:
         for i in range(accept_index):
             accepts[i] = "block"
     accept_1, accept_2, accept_3, accept_4, accept_5, accept_6 = accepts
+
+    choose_product = [
+        {"name": 'БВЗ', "product": 'Warehouse'},
+        {"name": 'Стеллажи', "product": 'Racks'},
+        {"name": 'Мусорные баки', "product": 'Trash-can'},
+        {"name": 'Поддоны', "product": 'Pallets'},
+        {"name": 'Пластиковая тара', "product": 'Plastic-container'},
+        {"name": 'Техника', "product": 'Equipment'},
+    ]
+
+    choose_project = [{"project": row['project'], "lead": row['company']}
+                      for row in dbase.get_info_records('lead', current_user.get_user_email())]
 
     m_dict = {'width': False, 'length': False, 'height': False, 'area': False, 'volume': False,
               'temperature': False, 'client': False, 'price_project': False,
@@ -25,6 +37,8 @@ def pricing_view(menu, choose_project, update_dict=None, accept_index=None, sele
               'cost_square_meters_EU': False, 'cost_cubic_meters_EU': False,
               'cost_square_meters_UA': False, 'cost_cubic_meters_UA': False,
               'cost_foundation': False, 'cost_option': False, 'cost_sq_met_found': False,
+              'final_price_UA': False, 'final_profit_UA': False, 'final_profit_percent': False,
+              'unique_ID': 'Empty', 'final_cost_sq_m_pr': False, 'product': False,
               }
 
     if update_dict is not None:
@@ -94,7 +108,7 @@ def pricing_view(menu, choose_project, update_dict=None, accept_index=None, sele
         {"name": 'price_square_meters', "title": '1 [m²] с НДС: ', "result": f"{format_price(m_dict['price_square_meters'])} euro"},
         {"name": 'price_cubic_meters', "title": '1 [m³] с НДС: ', "result": f"{format_price(m_dict['price_cubic_meters'])} euro"},
 
-        {"name": 'price_project', "title": 'Расход: ',
+        {"name": 'price_project', "title": 'Затраты: ',
          "result": f"{format_price(m_dict['price_project'])} euro"},
         {"name": 'price_delivery', "title": 'Доставка: ', "result": f"{format_price(m_dict['price_delivery'])} euro"},
         {"name": 'price_building', "title": 'Монтаж: ', "result": f"{format_price(m_dict['price_building'])} euro"},
@@ -130,35 +144,27 @@ def pricing_view(menu, choose_project, update_dict=None, accept_index=None, sele
         {"name": 'cost_option', "title": 'Опции: ', "result": f"{format_price(m_dict['cost_option'])} грн"},
     ]
 
-    value_warehouse = [
-        {"name": 'profit_percent', "title": 'Доходность: ', "result": f"{format_price(m_dict['profit_percent'])} %"},
+    final_price_warehouse = [
+        {"name": 'final_price_UA', "title": 'СТОИМОСТЬ ПРОЕКТА', "result": f"{format_price(m_dict['final_price_UA'])} грн"},
+        {"name": 'final_profit_UA', "title": 'МОРЖИНАЛЬНОСТЬ ПРОЕКТА', "result": f"{format_price(m_dict['final_profit_UA'])} грн"},
+        {"name": 'final_cost_sq_m_pr', "title": 'Цена 1 [m²]', "result": f"{format_price(m_dict['final_cost_sq_m_pr'])} грн"},
+        {"name": 'final_profit_percent', "title": 'ДОХОДНОСТЬ', "result": f"{format_price(m_dict['final_profit_percent'])} %"},
     ]
-
 
     title_table = [
         {"name": 'width', "title": 'Ширина'},
         {"name": 'length', "title": 'Длинна'},
         {"name": 'height', "title": 'Высота'},
         {"name": 'area', "title": 'Площадь'},
-        {"name": 'volume', "title": 'Объем'},
         {"name": 'price_warehouse', "title": 'Цена склада'},
         {"name": 'price_delivery', "title": 'Цена доставки'},
         {"name": 'price_building', "title": 'Цена монтажа'},
-        {"name": 'price_foundation', "title": 'Цена фундамента'},
-        {"name": 'price_light', "title": 'Цена света'},
-        {"name": 'cost_price', "title": 'Моржа'},
-        {"name": 'price_selling', "title": 'Цена продажи'},
-        {"name": 'price_one_m_squad', "title": 'Цена 1 [m²]'},
-    ]
-
-
-    choose_product = [
-        {"name": 'БВЗ', "product": 'Warehouse'},
-        {"name": 'Стеллажи', "product": 'Racks'},
-        {"name": 'Мусорные баки', "product": 'Trash-can'},
-        {"name": 'Поддоны', "product": 'Pallets'},
-        {"name": 'Пластиковая тара', "product": 'Plastic-container'},
-        {"name": 'Техника', "product": 'Equipment'},
+        {"name": 'cost_foundation', "title": 'Цена фундамента'},
+        {"name": 'cost_option', "title": 'Цена опций'},
+        {"name": 'final_profit_UA', "title": 'Моржа'},
+        {"name": 'final_price_UA', "title": 'Цена проекта'},
+        {"name": 'cost_square_meters_UA', "title": 'Цена 1 [m²]'},
+        {"name": 'final_profit_percent', "title": 'Доход'},
     ]
 
     return render_template('pricing.html',
@@ -179,7 +185,9 @@ def pricing_view(menu, choose_project, update_dict=None, accept_index=None, sele
                            get_title_table_pricing=get_title_table_pricing,
                            get_title_table_total_coast=get_title_table_total_coast,
                            title_table=title_table,
-                           value_warehouse=value_warehouse,
+                           m_dict=m_dict,
+                           final_price_warehouse=final_price_warehouse,
                            choose_project=choose_project,
-                           choose_product=choose_product
+                           choose_product=choose_product,
+                           product=product,
                            )

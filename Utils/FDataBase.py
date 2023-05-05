@@ -38,7 +38,7 @@ class FDataBase:
             if res:
                 return res
         except sqlite3.Error as e:
-            print("Ошибка получения статьи из БД " + str(e))
+            print("Ошибка получения лида из БД " + str(e))
 
         return False, False
 
@@ -165,3 +165,29 @@ class FDataBase:
             print("Ошибка копирования склада в БД " + str(e))
             return False
         return True
+
+    def check_records(self, name_table):
+        try:
+            check = self.__cur.execute(f"SELECT EXISTS(SELECT 1 FROM {name_table} LIMIT 1);")
+            check = check.fetchone()[0]
+            return check
+        except sqlite3.Error as e:
+            print("Ошибка проверки записей в таблице " + str(e))
+            return False
+
+    def get_record(self, name_table, *args):
+        query = ''
+        for column, value in args:
+            query += f"{column} = '{value}' AND "
+        query = query.rstrip(' AND')
+        try:
+            self.__cur.execute(f"SELECT * FROM {name_table} WHERE {query};")
+            res = self.__cur.fetchone()
+            if not res:
+                print("Запись не найден")
+                return False
+            return res
+        except sqlite3.Error as e:
+            print("Ошибка получения данных из БД " + str(e))
+
+        return False
