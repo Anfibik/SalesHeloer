@@ -37,9 +37,9 @@ Profile: {{ current_user }} <a href="{{url_for('logout')}}" class="button-logout
       {% for row in get_new_lead %}
       <tr>
         <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ row[0] }}"></td>
-        <td><a href="{{ url_for('show_info_lead', alias=row[1]) }}">{{ get_new_lead.index(row)+1 }}</a></td>
-        {% for cell in row[1:6] %}
-        <td><a href="{{ url_for('show_info_lead', alias=row[1]) }}">{{ cell }}</a></td>
+        <td><a href="{{ url_for('show_info_lead', alias=row[2]) }}">{{ get_new_lead.index(row)+1 }}</a></td>
+        {% for cell in row[2:7] %}
+        <td><a href="{{ url_for('show_info_lead', alias=row[2]) }}">{{ cell }}</a></td>
         {% endfor %}
       </tr>
       {% endfor %}

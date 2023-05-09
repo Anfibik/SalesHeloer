@@ -6,9 +6,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 
 from Utils.Calculate_BVZ import calculate_BVZ
+from Utils.UniqueID import string_to_ID
 from Utils.UserLogin import UserLogin
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
+from Utils.View_pricing import view_pricing
 from Utils.form import LoginForm, RegistrationForm
 from Utils.View_BVZ import view_BVZ
 
@@ -73,6 +75,8 @@ menu = [
     {"url": '/morzh', "name": 'Личные финансы'},
     {"url": '/about', "name": 'О программе'}
 ]
+
+
 
 
 # --------------------Login----------------------------
@@ -159,8 +163,8 @@ def leads():
             dbase.del_records('lead', checkbox_value)
         if button_add:
             res = dbase.set_new_lead(request.form.get('company'), request.form.get('name'), request.form.get('phone'),
-                                     request.form.get('mail'), request.form.get('project'),
-                                     current_user.get_user_email())
+                                     request.form.get('mail'), request.form.get('project'), current_user.get_user_email(),
+                                     )
             if not res:
                 flash('Ошибка добавления лида', category='error')
             else:
@@ -169,8 +173,6 @@ def leads():
     # Чтение лидов из базы данных
     get_new_lead = dbase.get_info_records('lead', current_user.get_user_email())
     get_new_lead = [[row[column_name] for column_name in row.keys()] for row in get_new_lead]
-
-    print(get_new_lead)
 
     return render_template('leads.html',
                            title='My LEADS',
@@ -190,14 +192,6 @@ def show_info_lead(alias):
     if not current_lead:
         abort(404)
 
-    if request.method == 'POST':
-        if "button_get_last_calculating" in request.form:
-            if dbase.check_records('my_warehouse'):
-                choose_project = [{"project": row['project'], "lead": row['company']}
-                                  for row in dbase.get_info_records('lead', current_user.get_user_email())]
-                last_data = dict(list(dict(dbase.get_last_record("my_warehouse")).items())[1::])
-                return view_BVZ(menu, choose_project, last_data, accept_index=6)
-
     return render_template('lead.html', menu=menu, title=current_lead, current_lead=current_lead)
 
 
@@ -206,28 +200,27 @@ def show_info_lead(alias):
 @login_required
 def calculation_product(alias):
     dbase = FDataBase(get_db())
+
     if request.method == 'POST':
-        if request.form['product'] == 'warehouse':
+        if alias == 'BVZ':
+            request_form = dict(request.form)
+            try:
+                request_form['project'], request_form['client'] = request_form['project'].split(':-:')
+            except KeyError:
+                return calculate_BVZ(dbase, request_form, menu, current_user)
+            return calculate_BVZ(dbase, request_form, menu, current_user)
 
-
-            return view_BVZ(dbase, menu, current_user)
-
+    return view_pricing(menu)
 
 
 @app.route('/pricing', methods=["POST", "GET"])
 @login_required
 def pricing():
     dbase = FDataBase(get_db())
-    if request.method == 'POST':
-        try:
-            product = dict(request.form)['product']
-        except KeyError:
-            product = dbase.get_last_record('warehouse')['product']
-        if product == 'Warehouse':
-            request_form = request.form
-            return calculate_BVZ(dbase, request_form, menu, current_user)
+    choose_project = [{"project": row['project'], "lead": row['company']}
+                      for row in dbase.get_info_records('lead', current_user.get_user_email())]
 
-    return view_BVZ(dbase, menu, current_user)
+    return view_pricing(menu, choose_project)
 
 
 # <-------------------------------------------------------------------------------->

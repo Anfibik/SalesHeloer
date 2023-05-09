@@ -25,5 +25,10 @@ function convertInput() {
 //Конец скриптов модального окна
 
 
-
+document.getElementById("apply-setting-button").addEventListener("click", function() {
+    var product = document.getElementById("product").value;
+    var form = document.getElementById("form-setting");
+    var action = form.getAttribute("action");
+    form.setAttribute("action", action + product);
+  });
 

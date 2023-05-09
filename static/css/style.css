@@ -540,14 +540,14 @@ table td a:hover {
 .vertical-line::before {
 	content: "";
 	display: block;
-	height: 170px;
+	height: 168px;
 	border-left: 2px solid rgb(186, 179, 179);
 }
 
 .vertical-line2::before {
 	content: "";
 	display: block;
-	height: 127px;
+	height: 120px;
 	border-left: 2px solid rgb(186, 179, 179);
 }
 
@@ -577,14 +577,20 @@ hr {
 #form-precent-cost {
 	display: flex !important;
 	padding: 5px;
+	flex-direction: row;
+    justify-content: space-around
 }
 
 .title-m {
+	display: flex;
+	flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
 	width: 50%;
 }
 
 .title-m div {
-	display: contents;
+	text-align: center;
 }
 
 
@@ -599,7 +605,7 @@ hr {
 }
 
 #form-precent-cost input {
-	width: 50px;
+	width: 40px;
 }
 
 #form-precent-cost label {
@@ -614,6 +620,10 @@ hr {
 	background-color: #dbdee1;
 }
 
+.percent-w-f-o {
+	display: flex;
+}
+
 
 /* Стили для правой колонки - вывода результатов */
 .output-forms-pricing-page,
@@ -624,16 +634,20 @@ hr {
 /* Стили для форм ввода */
 .form-inpute-dimension,
 .form-inpute-pricing,
-.form-inpute-option,
+.form-inpute-option {
+margin-bottom: 10px;
+font-family: Arial, Helvetica, sans-serif;
+font-size: 13px;
+}
+
 .div-precent-input {
-	margin-bottom: 15px;
 	font-family: Arial, Helvetica, sans-serif;
 }
 
 .form-inpute-dimension input,
 .form-inpute-pricing input,
 .form-inpute-option input {
-	width: 80px;
+	width: 60px;
 	margin-right: 5px;
 }
 
@@ -641,7 +655,7 @@ hr {
 .form-inpute-pricing label,
 .form-inpute-option label {
 	display: inline-block;
-	width: 80px;
+	width: 90px;
 	text-align: right;
 }
 
@@ -663,6 +677,7 @@ hr {
 	background-color: #113ec7;
 	cursor: pointer;
 	transition: all 0.2s ease;
+	margin-bottom: 8px;
 	/* Добавляем анимацию для всех свойств */
 }
 
@@ -746,8 +761,10 @@ hr {
 
 
 /*Стиль для формы кнопок сохранить, обновить*/
-.form-buttons-save {
-	text-align: center;
+
+.button-save-reload {
+	display: flex;
+	justify-content: space-evenly;
 	margin-top: 10px;
 }
 

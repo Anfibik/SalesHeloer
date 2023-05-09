@@ -4,32 +4,33 @@ from Utils.View_BVZ import view_BVZ
 from Utils.UniqueID import string_to_ID
 
 
-def calculate_BVZ(dbase, request_form, menu, current_user, choose_project):
-    if "button-accept-settings" in request_form:  # Выбор продукта, проекта, формата склада
+def calculate_BVZ(dbase, request_form, menu, current_user):
+
+    # --------------------------------------------------------------------------------------
+    if "button-accept-settings" in request_form:  # Выбор продукта и проекта
         dbase.del_records('warehouse')
-        settings = dict(list(request_form.items())[0:-1])
-        for d in choose_project:
-            for key, vol in d.items():
-                if settings["project"] == vol:
-                    settings["client"] = d["lead"]
-        settings['user'] = current_user.get_user_email()
+        request_form['user'] = current_user.get_user_email()
+        request_form['selected'] = True
+        del request_form['button-accept-settings']
+        dbase.add_record('warehouse', request_form)
+        return view_BVZ(menu, request_form, accept_index=1)
 
-        settings['selected'] = True
+    #  ----------------Выбор температуры склада---------------------------------------------------------------------
+    if "button-accept-temperature" in request_form:
+        dbase.update_record_by_id('warehouse', dbase.get_last_record("warehouse")['id'], {'temperature': request_form['temperature']})
+        return view_BVZ(menu, request_form, accept_index=2)
 
-        dbase.add_record('warehouse', settings)
-
-        return view_BVZ(dbase, menu, current_user, settings, accept_index=1)
-
-    if "button-accept-dimension" in request_form:  # Ввод размеров и вывод площадей
+    #  ----------------------Ввод размеров и вывод площадей---------------------------------------------------------
+    if "button-accept-dimension" in request_form:
         dimension = dict(list(request_form.items())[:-1])
         dimension['area'] = int(dimension['width']) * int(dimension['length'])
         dimension['volume'] = int(dimension['width']) * int(dimension['length']) * float(dimension['height'])
         dbase.update_record_by_id('warehouse', dbase.get_last_record("warehouse")['id'], dimension)
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
+        return view_BVZ(menu, last_data, accept_index=3)
 
-        return view_BVZ(dbase, menu, current_user, last_data, accept_index=2)
-
-    if "button-accept-pricing" in request_form:  # Ввод и вывод основных стоимостей
+    #  ----------------------Ввод и вывод основных стоимостей--------------------------------------------------------
+    if "button-accept-pricing" in request_form:
         price = dict(list(request_form.items())[:-1])
         dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], price)
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
@@ -43,10 +44,8 @@ def calculate_BVZ(dbase, request_form, menu, current_user, choose_project):
         last_data["price_cubic_meters"] = round(last_data["cost_price"] / last_data['volume'], 2)
         last_data["price_project"] = last_data["cost_price"] + last_data["price_delivery"] + last_data[
             "price_building"]
-
         dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
-
-        return view_BVZ(dbase, menu, current_user, last_data, accept_index=3)
+        return view_BVZ(menu, last_data, accept_index=4)
 
     # ------ Ввод и вывод дополнительных стоимостей ------------------------------------------------------------------
     if "button-accept-cost" in request_form:
@@ -66,19 +65,20 @@ def calculate_BVZ(dbase, request_form, menu, current_user, choose_project):
             dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
 
         dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
-        return view_BVZ(dbase, menu, current_user, last_data, accept_index=4)
+        return view_BVZ(menu, last_data, accept_index=5)
 
-    if "button-accept-percent" in request_form:  # Ввод и вывод финальных расчетов
+    #  -------------------Ввод и вывод финальных расчетов---------------------------------------------
+    if "button-accept-percent" in request_form:
         lst = list(dict(dbase.get_last_record("warehouse")).items())[1::]
         last_data = dict(lst)
 
-        percent_w = request_form["percent_w"] if request_form["percent_w"] != '' else 0
-        percent_f = request_form["percent_f"] if request_form["percent_f"] != '' else 0
-        percent_o = request_form["percent_o"] if request_form["percent_o"] != '' else 0
+        percent_w = request_form["percent_w"] if request_form["percent_w"] != '' else 0  # Процент склада
+        percent_f = request_form["percent_f"] if request_form["percent_f"] != '' else 0  # Процент фундамента
+        percent_o = request_form["percent_o"] if request_form["percent_o"] != '' else 0  # Процент освещения + стеллажи
 
-        last_data["percent_w"] = int(percent_w)  # Процент склада
-        last_data["percent_f"] = int(percent_f)  # Процент фундамента
-        last_data["percent_o"] = int(percent_o)  # Процент освещения + стеллажи
+        last_data["percent_w"] = int(percent_w)
+        last_data["percent_f"] = int(percent_f)
+        last_data["percent_o"] = int(percent_o)
 
         last_data["exchange_rates_from"] = request_form['exchange_rates_from']  # Курс поставщика
         last_data["exchange_rates_TO"] = request_form['exchange_rates_TO']  # Курс клиента
@@ -129,21 +129,44 @@ def calculate_BVZ(dbase, request_form, menu, current_user, choose_project):
         last_data['unique_ID'] = str(user_id) + '_' + str(lead_id) + '_' + string
         dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
 
-        return view_BVZ(dbase, menu, current_user, last_data, accept_index=5)
+        return view_BVZ(menu, last_data, accept_index=6)
 
+    #  -------Сохраняем полученный результат в постоянную БД-----------------------------------------------
     if "button-save-pricing" in request_form:
-
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
-
         if dbase.check_records('my_warehouse'):
             if dbase.get_last_record('warehouse')['id'] != dbase.get_last_record("my_warehouse")['id']:
                 dbase.save_warehouse()
             else:
                 dbase.update_record_by_id("my_warehouse", dbase.get_last_record("my_warehouse")['id'], last_data)
+        else:
+            dbase.save_warehouse()
+        return view_BVZ(menu, last_data, accept_index=7)
 
-        return view_BVZ(menu, choose_project, last_data, accept_index=6)
-
+    #  ---------Начинаем новый расчет для данного проекта-------------------------------------------------
     if "button-update-pricing" in request_form:
+        request_form = {
+            'user': current_user.get_user_email(),
+            'client': dbase.get_last_record('warehouse')['client'],
+            'project': dbase.get_last_record('warehouse')['project'],
+            'selected': dbase.get_last_record('warehouse')['selected'],
+            'product': dbase.get_last_record('warehouse')['product'],
+        }
         dbase.del_records('warehouse', dbase.get_last_record('warehouse')['id'])
+        print(request_form)
+        dbase.add_record('warehouse', request_form)
 
-        return view_BVZ(dbase, menu, current_user, accept_index=0)
+        return view_BVZ(menu, accept_index=1)
+
+    if "button_list_project" in request_form:
+
+        print(request_form)
+        warehouse_data = dict(dbase.get_record('my_warehouse',
+                                               ("user_email", current_user.get_user_email()),
+                                               ("client", request_form['client']),
+                                               ("project", request_form['project'])
+                                               )
+                              )
+        print(warehouse_data)
+
+        return view_BVZ(menu, warehouse_data, accept_index=7)

@@ -1,5 +1,7 @@
 import sqlite3
 
+from Utils.UniqueID import string_to_ID
+
 
 class FDataBase:
     def __init__(self, db):
@@ -19,11 +21,12 @@ class FDataBase:
         return []
 
     def set_new_lead(self, company, name, phone, mail, project, user_email, job_title='', price='', profit=''):
+        uniqueID = string_to_ID(company + name + user_email)
         try:
             self.__cur.execute(
-                "INSERT INTO lead (company, name, phone, mail, project, job_title, price, profit, user_email)"
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (company, name, phone, mail, project, job_title, price, profit, user_email))
+                "INSERT INTO lead (unique_ID, company, name, phone, mail, project, job_title, price, profit, user_email)"
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (uniqueID, company, name, phone, mail, project, job_title, price, profit, user_email))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Ошибка добавления статьи в БД " + str(e))
@@ -112,8 +115,8 @@ class FDataBase:
     def add_record(self, name_table, dict_records=None, **kwargs):
         """Добавление записи в выбранную таблицу по выбранным столбцам"""
         if dict_records is None:
-            title_table = tuple(kwargs.keys())
-            values = tuple(kwargs.values())
+            title_table = "('" + tuple(kwargs.keys())[0] + "')"
+            values = "('" + tuple(kwargs.values())[0] + "')"
         else:
             title_table = []
             values = []
@@ -122,8 +125,11 @@ class FDataBase:
                 values.append(v)
             title_table = tuple(title_table)
             values = tuple(values)
+
+        quer = f"INSERT INTO {name_table} {title_table} VALUES {values}"
+        print(quer)
         try:
-            self.__cur.execute(f"INSERT INTO {name_table} {title_table} VALUES {values}")
+            self.__cur.execute(quer)
             self.__db.commit()
         except sqlite3.Error as e:
             print(f"Ошибка добавления в БД:{name_table} записи {kwargs} " + str(e))

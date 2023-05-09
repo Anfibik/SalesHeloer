@@ -5,24 +5,13 @@ def format_price(price):
     return '{:,.2f}'.format(price).replace(',', " ")
 
 
-def view_BVZ(dbase, menu, current_user, update_dict=None, accept_index=None):
-    accepts = ['none'] * 6
+def view_BVZ(menu, update_dict=None, accept_index=None):
+    accepts = ['none'] * 7
+
     if accept_index is not None:
         for i in range(accept_index):
             accepts[i] = "block"
-    accept_1, accept_2, accept_3, accept_4, accept_5, accept_6 = accepts
-
-    choose_product = [
-        {"name": 'БВЗ', "product": 'Warehouse'},
-        {"name": 'Стеллажи', "product": 'Racks'},
-        {"name": 'Мусорные баки', "product": 'Trash-can'},
-        {"name": 'Поддоны', "product": 'Pallets'},
-        {"name": 'Пластиковая тара', "product": 'Plastic-container'},
-        {"name": 'Техника', "product": 'Equipment'},
-    ]
-
-    choose_project = [{"project": row['project'], "lead": row['company']}
-                      for row in dbase.get_info_records('lead', current_user.get_user_email())]
+    accept_1, accept_2, accept_3, accept_4, accept_5, accept_6, accept_7 = accepts
 
     m_dict = {'width': False, 'length': False, 'height': False, 'area': False, 'volume': False,
               'temperature': False, 'client': False, 'price_project': False,
@@ -71,7 +60,7 @@ def view_BVZ(dbase, menu, current_user, update_dict=None, accept_index=None):
 
     # 3 - блок ввода дополнительных стоимостей и фундамента
     set_title_table_second_pricing = [
-        {"name": 'price_foundation', "title": 'фундамент', "placeholder": 'евро', "current_vol": m_dict['price_foundation']},
+        {"name": 'price_foundation', "title": 'полы 1m²', "placeholder": 'евро', "current_vol": m_dict['price_foundation']},
         {"name": 'price_light', "title": 'освещение', "placeholder": 'евро', "current_vol": m_dict['price_light']},
         {"name": 'price_rack', "title": 'стеллажи', "placeholder": 'евро', "current_vol": m_dict['price_rack']}
     ]
@@ -167,8 +156,8 @@ def view_BVZ(dbase, menu, current_user, update_dict=None, accept_index=None):
         {"name": 'final_profit_percent', "title": 'Доход'},
     ]
 
-    return render_template('pricing.html',
-                           title='My PRICING',
+    return render_template('warehouse.html',
+                           title='BVZ',
                            menu=menu,
                            accept_1=accept_1,
                            accept_2=accept_2,
@@ -176,6 +165,7 @@ def view_BVZ(dbase, menu, current_user, update_dict=None, accept_index=None):
                            accept_4=accept_4,
                            accept_5=accept_5,
                            accept_6=accept_6,
+                           accept_7=accept_7,
                            set_title_table_dimension=set_title_table_dimension,
                            set_title_table_pricing=set_title_table_pricing,
                            set_title_table_second_pricing=set_title_table_second_pricing,
@@ -187,7 +177,5 @@ def view_BVZ(dbase, menu, current_user, update_dict=None, accept_index=None):
                            title_table=title_table,
                            m_dict=m_dict,
                            final_price_warehouse=final_price_warehouse,
-                           choose_project=choose_project,
-                           choose_product=choose_product,
-                           product=product,
+                           product=m_dict['product']
                            )
