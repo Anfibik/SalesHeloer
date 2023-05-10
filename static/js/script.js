@@ -3,12 +3,9 @@
 function openModal() {
     document.getElementById('myModal').style.display = 'block';
 }
-
 function closeModal() {
     document.getElementById('myModal').style.display = 'none';
 }
-
-
 function convertInput() {
     const inputValue = document.getElementById('input-field').value;
     const xhr = new XMLHttpRequest();
@@ -22,9 +19,8 @@ function convertInput() {
     };
     xhr.send(JSON.stringify({ input: inputValue }));
 }
-//Конец скриптов модального окна
 
-
+// Функционал изменения адреса на выбранный продукт
 document.getElementById("apply-setting-button").addEventListener("click", function() {
     var product = document.getElementById("product").value;
     var form = document.getElementById("form-setting");

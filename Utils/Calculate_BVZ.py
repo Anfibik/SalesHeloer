@@ -16,9 +16,12 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
 
     #  ----------------Выбор температуры склада---------------------------------------------------------------------
     if "button-accept-temperature" in request_form:
-        dbase.update_record_by_id('warehouse', dbase.get_last_record("warehouse")['id'],
-                                  {'temperature': request_form['temperature']})
-        return view_BVZ(menu, request_form, accept_index=2)
+        del request_form['button-accept-temperature']
+        record = dbase.get_last_record('warehouse')
+        dbase.update_record_by_id('warehouse', record['id'], {'temperature': request_form['temperature']})
+
+        last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
+        return view_BVZ(menu, last_data, accept_index=2)
 
     #  ----------------------Ввод размеров и вывод площадей---------------------------------------------------------
     if "button-accept-dimension" in request_form:
@@ -73,65 +76,69 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         lst = list(dict(dbase.get_last_record("warehouse")).items())[1::]
         last_data = dict(lst)
 
-        percent_w = request_form["percent_w"] if request_form["percent_w"] != '' else 0  # Процент склада
-        percent_f = request_form["percent_f"] if request_form["percent_f"] != '' else 0  # Процент фундамента
-        percent_o = request_form["percent_o"] if request_form["percent_o"] != '' else 0  # Процент освещения + стеллажи
+        percent_w = int(request_form["percent_w"]) if request_form["percent_w"] != '' else 0  # Процент моржи склада
+        percent_f = int(request_form["percent_f"]) if request_form["percent_f"] != '' else 0  # Процент моржи фундамента
+        percent_o = int(request_form["percent_o"]) if request_form["percent_o"] != '' else 0  # Процент моржи опций
+        exch_rate_from = int(request_form['exchange_rates_from'])  # Курс поставщика
+        exch_rate_to = int(request_form['exchange_rates_TO'])  # Курс клиента
 
+        cost_w_sq_m_EU = last_data["price_square_meters"]  # Себестоимость 1 кв.м. склада ЕВРО
+        cost_project_EU = last_data["price_project"]  # Себестоимость проекта ЕВРО
+        area_w = last_data["area"]  # Площадь склада
+
+        cost_f_EU = last_data["price_foundation"]  # Себестоимость фундамента ЕВРО
+        cost_f_sq_m_EU = last_data["price_sq_met_found"]  # Себестоимость метра фундамента ЕВРО
+        area_f = last_data["area_found"]  # Площадь фундамента
+
+        price_w_sq_m_EU = round((cost_w_sq_m_EU * percent_w / 100) + cost_w_sq_m_EU, 2)  # Цена 1м.кв. сырая ЕВРО
+        price_w_sq_m_EU = round(price_w_sq_m_EU * exch_rate_to / exch_rate_from, 2)  # Преобразованная 1м ЕВРО
+        price_w_EU = price_w_sq_m_EU * area_w + last_data["price_delivery"] + last_data["price_building"]
+        price_sell_w_sq_m_EU = ceil(price_w_EU / area_w)
+        price_sell_warehouse_EU = price_sell_w_sq_m_EU * area_w  # Цена склада финал ЕВРО
+        profit_warehouse_EU = price_sell_warehouse_EU - cost_project_EU  # Моржа на складе в ЕВРО
+
+        price_sell_w_sq_m_UA = price_sell_w_sq_m_EU * exch_rate_from  # Цена 1м склада финал ГРН
+        price_sell_warehouse_UA = price_sell_w_sq_m_UA * area_w  # Цена склада финал ГРН
+        profit_warehouse_UA = price_sell_warehouse_UA - (cost_project_EU * exch_rate_from)  # Моржа склад финал ГРН
+
+        price_f_sq_m_EU = (cost_f_sq_m_EU * percent_f / 100) + cost_f_sq_m_EU  # Цена 1м пол ЕВРО
+        price_sell_f_sq_m_EU = ceil(price_f_sq_m_EU * exch_rate_to / exch_rate_from)  # Цена 1м финал пол ЕВРО
+        price_sell_f_sq_m_UA = price_sell_f_sq_m_EU * exch_rate_from  # Цена 1м финал пол ГРН
+        price_sell_f_UA = price_sell_f_sq_m_UA * area_f  # Цена пол финал ГРН
+        profit_f_UA = price_sell_f_UA - (cost_f_EU * exch_rate_from)
+
+        # ---------- Добавляем в словарь данные -------------------------------------------------------------
         last_data["percent_w"] = int(percent_w)  # Добавляем в словарь Процент склада
         last_data["percent_f"] = int(percent_f)  # Добавляем в словарь Процент фундамента
         last_data["percent_o"] = int(percent_o)  # Добавляем в словарь Процент освещения + стеллажи
 
-        exch_rate_from = int(request_form['exchange_rates_from'])  # Курс поставщика
-        exch_rate_to = int(request_form['exchange_rates_TO'])  # Курс клиента
-
         last_data["exchange_rates_from"] = exch_rate_from  # Добавляем в словарь Курс поставщика
         last_data["exchange_rates_TO"] = exch_rate_to  # Добавляем в словарь Курс клиента
 
-        profit = int(last_data["cost_price"]) * int(last_data["percent_w"]) / 100  # Заработок склад евро
-        price_selling_EU = int(last_data["price_project"]) + profit  # Стоимость склада в евро для клиента
-        cost_square_meters_EU = ceil(price_selling_EU / last_data["area"])  # Стоимость 1 кв.м.
+        last_data["price_selling_EU"] = price_sell_warehouse_EU
+        last_data["profit_EU"] = profit_warehouse_EU
+        last_data["cost_square_meters_EU"] = price_sell_w_sq_m_EU
+        last_data["cost_cubic_meters_EU"] = round(price_sell_warehouse_EU / last_data["volume"], 2)
 
-        cost_square_meters_EU = ceil(cost_square_meters_EU * exch_rate_to / exch_rate_from)  # Преобразуем стоимость за 1 кв.м. с учетом курсовой разницы
-        price_selling_EU = cost_square_meters_EU * last_data["area"]  # Преобразуем стоимость склада с учетом курсовой разницы
-        profit = price_selling_EU - last_data["price_project"]
-
-        last_data["cost_square_meters_EU"] = cost_square_meters_EU
-        last_data["price_selling_EU"] = price_selling_EU
-        last_data["cost_cubic_meters_EU"] = round(price_selling_EU / last_data["volume"], 2)
-        last_data["profit_EU"] = profit
-
-        cost_sell_sq_m_w_UA = cost_square_meters_EU * exch_rate_from
-        cost_sell_w_UA = cost_sell_sq_m_w_UA * last_data["area"]
-        profit_w_UA = cost_sell_w_UA - (last_data['price_project'] * exch_rate_from)
-
-        last_data["price_selling_UA"] = cost_sell_w_UA
-        last_data["profit_UA"] = profit_w_UA
-        last_data["cost_square_meters_UA"] = cost_sell_sq_m_w_UA
+        last_data["price_selling_UA"] = price_sell_warehouse_UA
+        last_data["profit_UA"] = profit_warehouse_UA
+        last_data["cost_square_meters_UA"] = price_sell_w_sq_m_UA
         last_data["cost_cubic_meters_UA"] = last_data["price_selling_UA"] / last_data["volume"]
+
+        last_data["cost_foundation"] = price_sell_f_UA
+        last_data["cost_sq_met_found"] = price_sell_f_sq_m_UA
 
         last_data["profit_percent"] = last_data["profit_EU"] / last_data["price_selling_EU"] * 100
         profit_o = (last_data["price_light"] + last_data["price_rack"]) * last_data["percent_o"] / 100
-
-        price_sq_met_found_UA = ceil(last_data["price_foundation"] / last_data["area_found"] * exch_rate_to)  #  Округленная стоимость фундамента за 1 квадратный метр
-        profit_sq_met_found_UA = ceil(price_sq_met_found_UA * int(percent_f) / 100)
-        cost_sq_met_found_UA = price_sq_met_found_UA + profit_sq_met_found_UA
-        cost_foundation_UA = (price_sq_met_found_UA + profit_sq_met_found_UA) * last_data["area_found"]
-
-        last_data["cost_foundation"] = cost_foundation_UA
         last_data["cost_option"] = (last_data["price_light"] + last_data["price_rack"] + profit_o) * int(
             last_data["exchange_rates_TO"])
-        last_data["cost_sq_met_found"] = cost_sq_met_found_UA
-
-        profit_w_UA = last_data['profit_UA']
-        profit_f_UA = profit_sq_met_found_UA * last_data["area_found"]
         profit_o_UA = profit_o * int(last_data["exchange_rates_TO"])
 
-        last_data['final_price_UA'] = last_data["price_selling_UA"] + last_data["cost_foundation"] + last_data[
-            "cost_option"]
-        last_data['final_profit_UA'] = profit_w_UA + profit_f_UA + profit_o_UA
+        last_data['final_price_UA'] = price_sell_warehouse_UA + price_sell_f_UA + last_data["cost_option"]
+        last_data['final_profit_UA'] = profit_warehouse_UA + profit_f_UA + profit_o_UA
         last_data['final_profit_percent'] = round(last_data['final_profit_UA'] / last_data['final_price_UA'] * 100,
                                                   2)
-        last_data['final_cost_sq_m_pr'] = last_data['final_price_UA'] / last_data['area']
+        last_data['final_cost_sq_m_pr'] = last_data['final_price_UA'] / area_w
 
         string = string_to_ID(last_data['user_email'] + last_data['client'] +
                               last_data['project'] + str(last_data['final_price_UA']) +

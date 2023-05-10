@@ -7,17 +7,25 @@
 
 {% block settings_product_project_temp %}
 
-<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting">
-    <div class="warehouse-setting">
-        <div class="temperature-radio">Температурный режим:
-            <label> <input type="radio" name="temperature" value="Теплый" required> Теплый </label>
-            <label> <input type="radio" name="temperature" value="Холодный" required> Холодный </label>
-        </div>
-        <button name="button-accept-temperature" class="button-accept" value="block">применить</button>
+<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting" style="display: {{ accept_s }};">
+  <div class="warehouse-setting">
+    <div class="temperature-radio">Температурный режим:
+      <label> <input type="radio" name="temperature" value="Теплый" required> Теплый </label>
+      <label> <input type="radio" name="temperature" value="Холодный" required> Холодный </label>
     </div>
+    <button name="button-accept-temperature" class="button-accept" value="block">применить</button>
+  </div>
 </form>
 
 {% endblock settings_product_project_temp %}
+
+<div class="warehouse-setting" style="display: {{ accept_2 }};">
+  {% for s in get_final_setting %}
+  <label for="{{s.name}}" class="value-settings">{{ s.title }}
+    <output id="{{s.name}}">{{ s.value }}</output>
+  </label>
+  {% endfor %}
+</div>
 
 
 <hr style="display: {{ accept_2 }};">
@@ -239,12 +247,14 @@
     </form>
 
     <div class="button-save-reload">
-    <form class="form-buttons-save" action="{{ url_for('calculation_product', alias='BVZ') }}" method="POST" style="display: {{ accept_6 }};">
-      <button type="submit" class="button-accept" name="button-save-pricing">сохранить</button>
-    </form>
-    <form class="form-buttons-save" action="{{ url_for('calculation_product', alias='BVZ') }}" method="POST" style="display: {{ accept_6 }};">
-      <button type="submit" class="button-accept" name="button-update-pricing">новый рассчет</button>
-    </form>
+      <form class="form-buttons-save" action="{{ url_for('calculation_product', alias='BVZ') }}" method="POST"
+        style="display: {{ accept_6 }};">
+        <button type="submit" class="button-accept" name="button-save-pricing">сохранить</button>
+      </form>
+      <form class="form-buttons-save" action="{{ url_for('calculation_product', alias='BVZ') }}" method="POST"
+        style="display: {{ accept_6 }};">
+        <button type="submit" class="button-accept" name="button-update-pricing">новый рассчет</button>
+      </form>
     </div>
   </div>
 
@@ -307,9 +317,6 @@
   <table id="my-table">
     <b style="display: {{ accept_7 }}" class="title-final-cost">ИТОГОВЫЕ РАССЧЕТЫ</b>
     <tr>
-      <th class="button-delete-lead-th">
-        <input type="submit" name="button-delete-lead" value="удалить" class="button-delete-lead">
-      </th>
       {% for t in title_table %}
       <th>{{ t.title }}</th>
       {% endfor %}
@@ -317,7 +324,6 @@
 
     <tbody class="table-result">
       <tr>
-        <td><input type="checkbox" name="check-warehouse" id="check-warehouse"></td>
         {% for cell in title_table %}
         <td>{{ m_dict[cell.name] }}</td>
         {% endfor %}

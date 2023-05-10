@@ -6,12 +6,14 @@ def format_price(price):
 
 
 def view_BVZ(menu, update_dict=None, accept_index=None):
-    accepts = ['none'] * 7
+    accepts = ['none'] * 8
+    if accept_index < 2:
+        accepts[-1] = 'block'
 
     if accept_index is not None:
         for i in range(accept_index):
             accepts[i] = "block"
-    accept_1, accept_2, accept_3, accept_4, accept_5, accept_6, accept_7 = accepts
+    accept_1, accept_2, accept_3, accept_4, accept_5, accept_6, accept_7, accept_s = accepts
 
     m_dict = {'width': False, 'length': False, 'height': False, 'area': False, 'volume': False,
               'temperature': False, 'client': False, 'price_project': False,
@@ -76,15 +78,20 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
     ]
 
     # ОТОБРАЖЕНИЕ БЛОКА С ВЫВОДОМ ВЫЧИСЛЕНИЙ---------------------------------------------------------------------------
+    # 0 - блок с параметрами расчета
+    get_final_setting = [
+        {"name": 'product', "title": 'Продукт: ', "value": m_dict['product']},
+        {"name": 'client', "title": 'Клиент: ', "value": m_dict['client']},
+        {"name": 'project', "title": 'Проект: ', "value": m_dict['project']},
+        {"name": 'temperature', "title": 'Температура: ', "value": m_dict['temperature']},
+    ]
+
     # 1 - блок с размерами
     get_title_table_dimension = [
         {"result": f"Ш: {m_dict['width']}m | Д: {m_dict['length']}m | В: {m_dict['height']}m", "title": 'Размеры склада: '},
 
         {"result": f"{m_dict['area']} m²", "title": 'Площадь: '},
         {"result": f"{m_dict['volume']} m³", "title": 'Объем: '},
-
-        {"result": f"{m_dict['temperature']}", "title": 'Температура: '},
-        {"result": f"{m_dict['client']}", "title": 'Клиент: '}
     ]
 
     # 2 - блок с затратами
@@ -158,6 +165,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
     return render_template('warehouse.html',
                            title='BVZ',
                            menu=menu,
+                           accept_s=accept_s,
                            accept_1=accept_1,
                            accept_2=accept_2,
                            accept_3=accept_3,
@@ -176,5 +184,6 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
                            title_table=title_table,
                            m_dict=m_dict,
                            final_price_warehouse=final_price_warehouse,
-                           product=m_dict['product']
+                           product=m_dict['product'],
+                           get_final_setting=get_final_setting,
                            )

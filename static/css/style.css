@@ -560,6 +560,11 @@ hr {
 	margin-bottom: 5px;
 }
 
+.value-settings {
+	margin-right: 20px;
+	margin-left: 5px;
+}
+
 
 /* Стили для основного контейнера страницы */
 .global-div-pricing-page,
