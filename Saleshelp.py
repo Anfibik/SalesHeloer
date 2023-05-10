@@ -174,6 +174,8 @@ def leads():
     get_new_lead = dbase.get_info_records('lead', current_user.get_user_email())
     get_new_lead = [[row[column_name] for column_name in row.keys()] for row in get_new_lead]
 
+    print(get_new_lead)
+
     return render_template('leads.html',
                            title='My LEADS',
                            menu=menu,
@@ -188,7 +190,7 @@ def leads():
 def show_info_lead(alias):
     dbase = FDataBase(get_db())
 
-    current_lead = dbase.get_lead(alias)
+    current_lead = dbase.get_lead(alias, current_user.get_user_email())
     if not current_lead:
         abort(404)
 

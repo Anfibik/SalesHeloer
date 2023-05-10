@@ -60,7 +60,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
 
     # 3 - блок ввода дополнительных стоимостей и фундамента
     set_title_table_second_pricing = [
-        {"name": 'price_foundation', "title": 'полы 1m²', "placeholder": 'евро', "current_vol": m_dict['price_foundation']},
+        {"name": 'price_sq_met_found', "title": 'полы 1m²', "placeholder": 'евро', "current_vol": m_dict['price_sq_met_found']},
         {"name": 'price_light', "title": 'освещение', "placeholder": 'евро', "current_vol": m_dict['price_light']},
         {"name": 'price_rack', "title": 'стеллажи', "placeholder": 'евро', "current_vol": m_dict['price_rack']}
     ]
@@ -108,8 +108,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
         {"name": 'dimension_found', "title": 'Пятно : ', "result": f"{m_dict['dimension_found']}"},
         {"name": 'area_found', "title": 'Пятно [S]: ', "result": f"{m_dict['area_found']} m²"},
 
-        {"name": 'price_foundation', "title": 'Фундамент: ',
-         "result": f"{format_price(m_dict['price_foundation'])} euro"},
+        {"name": 'price_foundation', "title": 'Фундамент: ', "result": f"{format_price(m_dict['price_foundation'])} euro"},
         {"name": 'price_sq_met_found', "title": '1 [m²] с НДС: ', "result": f"{m_dict['price_sq_met_found']} euro"},
 
         {"name": 'price_light', "title": 'Освещение: ', "result": f"{format_price(m_dict['price_light'])} euro"},

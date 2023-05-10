@@ -34,9 +34,9 @@ class FDataBase:
 
         return True
 
-    def get_lead(self, alias):
+    def get_lead(self, alias, user):
         try:
-            self.__cur.execute(f"SELECT * FROM lead WHERE company = '{alias}'")
+            self.__cur.execute(f"SELECT * FROM lead WHERE company = '{alias}' AND user_email = '{user}'")
             res = self.__cur.fetchone()
             if res:
                 return res
@@ -186,6 +186,8 @@ class FDataBase:
         for column, value in args:
             query += f"{column} = '{value}' AND "
         query = query.rstrip(' AND')
+
+        print(query)
         try:
             self.__cur.execute(f"SELECT * FROM {name_table} WHERE {query};")
             res = self.__cur.fetchone()
