@@ -23,13 +23,13 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
               'price_delivery': False, 'price_warehouse': False, 'price_building': False,
               'price_foundation': False, 'price_sq_met_found': 0, 'price_light': False, 'price_rack': False,
               'dimension_found': 0, 'area_found': 0, 'percent_w': False, 'percent_f': False, 'percent_o': False,
-              'price_selling': False,
+              'price_selling': False, 'amount_calc': 0,
               'exchange_rates_from': False, 'exchange_rates_TO': False, 'profit_percent': False,
               'cost_square_meters_EU': False, 'cost_cubic_meters_EU': False,
               'cost_square_meters_UA': False, 'cost_cubic_meters_UA': False,
               'cost_foundation': False, 'cost_option': False, 'cost_sq_met_found': False,
               'final_price_UA': False, 'final_profit_UA': False, 'final_profit_percent': False,
-              'unique_ID': 'Empty', 'final_cost_sq_m_pr': False, 'product': False,
+              'unique_ID': 'Empty', 'final_cost_sq_m_pr': False, 'product': False, 'project': False,
               }
 
     if update_dict is not None:
@@ -80,16 +80,23 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
     # ОТОБРАЖЕНИЕ БЛОКА С ВЫВОДОМ ВЫЧИСЛЕНИЙ---------------------------------------------------------------------------
     # 0 - блок с параметрами расчета
     get_final_setting = [
-        {"name": 'product', "title": 'Продукт: ', "value": m_dict['product']},
-        {"name": 'client', "title": 'Клиент: ', "value": m_dict['client']},
-        {"name": 'project', "title": 'Проект: ', "value": m_dict['project']},
-        {"name": 'temperature', "title": 'Температура: ', "value": m_dict['temperature']},
+        {"name": 'product', "title": 'Продукт: ', "value": m_dict['product'],
+         "description": 'Быстровозводимая конструкция, подходящая для складов и производственных помещений'},
+
+        {"name": 'client', "title": 'Клиент: ', "value": m_dict['client'],
+         "description": 'Клиент, для которого делается расчет стоимости'},
+
+        {"name": 'project', "title": 'Проект: ', "value": m_dict['project'],
+         "description": 'Название рассчитываемого проекта'},
+
+        {"name": 'temperature', "title": 'Температура: ', "value": m_dict['temperature'],
+         "description": 'Теплый - сендвич панели и крыша с изоляцией, холодный - ПВХ и профнастил'},
     ]
 
     # 1 - блок с размерами
     get_title_table_dimension = [
-        {"result": f"Ш: {m_dict['width']}m | Д: {m_dict['length']}m | В: {m_dict['height']}m", "title": 'Размеры склада: '},
-
+        {"result": f"Ш: {m_dict['width']}m | Д: {m_dict['length']}m | В: {m_dict['height']}m",
+         "title": 'Размеры склада: '},
         {"result": f"{m_dict['area']} m²", "title": 'Площадь: '},
         {"result": f"{m_dict['volume']} m³", "title": 'Объем: '},
     ]

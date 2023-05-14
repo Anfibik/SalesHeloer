@@ -10,6 +10,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         dbase.del_records('warehouse')
         request_form['user_email'] = current_user.get_user_email()
         request_form['selected'] = True
+        request_form['lead_ID'] = dbase.get_record('lead', ('company', request_form['client']))['id']
         del request_form['button-accept-settings']
         dbase.add_record('warehouse', request_form)
         return view_BVZ(menu, request_form, accept_index=1)
@@ -18,7 +19,10 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
     if "button-accept-temperature" in request_form:
         del request_form['button-accept-temperature']
         record = dbase.get_last_record('warehouse')
-        dbase.update_record_by_id('warehouse', record['id'], {'temperature': request_form['temperature']})
+        lead_ID = dbase.get_record('lead', ('company', record['client']))['id']
+
+        dbase.update_record_by_id('warehouse', record['id'], {'temperature': request_form['temperature'],
+                                                              'lead_ID': lead_ID})
 
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
         return view_BVZ(menu, last_data, accept_index=2)
@@ -45,15 +49,13 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         last_data["cost_price"] = pw + pc + pV
         last_data["price_square_meters"] = round(last_data["cost_price"] / last_data['area'], 2)
         last_data["price_cubic_meters"] = round(last_data["cost_price"] / last_data['volume'], 2)
-        last_data["price_project"] = last_data["cost_price"] + last_data["price_delivery"] + last_data[
-            "price_building"]
+        last_data["price_project"] = last_data["cost_price"] + last_data["price_delivery"] + last_data["price_building"]
         dbase.update_record_by_id("warehouse", dbase.get_last_record("warehouse")['id'], last_data)
         return view_BVZ(menu, last_data, accept_index=4)
 
     # ------ Ввод и вывод дополнительных стоимостей ------------------------------------------------------------------
     if "button-accept-cost" in request_form:
         advance_price = dict(list(request_form.items())[:-1])
-        print(advance_price)
         for key in advance_price:
             if advance_price[key] == '':
                 advance_price[key] = 0
@@ -93,11 +95,11 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         price_w_sq_m_EU = round((cost_w_sq_m_EU * percent_w / 100) + cost_w_sq_m_EU, 2)  # Цена 1м.кв. сырая ЕВРО
         price_w_sq_m_EU = round(price_w_sq_m_EU * exch_rate_to / exch_rate_from, 2)  # Преобразованная 1м ЕВРО
         price_w_EU = price_w_sq_m_EU * area_w + last_data["price_delivery"] + last_data["price_building"]
-        price_sell_w_sq_m_EU = ceil(price_w_EU / area_w)
+        price_sell_w_sq_m_EU = round(price_w_EU / area_w, 2)
         price_sell_warehouse_EU = price_sell_w_sq_m_EU * area_w  # Цена склада финал ЕВРО
         profit_warehouse_EU = price_sell_warehouse_EU - cost_project_EU  # Моржа на складе в ЕВРО
 
-        price_sell_w_sq_m_UA = price_sell_w_sq_m_EU * exch_rate_from  # Цена 1м склада финал ГРН
+        price_sell_w_sq_m_UA = ceil(price_sell_w_sq_m_EU * exch_rate_from)  # Цена 1м склада финал ГРН
         price_sell_warehouse_UA = price_sell_w_sq_m_UA * area_w  # Цена склада финал ГРН
         profit_warehouse_UA = price_sell_warehouse_UA - (cost_project_EU * exch_rate_from)  # Моржа склад финал ГРН
 
@@ -116,29 +118,30 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         last_data["exchange_rates_TO"] = exch_rate_to  # Добавляем в словарь Курс клиента
 
         last_data["price_selling_EU"] = price_sell_warehouse_EU
-        last_data["profit_EU"] = profit_warehouse_EU
+        last_data["profit_EU"] = round(profit_warehouse_EU, 2)
         last_data["cost_square_meters_EU"] = price_sell_w_sq_m_EU
         last_data["cost_cubic_meters_EU"] = round(price_sell_warehouse_EU / last_data["volume"], 2)
 
         last_data["price_selling_UA"] = price_sell_warehouse_UA
-        last_data["profit_UA"] = profit_warehouse_UA
+        last_data["profit_UA"] = round(profit_warehouse_UA, 2)
         last_data["cost_square_meters_UA"] = price_sell_w_sq_m_UA
-        last_data["cost_cubic_meters_UA"] = last_data["price_selling_UA"] / last_data["volume"]
+        last_data["cost_cubic_meters_UA"] = round(last_data["price_selling_UA"] / last_data["volume"], 2)
 
         last_data["cost_foundation"] = price_sell_f_UA
         last_data["cost_sq_met_found"] = price_sell_f_sq_m_UA
 
-        last_data["profit_percent"] = last_data["profit_EU"] / last_data["price_selling_EU"] * 100
+        last_data["profit_percent"] = round(last_data["profit_EU"] / last_data["price_selling_EU"] * 100, 2)
         profit_o = (last_data["price_light"] + last_data["price_rack"]) * last_data["percent_o"] / 100
         last_data["cost_option"] = (last_data["price_light"] + last_data["price_rack"] + profit_o) * int(
             last_data["exchange_rates_TO"])
         profit_o_UA = profit_o * int(last_data["exchange_rates_TO"])
 
-        last_data['final_price_UA'] = price_sell_warehouse_UA + price_sell_f_UA + last_data["cost_option"]
-        last_data['final_profit_UA'] = profit_warehouse_UA + profit_f_UA + profit_o_UA
+        final_price_UA = price_sell_warehouse_UA + price_sell_f_UA + last_data["cost_option"]
+        last_data['final_cost_sq_m_pr'] = round(final_price_UA / area_w)
+        last_data['final_price_UA'] = last_data['final_cost_sq_m_pr'] * area_w
+        last_data['final_profit_UA'] = round(profit_warehouse_UA + profit_f_UA + profit_o_UA, 2)
         last_data['final_profit_percent'] = round(last_data['final_profit_UA'] / last_data['final_price_UA'] * 100,
                                                   2)
-        last_data['final_cost_sq_m_pr'] = last_data['final_price_UA'] / area_w
 
         string = string_to_ID(last_data['user_email'] + last_data['client'] +
                               last_data['project'] + str(last_data['final_price_UA']) +
@@ -161,6 +164,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
                 dbase.update_record_by_id("my_warehouse", dbase.get_last_record("my_warehouse")['id'], last_data)
         else:
             dbase.save_warehouse()
+
         return view_BVZ(menu, last_data, accept_index=7)
 
     #  ---------Начинаем новый расчет для данного проекта-------------------------------------------------
@@ -173,7 +177,6 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
             'product': dbase.get_last_record('warehouse')['product'],
         }
         dbase.del_records('warehouse', dbase.get_last_record('warehouse')['id'])
-        print(request_form)
         dbase.add_record('warehouse', request_form)
 
         return view_BVZ(menu, accept_index=1)

@@ -21,7 +21,7 @@
 
 <div class="warehouse-setting" style="display: {{ accept_2 }};">
   {% for s in get_final_setting %}
-  <label for="{{s.name}}" class="value-settings">{{ s.title }}
+  <label for="{{s.name}}" class="value-settings" title="{{ s.description }}">{{ s.title }}
     <output id="{{s.name}}">{{ s.value }}</output>
   </label>
   {% endfor %}

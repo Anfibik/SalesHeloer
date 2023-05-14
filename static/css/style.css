@@ -583,14 +583,14 @@ hr {
 	display: flex !important;
 	padding: 5px;
 	flex-direction: row;
-    justify-content: space-around
+	justify-content: space-around
 }
 
 .title-m {
 	display: flex;
 	flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+	justify-content: space-between;
+	align-items: center;
 	width: 50%;
 }
 
@@ -640,9 +640,9 @@ hr {
 .form-inpute-dimension,
 .form-inpute-pricing,
 .form-inpute-option {
-margin-bottom: 10px;
-font-family: Arial, Helvetica, sans-serif;
-font-size: 13px;
+	margin-bottom: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
 }
 
 .div-precent-input {
@@ -780,4 +780,9 @@ font-size: 13px;
 	color: #000000;
 	background-color: #0bf8a1;
 	font-weight: bold;
+}
+
+.buttom-values-table-calc {
+	background: white;
+	border: none;
 }

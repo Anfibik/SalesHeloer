@@ -1,3 +1,4 @@
+import itertools
 import sqlite3
 import os
 
@@ -6,13 +7,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 
 from Utils.Calculate_BVZ import calculate_BVZ
-from Utils.UniqueID import string_to_ID
 from Utils.UserLogin import UserLogin
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
+from Utils.View_final_calculation import view_table_warehouse
 from Utils.View_pricing import view_pricing
 from Utils.form import LoginForm, RegistrationForm
-from Utils.View_BVZ import view_BVZ
 
 # Конфигурация
 DATABASE = '/tmp/SH_site.db'
@@ -75,8 +75,6 @@ menu = [
     {"url": '/morzh', "name": 'Личные финансы'},
     {"url": '/about', "name": 'О программе'}
 ]
-
-
 
 
 # --------------------Login----------------------------
@@ -145,6 +143,7 @@ title_table_leads = [
     {"name": 'phone', "type": 'tel', "placeholder": 'Телефон'},
     {"name": 'mail', "type": 'email', "placeholder": 'Почта'},
     {"name": 'project', "type": 'text', "placeholder": 'Проект'},
+    {"name": 'amount_calc', "type": 'number', "placeholder": 'Количество расчетов'},
 ]
 
 
@@ -152,18 +151,26 @@ title_table_leads = [
 @login_required
 def leads():
     dbase = FDataBase(get_db())
-
     # Добавление лидов в базу данных
     if request.method == "POST":
-        checkbox_value = request.form.getlist('check-lead')
+        checkbox_value_id_lead = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-lead')
         button_add = request.form.get('button-add-lead')
 
-        if checkbox_value and button_delete:
-            dbase.del_records('lead', checkbox_value)
+        if checkbox_value_id_lead and button_delete:
+            dbase.del_records('lead', checkbox_value_id_lead)
+            records_del_calk = []
+            for id_lead in checkbox_value_id_lead:
+                records_del_calk.append(dbase.get_info_records('my_warehouse',
+                                                               current_user.get_user_email(),
+                                                               ('lead_ID', id_lead)))
+            records_del_calk = list(map(lambda x: x['id'], itertools.chain.from_iterable(records_del_calk)))
+            dbase.del_records('my_warehouse', records_del_calk)
+
         if button_add:
             res = dbase.set_new_lead(request.form.get('company'), request.form.get('name'), request.form.get('phone'),
-                                     request.form.get('mail'), request.form.get('project'), current_user.get_user_email(),
+                                     request.form.get('mail'), request.form.get('project'),
+                                     current_user.get_user_email(),
                                      )
             if not res:
                 flash('Ошибка добавления лида', category='error')
@@ -174,11 +181,13 @@ def leads():
     get_new_lead = dbase.get_info_records('lead', current_user.get_user_email())
     get_new_lead = [[row[column_name] for column_name in row.keys()] for row in get_new_lead]
 
-    print(get_new_lead)
+    # Определение количества расчетов
+    for lead in get_new_lead:
+        amount_calc = dbase.get_amount_records('my_warehouse', 'lead_ID', lead[0])
+        dbase.update_record_by_id("lead", lead[0], {'amount_calc': amount_calc})
+        lead[7] = amount_calc
 
-    return render_template('leads.html',
-                           title='My LEADS',
-                           menu=menu,
+    return render_template('leads.html', title='My LEADS', menu=menu,
                            title_table_leads=title_table_leads,
                            get_new_lead=get_new_lead,
                            current_user=current_user.get_user_name(),
@@ -194,7 +203,19 @@ def show_info_lead(alias):
     if not current_lead:
         abort(404)
 
-    return render_template('lead.html', menu=menu, title=current_lead, current_lead=current_lead)
+    if request.method == 'POST':
+        checkbox_value = request.form.getlist('check-lead')
+        button_delete = request.form.get('button-delete-calc')
+        if checkbox_value and button_delete:
+            dbase.del_records('my_warehouse', checkbox_value)
+
+    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead)
+    value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
+
+    return render_template('lead.html', menu=menu, title=current_lead, current_lead=current_lead,
+                           title_table_calc_BVZ=title_table_calc_BVZ,
+                           value_table_calc_BVZ=value_table_calc_BVZ,
+                           )
 
 
 # -----PRICING форма расчетов----------------------------------------------------->
@@ -202,7 +223,6 @@ def show_info_lead(alias):
 @login_required
 def calculation_product(alias):
     dbase = FDataBase(get_db())
-
     if request.method == 'POST':
         if alias == 'BVZ':
             request_form = dict(request.form)
@@ -211,6 +231,9 @@ def calculation_product(alias):
             except KeyError:
                 return calculate_BVZ(dbase, request_form, menu, current_user)
             return calculate_BVZ(dbase, request_form, menu, current_user)
+
+    if request.form == 'GET':
+        pass
 
     return view_pricing(menu)
 

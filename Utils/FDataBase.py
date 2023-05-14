@@ -8,8 +8,13 @@ class FDataBase:
         self.__db = db
         self.__cur = db.cursor()
 
-    def get_info_records(self, name_tabl, user_email):
-        sql = f"SELECT * FROM {name_tabl} WHERE user_email = '{user_email}'"
+    def get_info_records(self, name_tabl, user_email, *args):
+        query = ''
+        if len(args) > 0:
+            for column, value in args:
+                query += f" AND {column} = '{value}' AND "
+            query = query.rstrip(' AND')
+        sql = f"SELECT * FROM {name_tabl} WHERE user_email = '{user_email}'{query}"
         try:
             self.__cur.execute(sql)
             res = self.__cur.fetchall()
@@ -187,7 +192,6 @@ class FDataBase:
             query += f"{column} = '{value}' AND "
         query = query.rstrip(' AND')
 
-        print(query)
         try:
             self.__cur.execute(f"SELECT * FROM {name_table} WHERE {query};")
             res = self.__cur.fetchone()
@@ -199,3 +203,12 @@ class FDataBase:
             print("Ошибка получения данных из БД " + str(e))
 
         return False
+
+    def get_amount_records(self, name_table, name_column, value_cell):
+        try:
+            self.__cur.execute(f"SELECT COUNT(*) FROM {name_table} WHERE {name_column} = '{value_cell}'")
+            records = self.__cur.fetchone()[0]
+            return records
+        except sqlite3.Error as e:
+            print("Ошибка получения записей из БД " + str(e))
+            return False

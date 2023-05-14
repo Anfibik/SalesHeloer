@@ -2,16 +2,57 @@
 
 {% block title %} {{title}} {% endblock %}
 
-{% block information %} 
-    Project: {{current_lead.project}} 
+{% block information %}
+Project: {{current_lead.project}}
 {% endblock %}
 
 {% block content %}
-    {% for cell in current_lead[1::] %}    
-    {{cell}}
-    {% endfor %}
-    <form action="{{ url_for('calculation_product', alias='BVZ') }}" method="post">
-        <input type="hidden" name="project" value="{{current_lead.project}}:-:{{current_lead.company}}">
-        <button name="button_list_project"> Проекты </button>
-    </form>
-{% endblock %}  
+<!------------------------------------------------------------------>
+{% block lead_information %}
+{% for cell in current_lead[1::] %}
+{{cell}}
+{% endfor %}
+
+{% endblock lead_information %}
+
+<!---Таблица с сохраненными расчетами------------------------------------>
+{% block view_calculations %}
+<form action="{{url_for('show_info_lead', alias=current_lead.company)}}" method="POST">
+
+    <table id="my-table">
+        <b class="title-final-cost">ИТОГОВЫЕ РАССЧЕТЫ БВЗ</b>
+        <tr>
+            <th class="button-delete-lead-th">
+                <input type="submit" name="button-delete-calc" value="удалить" class="button-delete-lead">
+            </th>
+            <th>№</th>
+            {% for t in title_table_calc_BVZ %}
+            <th>{{ t.title }}</th>
+            {% endfor %}
+        </tr>
+
+        <tbody class="table-result">
+            {% for record in value_table_calc_BVZ %}
+            <tr>
+                <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ record[0] }}"></td>
+
+                <td>{{ value_table_calc_BVZ.index(record)+1 }}</td>
+
+                {% for cell in record[1:] %}
+                <td> <button name="asdfsadf" value="!!!!" class="buttom-values-table-calc"> 
+                    <a href="{{ url_for('calculation_product', alias='BVZ') }}">{{ cell }}</a>
+                </button></td>
+                {% endfor %}
+
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</form>
+
+
+{% endblock view_calculations %}
+
+{% endblock %}
