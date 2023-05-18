@@ -7,7 +7,8 @@
 
 {% block settings_product_project_temp %}
 
-<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting" style="display: {{ accept_s }};">
+<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting"
+  style="display: {{ accept_s }};">
   <div class="warehouse-setting">
     <div class="temperature-radio">Температурный режим:
       <label> <input type="radio" name="temperature" value="Теплый" required> Теплый </label>
@@ -22,7 +23,8 @@
 <div class="warehouse-setting" style="display: {{ accept_2 }};">
   {% for s in get_final_setting %}
   <label for="{{s.name}}" class="value-settings" title="{{ s.description }}">{{ s.title }}
-    <output id="{{s.name}}">{{ s.value }}</output>
+    <output id="{{s.name}}"><a href="{{ url_for('show_info_lead', alias=current_lead) }}" class="setting_info_calc">{{
+        s.value }}</a></output>
   </label>
   {% endfor %}
 </div>
@@ -247,15 +249,30 @@
     </form>
 
     <div class="button-save-reload">
+
+
       <form class="form-buttons-save" action="{{ url_for('calculation_product', alias='BVZ') }}" method="POST"
         style="display: {{ accept_6 }};">
-        <button type="submit" class="button-accept" name="button-save-pricing">сохранить</button>
+        <button type="button" class="button-accept" name="button-save-pricing" onclick="openModalCalc()">сохранить</button>
+
+        <div id="myModalCalc" class="modal">
+          <div class="modal-content">
+            <span class="close" onclick="closeModalCalc()">&times;</span>
+
+            <label for="input-field-comment-calc">Введите краткое описание данного рассчета</label>
+            <input type="text" id="input-field-comment-calc" name="input-field-comment-calc">
+            <button type="submit" class="button-accept" name="button-save-pricing">Сохранить комментарий</button>
+          </div>
+        </div>
+
       </form>
+
       <form class="form-buttons-save" action="{{ url_for('calculation_product', alias='BVZ') }}" method="POST"
         style="display: {{ accept_6 }};">
         <button type="submit" class="button-accept" name="button-update-pricing">новый рассчет</button>
       </form>
     </div>
+
   </div>
 
   <!--================================================================================================================-->
@@ -331,7 +348,12 @@
     </tbody>
   </table>
 </div>
-
+<!---IIIIIIII БЛОК ВЫВОДА КОММЕНТАРИЯ  IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII-->
+<div>
+  <output>
+    
+  </output>
+</div>
 
 
 

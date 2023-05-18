@@ -3,15 +3,14 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block information %}
-Project: {{current_lead.project}}
+    {% for cell in current_lead[1::] %}
+        {{cell}}
+    {% endfor %}
 {% endblock %}
-
 {% block content %}
-<!------------------------------------------------------------------>
+
+<!---------------------------------------------------------------------->
 {% block lead_information %}
-{% for cell in current_lead[1::] %}
-{{cell}}
-{% endfor %}
 
 {% endblock lead_information %}
 
@@ -35,21 +34,22 @@ Project: {{current_lead.project}}
             {% for record in value_table_calc_BVZ %}
             <tr>
                 <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ record[0] }}"></td>
-
                 <td>{{ value_table_calc_BVZ.index(record)+1 }}</td>
-
-                {% for cell in record[1:] %}
-                <td> <button name="asdfsadf" value="!!!!" class="buttom-values-table-calc"> 
-                    <a href="{{ url_for('calculation_product', alias='BVZ') }}">{{ cell }}</a>
-                </button></td>
+                {% for cell in record[2:-1:] %}
+                <td>  
+                    <a href="{{ url_for('calculation_product', alias='BVZ', calc_ID=record[0]) }}" title="{{ record[-1] }}">
+                        {{ cell }}
+                    </a>
+                </td>
                 {% endfor %}
-
-
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</form>
 
+<form action="{{ url_for('pricing') }}" method="POST">
+    <button name="button-add-calculation" class="button-accept" value="{{current_lead['id']}}"> Новый расчет </button>
 </form>
 
 

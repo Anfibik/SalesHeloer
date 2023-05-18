@@ -5,6 +5,7 @@ from Utils.UniqueID import string_to_ID
 
 
 def calculate_BVZ(dbase, request_form, menu, current_user):
+
     # --------------------------------------------------------------------------------------
     if "button-accept-settings" in request_form:  # Выбор продукта и проекта
         dbase.del_records('warehouse')
@@ -96,7 +97,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         price_w_sq_m_EU = round(price_w_sq_m_EU * exch_rate_to / exch_rate_from, 2)  # Преобразованная 1м ЕВРО
         price_w_EU = price_w_sq_m_EU * area_w + last_data["price_delivery"] + last_data["price_building"]
         price_sell_w_sq_m_EU = round(price_w_EU / area_w, 2)
-        price_sell_warehouse_EU = price_sell_w_sq_m_EU * area_w  # Цена склада финал ЕВРО
+        price_sell_warehouse_EU = round(price_sell_w_sq_m_EU * area_w, 2)  # Цена склада финал ЕВРО
         profit_warehouse_EU = price_sell_warehouse_EU - cost_project_EU  # Моржа на складе в ЕВРО
 
         price_sell_w_sq_m_UA = ceil(price_sell_w_sq_m_EU * exch_rate_from)  # Цена 1м склада финал ГРН
@@ -156,7 +157,11 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
 
     #  -------Сохраняем полученный результат в постоянную БД-----------------------------------------------
     if "button-save-pricing" in request_form:
+        dbase.update_record_by_id('warehouse', dbase.get_last_record("warehouse")['id'],
+                                  {'comments': request_form['input-field-comment-calc']})
+
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
+
         if dbase.check_records('my_warehouse'):
             if dbase.get_last_record('warehouse')['id'] != dbase.get_last_record("my_warehouse")['id']:
                 dbase.save_warehouse()
@@ -164,6 +169,15 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
                 dbase.update_record_by_id("my_warehouse", dbase.get_last_record("my_warehouse")['id'], last_data)
         else:
             dbase.save_warehouse()
+
+        # if dbase.check_records('my_warehouse'):
+        #     unique_ID = dbase.get_last_record('warehouse')['unique_ID']
+        #     if unique_ID == dbase.get_record('my_warehouse', ('unique_ID', unique_ID)):
+        #         dbase.update_record_by_id
+        #     else:
+        #         dbase.update_record_by_id("my_warehouse", dbase.get_last_record("my_warehouse")['id'], last_data)
+        # else:
+        #     dbase.save_warehouse()
 
         return view_BVZ(menu, last_data, accept_index=7)
 
@@ -181,15 +195,15 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
 
         return view_BVZ(menu, accept_index=1)
 
-    if "button_list_project" in request_form:
+    if "button-raw-accept" in list(request_form.values()):
         try:
-            warehouse_data = dict(dbase.get_record('my_warehouse',
-                                                   ("user_email", current_user.get_user_email()),
-                                                   ("client", request_form['client']),
-                                                   ("project", request_form['project'])
-                                                   ))
+            del request_form['button_raw']
+            del request_form['id']
+            warehouse_data = request_form
+            print(warehouse_data)
         except:
             return view_BVZ(menu, accept_index=0)
+
         dbase.del_records('warehouse')
         dbase.add_record('warehouse', warehouse_data)
 

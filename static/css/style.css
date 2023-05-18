@@ -101,7 +101,7 @@ table {
 	/* ширина таблицы на 100% от ширины родительского элемента */
 	border-collapse: collapse;
 	/* схлопывание границ таблицы в одну */
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	/* отступ снизу */
 }
 
@@ -114,13 +114,16 @@ th {
 
 td,
 th {
-	padding: 10px;
+	padding: 5px;
 	/* отступы внутри ячеек таблицы */
 	text-align: center;
 	/* выравнивание текста по центру */
 	border: 1px solid #ccc;
 	/* границы ячеек таблицы */
 }
+
+
+
 
 
 /* Стили для модального окна ===========================================================*/
@@ -141,7 +144,8 @@ th {
 	margin: 10% auto;
 	padding: 20px;
 	border: 1px solid #888;
-	width: 80%;
+	width: 60%;
+	height: 60%;
 }
 
 .close {
@@ -485,14 +489,16 @@ h1 {
 	font-weight: bold;
 	padding: 2px;
 	border-bottom: 1px solid #ddd;
+	font-size: 14px;
 }
 
 /* Стили для ячеек в теле таблицы */
 #my-table td {
 	border-bottom: 1px solid #ddd;
-	padding: 2px;
-	text-align: center;
-	font-size: 14px;
+	padding: 1px;
+	padding-left: 10px;
+	text-align: left;
+	font-size: 13px;
 	vertical-align: top;
 	background-color: white;
 	/* цвет фона - белый */
@@ -786,3 +792,11 @@ hr {
 	background: white;
 	border: none;
 }
+
+.setting_info_calc {
+	text-decoration: none;
+	color:rgb(0, 0, 0);
+	font-weight: bold;
+}
+
+/*Стили для модального окна комментариев*/

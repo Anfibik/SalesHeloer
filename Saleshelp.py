@@ -70,7 +70,7 @@ def load_user(user_id):
 
 menu = [
     {"url": '/', "name": 'Главная'},
-    {"url": '/leads', "name": 'Мои лиды'},
+    {"url": '/leads', "name": 'Сделки'},
     {"url": '/pricing', "name": 'Расчет стоимостей'},
     {"url": '/morzh', "name": 'Личные финансы'},
     {"url": '/about', "name": 'О программе'}
@@ -212,7 +212,7 @@ def show_info_lead(alias):
     title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead)
     value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
 
-    return render_template('lead.html', menu=menu, title=current_lead, current_lead=current_lead,
+    return render_template('lead.html', menu=menu, title=current_lead['company'], current_lead=current_lead,
                            title_table_calc_BVZ=title_table_calc_BVZ,
                            value_table_calc_BVZ=value_table_calc_BVZ,
                            )
@@ -223,6 +223,13 @@ def show_info_lead(alias):
 @login_required
 def calculation_product(alias):
     dbase = FDataBase(get_db())
+    calc_ID = request.args.get('calc_ID')
+
+    if calc_ID:
+        request_form = dict(dbase.get_record('my_warehouse', ('id', calc_ID)))
+        request_form['button_raw'] = 'button-raw-accept'
+        return calculate_BVZ(dbase, request_form, menu, current_user)
+
     if request.method == 'POST':
         if alias == 'BVZ':
             request_form = dict(request.form)
@@ -230,10 +237,8 @@ def calculation_product(alias):
                 request_form['project'], request_form['client'] = request_form['project'].split(':-:')
             except KeyError:
                 return calculate_BVZ(dbase, request_form, menu, current_user)
-            return calculate_BVZ(dbase, request_form, menu, current_user)
 
-    if request.form == 'GET':
-        pass
+            return calculate_BVZ(dbase, request_form, menu, current_user)
 
     return view_pricing(menu)
 
@@ -242,8 +247,13 @@ def calculation_product(alias):
 @login_required
 def pricing():
     dbase = FDataBase(get_db())
-    choose_project = [{"project": row['project'], "lead": row['company']}
-                      for row in dbase.get_info_records('lead', current_user.get_user_email())]
+    choose_project = []
+    for row in dbase.get_info_records('lead', current_user.get_user_email()):
+        if str(request.form.get('button-add-calculation')) == str(row['id']):
+            choose_project.append({"project": row['project'], "lead": row['company'], "selected": 1})
+        else:
+            choose_project.append(
+                {"project": row['project'], "lead": row['company'], "selected": 0})
 
     return view_pricing(menu, choose_project)
 

@@ -6,16 +6,17 @@ Profile: {{ current_user }} <a href="{{url_for('logout')}}" class="button-logout
 {% endblock %}
 
 {% block content %}
+<!--Блок ввода нового лида-->
 <form action="{{url_for('leads')}}" method="POST" id="add-leads-table" class="form-table-leads">
   <div class="input-leads">
-    {% for l in title_table_leads %}
+    {% for l in title_table_leads[:5] %}
     <input type="{{ l.type }}" id="{{l.name}}" name="{{l.name}}" placeholder="{{l.placeholder}}" 
           {% if l.name !='mail' %} required {% endif %}>
     {% endfor %}
     <input type="submit" name="button-add-lead" value="Добавить" />
   </div>
 </form>
-
+<!------------------------------->
 
 <form action="{{url_for('leads')}}" method="POST">
   <table id="my-table">
@@ -37,9 +38,9 @@ Profile: {{ current_user }} <a href="{{url_for('logout')}}" class="button-logout
       {% for row in get_new_lead %}
       <tr>
         <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ row[0] }}"></td>
-        <td><a href="{{ url_for('show_info_lead', alias=row[2]) }}">{{ get_new_lead.index(row)+1 }}</a></td>
+        <td><a href="{{ url_for('show_info_lead', alias=row[2] ) }}">{{ get_new_lead.index(row)+1 }}</a></td>
         {% for cell in row[2:8] %}
-        <td><a href="{{ url_for('show_info_lead', alias=row[2]) }}">{{ cell }}</a></td>
+        <td><a href="{{ url_for('show_info_lead', alias=row[2] ) }}">{{ cell }}</a></td>
         {% endfor %}
       </tr>
       {% endfor %}

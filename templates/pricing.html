@@ -28,7 +28,7 @@
         <select id="project" name="project" required>
           <option value="">-- Выберите проект --</option>
           {% for p in choose_project %}
-          <option value="{{p.project}}:-:{{p.lead}}"> {{p.lead}} - {{p.project}} </option>
+          <option value="{{p.project}}:-:{{p.lead}}" {% if p.selected %} selected {% endif %}> {{p.lead}} - {{p.project}} </option>
           {% endfor %}
         </select>
       </div>

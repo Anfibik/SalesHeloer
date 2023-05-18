@@ -132,7 +132,6 @@ class FDataBase:
             values = tuple(values)
 
         quer = f"INSERT INTO {name_table} {title_table} VALUES {values}"
-        print(quer)
         try:
             self.__cur.execute(quer)
             self.__db.commit()

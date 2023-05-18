@@ -193,4 +193,5 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
                            final_price_warehouse=final_price_warehouse,
                            product=m_dict['product'],
                            get_final_setting=get_final_setting,
+                           current_lead=m_dict['client'],
                            )

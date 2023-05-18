@@ -1,7 +1,7 @@
 from string import ascii_lowercase, digits, punctuation
 from random import sample, shuffle
 
-used_string = ascii_lowercase + digits + punctuation + 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя '
+used_string = ascii_lowercase + digits + punctuation + '№,.-=+;№%:?!абвгдеёжзийклмнопрстуфхцчшщъыьэюяії'' '
 
 
 def string_to_ID(string):
