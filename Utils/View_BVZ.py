@@ -23,7 +23,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
               'price_delivery': False, 'price_warehouse': False, 'price_building': False,
               'price_foundation': False, 'price_sq_met_found': 0, 'price_light': False, 'price_rack': False,
               'dimension_found': 0, 'area_found': 0, 'percent_w': False, 'percent_f': False, 'percent_o': False,
-              'price_selling': False, 'amount_calc': 0,
+              'price_selling': False, 'amount_calc': 0, 'comments': 'no comments',
               'exchange_rates_from': False, 'exchange_rates_TO': False, 'profit_percent': False,
               'cost_square_meters_EU': False, 'cost_cubic_meters_EU': False,
               'cost_square_meters_UA': False, 'cost_cubic_meters_UA': False,

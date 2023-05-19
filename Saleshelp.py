@@ -165,7 +165,9 @@ def leads():
                                                                current_user.get_user_email(),
                                                                ('lead_ID', id_lead)))
             records_del_calk = list(map(lambda x: x['id'], itertools.chain.from_iterable(records_del_calk)))
-            dbase.del_records('my_warehouse', records_del_calk)
+
+            if len(records_del_calk) > 0:
+                dbase.del_records('my_warehouse', records_del_calk)
 
         if button_add:
             res = dbase.set_new_lead(request.form.get('company'), request.form.get('name'), request.form.get('phone'),
@@ -184,7 +186,7 @@ def leads():
     # Определение количества расчетов
     for lead in get_new_lead:
         amount_calc = dbase.get_amount_records('my_warehouse', 'lead_ID', lead[0])
-        dbase.update_record_by_id("lead", lead[0], {'amount_calc': amount_calc})
+        dbase.update_record("lead", 'id', lead[0], {'amount_calc': amount_calc})
         lead[7] = amount_calc
 
     return render_template('leads.html', title='My LEADS', menu=menu,

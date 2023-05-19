@@ -255,12 +255,14 @@
         style="display: {{ accept_6 }};">
         <button type="button" class="button-accept" name="button-save-pricing" onclick="openModalCalc()">сохранить</button>
 
-        <div id="myModalCalc" class="modal">
-          <div class="modal-content">
-            <span class="close" onclick="closeModalCalc()">&times;</span>
+        <div id="myModalCalc" class="modalCalc">
+          <div class="modal-content-Calc">
+            <span class="closeCalc" onclick="closeModalCalc()">&times;</span>
 
             <label for="input-field-comment-calc">Введите краткое описание данного рассчета</label>
-            <input type="text" id="input-field-comment-calc" name="input-field-comment-calc">
+            <textarea id="input-field-comment-calc" name="input-field-comment-calc">
+              {{ m_dict['comments'] }}
+            </textarea>
             <button type="submit" class="button-accept" name="button-save-pricing">Сохранить комментарий</button>
           </div>
         </div>
@@ -349,9 +351,9 @@
   </table>
 </div>
 <!---IIIIIIII БЛОК ВЫВОДА КОММЕНТАРИЯ  IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII-->
-<div>
+<div class="output-comments" style="display: {{ accept_7}}">
   <output>
-    
+    {{ m_dict['comments'] }}
   </output>
 </div>
 

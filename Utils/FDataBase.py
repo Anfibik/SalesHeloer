@@ -149,9 +149,9 @@ class FDataBase:
             print("Ошибка получения последней записи из БД " + str(e))
             return False
 
-    def update_record_by_id(self, name_table, id_record, columns_values):
+    def update_record(self, name_table, title_column, vol_column, new_columns_values):
         new_val = ''
-        for title, values in columns_values.items():
+        for title, values in new_columns_values.items():
             new_val = new_val + title
             if type(values) == int:
                 new_val = new_val + '=' + str(values) + ', '
@@ -159,11 +159,11 @@ class FDataBase:
                 new_val = new_val + '=' + f"'{values}'" + ', '
         new_val = new_val.rstrip(', ')
         try:
-            self.__cur.execute(f"UPDATE {name_table} SET {new_val} WHERE id={id_record}")
+            self.__cur.execute(f"UPDATE {name_table} SET {new_val} WHERE {title_column}={vol_column}")
             self.__db.commit()
             return True
         except sqlite3.Error as e:
-            print(f"Ошибка обновления записи {id_record} в БД {name_table} " + str(e))
+            print(f"Ошибка обновления записи {vol_column} в БД {name_table} " + str(e))
             return False
 
     def save_warehouse(self):
