@@ -1,0 +1,6 @@
+
+Tpython:S1066ê"/Merge this if statement with the enclosing one.(÷Şüÿÿÿÿ8£üõ‚1
+Jpython:S5806x"+Rename this variable; it shadows a builtin.(œ¨‡Ô8£üõ‚1
+‰python:S117Ô"eRename this local variable "title_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(ë€ÛÕúÿÿÿÿ8£üõ‚1
+‰python:S117Ô"eRename this local variable "value_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(ë€ÛÕúÿÿÿÿ8£üõ‚1
+wpython:S117â"XRename this local variable "calc_ID" to match the regular expression ^[_a-z][a-z0-9_]*$.(ªûÂ¥8£üõ‚1

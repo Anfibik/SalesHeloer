@@ -1,0 +1,27 @@
+
+}python:S117\"ZRename this local variable "cost_f_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(‰ÚçÃûÿÿÿÿ8„Ë¼ú‚1
+‚python:S117]"_Rename this local variable "cost_f_sq_m_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(¤Ç®™øÿÿÿÿ8…Ë¼ú‚1
+~python:S117Y"`Rename this local variable "cost_project_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(ãÑÂ…8‡Ë¼ú‚1
+|python:S117X"_Rename this local variable "cost_w_sq_m_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(„’ŸD8‰Ë¼ú‚1
+ƒpython:S117Œ"_Rename this local variable "final_price_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(¨»Õãúÿÿÿÿ8‰Ë¼ú‚1
+upython:S117"XRename this local variable "lead_ID" to match the regular expression ^[_a-z][a-z0-9_]*$.(éÉò8‰Ë¼ú‚1
+vpython:S1170"SRename this local variable "pV" to match the regular expression ^[_a-z][a-z0-9_]*$.(ºÎíÿÿÿÿÿ8‰Ë¼ú‚1
+ƒpython:S117k"`Rename this local variable "price_f_sq_m_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(ƒÙÔ£ùÿÿÿÿ8‰Ë¼ú‚1
+ƒpython:S117n"`Rename this local variable "price_sell_f_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(ÑÁ†ëşÿÿÿÿ8‰Ë¼ú‚1
+ƒpython:S117l"eRename this local variable "price_sell_f_sq_m_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(¶…Æ8‰Ë¼ú‚1
+ƒpython:S117m"eRename this local variable "price_sell_f_sq_m_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(ñ„¨8‰Ë¼ú‚1
+ˆpython:S117c"eRename this local variable "price_sell_w_sq_m_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(î’ ìıÿÿÿÿ8‰Ë¼ú‚1
+ƒpython:S117g"eRename this local variable "price_sell_w_sq_m_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(·³¨ñ8‰Ë¼ú‚1
+‹python:S117d"hRename this local variable "price_sell_warehouse_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(ÜÅ˜Ôüÿÿÿÿ8‰Ë¼ú‚1
+‹python:S117h"hRename this local variable "price_sell_warehouse_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(¬ÿñ‰şÿÿÿÿ8‰Ë¼ú‚1
+~python:S117b"[Rename this local variable "price_w_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(¥ï½¬ûÿÿÿÿ8‰Ë¼ú‚1
+ƒpython:S117`"`Rename this local variable "price_w_sq_m_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(ÏŞêşÿÿÿÿ8‰Ë¼ú‚1
+ypython:S117o"\Rename this local variable "profit_f_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(­ğÃ8‰Ë¼ú‚1
+€python:S117Š"\Rename this local variable "profit_o_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(‚½ÓÍúÿÿÿÿ8‰Ë¼ú‚1
+‚python:S117e"dRename this local variable "profit_warehouse_EU" to match the regular expression ^[_a-z][a-z0-9_]*$.(ãû¿–8‰Ë¼ú‚1
+‚python:S117i"dRename this local variable "profit_warehouse_UA" to match the regular expression ^[_a-z][a-z0-9_]*$.(¬ö±Ï8‰Ë¼ú‚1
+python:S117¦"]Rename this local variable "warehouse_ID" to match the regular expression ^[_a-z][a-z0-9_]*$.(ŒÈÆ‰úÿÿÿÿ8†Áòú‚1
+rpython:S1542"SRename function "calculate_BVZ" to match the regular expression ^[a-z_][a-z0-9_]*$.(²Ïµ£8‰Ë¼ú‚1
+spython:S3776"TRefactor this function to reduce its Cognitive Complexity from 31 to the 15 allowed.(²Ïµ£8‰Ë¼ú‚1
+\python:S5754Ä"<Specify an exception class to catch or reraise the exception(ˆÊÉ·8‰Ë¼ú‚1
+=python:S125Á"Remove this commented out code.(ñø¢8— ¾ú‚1
