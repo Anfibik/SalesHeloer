@@ -1,7 +1,6 @@
-CREATE TABLE IF NOT EXISTS projects (
+CREATE TABLE IF NOT EXISTS project_comments (
 id integer PRIMARY KEY AUTOINCREMENT,
-title_proget,
 leads_email TEXT,
-phone_email TEXT,
-price_selling TEXT
+warehouse_ID TEXT,
+comments TEXT
 );

@@ -30,6 +30,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
               'cost_foundation': False, 'cost_option': False, 'cost_sq_met_found': False,
               'final_price_UA': False, 'final_profit_UA': False, 'final_profit_percent': False,
               'unique_ID': 'Empty', 'final_cost_sq_m_pr': False, 'product': False, 'project': False,
+              'S_panel': False, 'H_skate': False,
               }
 
     if update_dict is not None:
@@ -95,10 +96,13 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
 
     # 1 - блок с размерами
     get_title_table_dimension = [
-        {"result": f"Ш: {m_dict['width']}m | Д: {m_dict['length']}m | В: {m_dict['height']}m",
-         "title": 'Размеры склада: '},
+        {"result": f"Ш: {m_dict['width']}m | Д: {m_dict['length']}m | В: {m_dict['height']}m", "title": 'Размеры склада: '},
+
         {"result": f"{m_dict['area']} m²", "title": 'Площадь: '},
         {"result": f"{m_dict['volume']} m³", "title": 'Объем: '},
+
+        {"result": f"{m_dict['S_panel']} m²", "title": 'Сэндвич S: '},
+        {"result": f"{m_dict['H_skate']} m", "title": 'Конёк H: '},
     ]
 
     # 2 - блок с затратами

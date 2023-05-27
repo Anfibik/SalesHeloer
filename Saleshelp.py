@@ -13,6 +13,8 @@ from Utils.NumConvert import number_to_words
 from Utils.View_final_calculation import view_table_warehouse
 from Utils.View_pricing import view_pricing
 from Utils.form import LoginForm, RegistrationForm
+from datetime import datetime
+
 
 # Конфигурация
 DATABASE = '/tmp/SH_site.db'
@@ -200,23 +202,49 @@ def leads():
 @app.route("/lead/<alias>", methods=["POST", "GET"])
 def show_info_lead(alias):
     dbase = FDataBase(get_db())
-
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
+    print(dict(request.form))
+
+    if current_lead['comments_history']:
+        history_comments = current_lead['comments_history'].split(' $END_COMMENTS$ \n')
+        history_event = current_lead['event'].split(' $END_EVENT$ \n')
+    else:
+        history_comments = []
+        history_event = []
+
     if not current_lead:
         abort(404)
 
     if request.method == 'POST':
         checkbox_value = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-calc')
+        button_lead_comment = request.form.get('button-accept-comments')
+
         if checkbox_value and button_delete:
             dbase.del_records('my_warehouse', checkbox_value)
+
+        if button_lead_comment:
+            if request.form.get('comment-for-lead').replace(' ', ''):
+                current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M")
+                event = request.form.get('event-comments')
+                history_comments.append(f"{current_datetime} ({event}): \n{request.form.get('comment-for-lead')}")
+                history_event.append(request.form.get('input-field-event'))
+                comment = ' $END_COMMENTS$ \n'.join(history_comments)
+                lead_event = ' $END_EVENT$ \n'.join(history_event)
+                dbase.update_record('lead', 'id', current_lead['id'], {'comments_history': comment,
+                                                                       'event': lead_event})
 
     title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead)
     value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
 
+    history_comments.reverse()
+    history_event.reverse()
+
+    history_lead = list(zip(history_comments, history_event))
     return render_template('lead.html', menu=menu, title=current_lead['company'], current_lead=current_lead,
                            title_table_calc_BVZ=title_table_calc_BVZ,
                            value_table_calc_BVZ=value_table_calc_BVZ,
+                           history_lead=history_lead,
                            )
 
 

@@ -3,21 +3,21 @@ function openModal() {
     var modal = document.getElementById("myModal");
     modal.style.display = "block";
 }
-
 function closeModal() {
     var modal = document.getElementById("myModal");
     modal.style.display = "none";
 }
 
+//Открытие и закрытие модального окна
 function openModalCalc() {
     var modal = document.getElementById("myModalCalc");
     modal.style.display = "block";
 }
-
 function closeModalCalc() {
     var modal = document.getElementById("myModalCalc");
     modal.style.display = "none";
 }
+
 
 
 // Функция для конвертации цифры в словесное представление
@@ -44,3 +44,7 @@ document.getElementById("apply-setting-button").addEventListener("click", functi
     form.setAttribute("action", action + product);
 });
 
+// Функция обновления страницы лида для добавления отображения введенного комментария
+function reloadPage() {
+    location.reload();
+}

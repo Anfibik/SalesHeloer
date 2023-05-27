@@ -1,13 +1,14 @@
 from math import ceil
 
+from Utils.Calculate_S_panel import calculate_S_panel
 from Utils.View_BVZ import view_BVZ
 from Utils.UniqueID import string_to_ID
 
 
 def calculate_BVZ(dbase, request_form, menu, current_user):
 
-    # --------------------------------------------------------------------------------------
-    if "button-accept-settings" in request_form:  # Выбор продукта и проекта
+    # ----------------- Выбор продукта и проекта---------------------------------------------------------------------
+    if "button-accept-settings" in request_form:
         dbase.del_records('warehouse')
         request_form['user_email'] = current_user.get_user_email()
         request_form['selected'] = True
@@ -33,6 +34,9 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         dimension = dict(list(request_form.items())[:-1])
         dimension['area'] = int(dimension['width']) * int(dimension['length'])
         dimension['volume'] = int(dimension['width']) * int(dimension['length']) * float(dimension['height'])
+        value_S_H = calculate_S_panel(int(dimension['width']), int(dimension['length']), float(dimension['height']))
+        dimension['S_panel'] = value_S_H[0]
+        dimension['H_skate'] = value_S_H[1]
         dbase.update_record('warehouse', 'id', dbase.get_last_record("warehouse")['id'], dimension)
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
         return view_BVZ(menu, last_data, accept_index=3)
@@ -131,7 +135,10 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         last_data["cost_foundation"] = price_sell_f_UA
         last_data["cost_sq_met_found"] = price_sell_f_sq_m_UA
 
-        last_data["profit_percent"] = round(last_data["profit_EU"] / last_data["price_selling_EU"] * 100, 2)
+        if last_data["price_selling_EU"] > 0:
+            last_data["profit_percent"] = round(last_data["profit_EU"] / last_data["price_selling_EU"] * 100, 2)
+        else:
+            last_data["profit_percent"] = 0
         profit_o = (last_data["price_light"] + last_data["price_rack"]) * last_data["percent_o"] / 100
         last_data["cost_option"] = (last_data["price_light"] + last_data["price_rack"] + profit_o) * int(
             last_data["exchange_rates_TO"])
@@ -141,8 +148,10 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         last_data['final_cost_sq_m_pr'] = round(final_price_UA / area_w)
         last_data['final_price_UA'] = last_data['final_cost_sq_m_pr'] * area_w
         last_data['final_profit_UA'] = round(profit_warehouse_UA + profit_f_UA + profit_o_UA, 2)
-        last_data['final_profit_percent'] = round(last_data['final_profit_UA'] / last_data['final_price_UA'] * 100,
-                                                  2)
+        if last_data['final_price_UA'] > 0:
+            last_data['final_profit_percent'] = round(last_data['final_profit_UA'] / last_data['final_price_UA'] * 100, 2)
+        else:
+            last_data['final_profit_percent'] = 0
 
         string = string_to_ID(last_data['user_email'] + last_data['client'] +
                               last_data['project'] + str(last_data['final_price_UA']) +

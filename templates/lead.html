@@ -1,12 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %} {{title}} {% endblock %}
+{% block title %} Компания: {{title}} {% endblock %}
 
-{% block information %}
-    {% for cell in current_lead[1::] %}
-        {{cell}}
-    {% endfor %}
-{% endblock %}
+{% block information %} {{current_lead.company}} {% endblock %}
+
 {% block content %}
 
 <!---------------------------------------------------------------------->
@@ -36,8 +33,9 @@
                 <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ record[0] }}"></td>
                 <td>{{ value_table_calc_BVZ.index(record)+1 }}</td>
                 {% for cell in record[2:-1:] %}
-                <td>  
-                    <a href="{{ url_for('calculation_product', alias='BVZ', calc_ID=record[0]) }}" title="{{ record[-1] }}">
+                <td>
+                    <a href="{{ url_for('calculation_product', alias='BVZ', calc_ID=record[0]) }}"
+                        title="{{ record[-1] }}">
                         {{ cell }}
                     </a>
                 </td>
@@ -51,6 +49,67 @@
 <form action="{{ url_for('pricing') }}" method="POST">
     <button name="button-add-calculation" class="button-accept" value="{{current_lead['id']}}"> Новый расчет </button>
 </form>
+
+<!--Блок добавления комментариев к истории общения с лидами-->
+<div class="lead-communication">
+    <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post">
+        <div class="setting-lead-comments">
+            <label for="event-comments">Выберете событие</label>
+            <select name="event-comments" id="event-comments">
+                <option value="Телефонный разговор">Комментарий</option>
+                <option value="Первый контакт">Первый контакт</option>
+                <option value="Встреча">Встреча</option>
+                <option value="Комментарий">Телефонный разговор</option>
+            </select>
+        </div>
+
+        <div>
+            <textarea name="comment-for-lead" id="comment-for-lead" cols="200" rows="3" resize="none"></textarea>
+        </div>
+
+        <div>
+            <button type="button" name="button-accept-to-event" class="button-accept" value="button-accept-to-event"
+                onclick="openModalCalc()">
+                Сохранить коментарий </button>
+        </div>
+
+        <div id="myModalCalc" class="modalCalc">
+            <div class="modal-content-Calc">
+                <span class="closeCalc" onclick="closeModalCalc()">&times;</span>
+
+                <label for="input-field-Calc"> Введите описание следующего шага </label>
+                <textarea id="input-field-event" name="input-field-event">  </textarea>
+                <button type="submit" name="button-accept-comments" class="button-accept" value="save-lead-comments"
+                    onclick="reloadPage()">
+                    Поставить задачу
+                </button>
+            </div>
+        </div>
+
+
+    </form>
+
+    <!-----Область вывода сохораненных сообщений. История коммуникации с клиентом---->
+    <div class="communication-history">
+
+        {% for history in history_lead %}
+        <div class="history-list">
+
+            <div class="current-lead-comment">
+                <output>{{ history[0]|replace('\n', '<br>')|safe }}</output>
+            </div>
+        
+            <div class="current-lead-event">
+                Следующий шаг:
+                <br>
+                <output>{{ history[1] }}</output>
+            </div>
+
+        </div>
+        {%endfor%}
+
+    </div>
+</div>
 
 
 {% endblock view_calculations %}
