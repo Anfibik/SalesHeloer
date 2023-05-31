@@ -166,9 +166,9 @@ class FDataBase:
             print(f"Ошибка обновления записи {vol_column} в БД {name_table} " + str(e))
             return False
 
-    def save_warehouse(self):
+    def save_warehouse(self, name_table):
         try:
-            self.__cur.execute(f"INSERT INTO my_warehouse "
+            self.__cur.execute(f"INSERT INTO {name_table} "
                                f"SELECT * FROM warehouse WHERE id = {self.get_last_record('warehouse')['id']}")
             self.__db.commit()
         except sqlite3.Error as e:

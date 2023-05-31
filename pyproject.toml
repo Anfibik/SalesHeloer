@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "sale-helper"
+version = "0.1.0"
+description = "my first pet project"
+authors = ["Filobokov Andrey <fibiknew@gmail.com>"]
+readme = "README.md"
+packages = [{include = "sale_helper"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+blinker = "^1.6.2"
+click = "^8.1.3"
+colorama = "^0.4.6"
+dnspython = "^2.3.0"
+email-validator = "^2.0.0.post2"
+flask = "^2.3.2"
+flask-login = "^0.6.2"
+flask-wtf = "1.1.1"
+gunicorn = "^20.1.0"
+idna = "^3.4"
+itsdangerous = "^2.1.2"
+jinja2 = "^3.1.2"
+markupsafe = "^2.1.2"
+werkzeug = "^2.3.4"
+wtforms = "^3.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -176,14 +176,17 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
             if dbase.get_amount_records('my_warehouse', 'id', warehouse_ID):
                 dbase.update_record('my_warehouse', 'id', warehouse_ID, last_data)
             else:
-                dbase.save_warehouse()
+                dbase.save_warehouse('my_warehouse')
+                dbase.save_warehouse('archive_calculating')
         else:
-            dbase.save_warehouse()
+            dbase.save_warehouse('my_warehouse')
+            dbase.save_warehouse('archive_calculating')
 
         return view_BVZ(menu, last_data, accept_index=7)
 
     #  ---------Начинаем новый расчет для данного проекта-------------------------------------------------
     if "button-update-pricing" in request_form:
+
         request_form = {
             'user_email': current_user.get_user_email(),
             'client': dbase.get_last_record('warehouse')['client'],
@@ -199,8 +202,6 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
     if "button-raw-accept" in list(request_form.values()):
         try:
             del request_form['button_raw']
-            # my_warehouse_ID = request_form['id']
-            # del request_form['id']
             warehouse_data = request_form
         except:
             return view_BVZ(menu, accept_index=0)

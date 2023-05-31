@@ -38,4 +38,37 @@
 </form>
 {% endblock settings_product_project_temp %}
 
+<form action="{{url_for('pricing')}}" method="POST">
+
+    <table id="my-table">
+        <b class="title-final-cost">АРХИВ РАСЧЕТОВ БВЗ</b>
+        <tr>
+            <th class="button-delete-lead-th">
+                <input type="submit" name="button-delete-calc" value="удалить" class="button-delete-lead">
+            </th>
+            <th>№</th>
+            {% for t in title_table_calc_BVZ %}
+            <th>{{ t.title }}</th>
+            {% endfor %}
+        </tr>
+
+        <tbody class="table-result">
+            {% for record in value_table_calc_BVZ %}
+            <tr>
+                <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ record[0] }}"></td>
+                <td>{{ value_table_calc_BVZ.index(record)+1 }}</td>
+                {% for cell in record[2:-1:] %}
+                <td>
+                    <a href="{{ url_for('calculation_product', alias='BVZ', calc_ID=record[0]) }}"
+                        title="{{ record[-1] }}">
+                        {{ cell }}
+                    </a>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+
 {% endblock %}

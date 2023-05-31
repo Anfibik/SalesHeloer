@@ -1,6 +1,7 @@
 def format_price(price):
     return '{:,.2f}'.format(price).replace(',', " ")
 
+
 title_table = [
     {"name": 'width', "title": 'Шир'},
     {"name": 'length', "title": 'Дл'},
@@ -22,38 +23,41 @@ title_table = [
 ]
 
 
-def view_table_warehouse(dbase, current_user, current_lead):
+def view_table_warehouse(dbase, current_user, current_lead=None, page=None):
     body_table = []
+    current_records = {}
+    if page == 'show_info_lead':
+        if dbase.check_records('my_warehouse'):
+            current_records = dbase.get_info_records('my_warehouse',
+                                                     current_user.get_user_email(),
+                                                     ('client', current_lead['company']))
+    elif page == 'pricing':
+        if dbase.check_records('archive_calculating'):
+            current_records = dbase.get_info_records('archive_calculating', current_user.get_user_email())
 
-    if dbase.check_records('my_warehouse'):
-        current_records = dbase.get_info_records('my_warehouse',
-                                                 current_user.get_user_email(),
-                                                 ('client', current_lead['company']))
-
-        for record in current_records:
-
-            mask_value_project_in_table = {
-                "id": record['id'],
-                "unique_ID": record['unique_ID'],
-                "width": f"{record['width']} m",
-                "length": f"{record['length']} m",
-                "height": f"{record['height']} m",
-                "area": f"{record['area']} m²",
-                "price_warehouse": f"{format_price(record['price_warehouse'])} euro",
-                "percent_w": f"{record['percent_w']} %",
-                "price_delivery": f"{format_price(record['price_delivery'] * record['exchange_rates_TO'])} грн",
-                "price_building": f"{format_price(record['price_building'] * record['exchange_rates_TO'])} грн",
-                "price_selling_UA": f"{format_price(record['price_selling_UA'])} грн",
-                "cost_square_meters_UA": f"{format_price(record['cost_square_meters_UA'])} грн",
-                "cost_foundation": f"{format_price(record['cost_foundation'])} грн",
-                "cost_sq_met_found": f"{format_price(record['cost_sq_met_found'])} грн",
-                "cost_option": f"{format_price(record['cost_option'])} грн",
-                "final_price_UA": f"{format_price(record['final_price_UA'])} грн",
-                "final_cost_sq_m_pr": f"{format_price(record['final_cost_sq_m_pr'])} грн",
-                "final_profit_UA": f"{format_price(record['final_profit_UA'])} грн",
-                "final_profit_percent": f"{format_price(record['final_profit_percent'])} %",
-                "comments": record['comments'],
-            }
-            body_table.append(mask_value_project_in_table)
+    for record in current_records:
+        mask_value_project_in_table = {
+            "id": record['id'],
+            "unique_ID": record['unique_ID'],
+            "width": f"{record['width']} m",
+            "length": f"{record['length']} m",
+            "height": f"{record['height']} m",
+            "area": f"{record['area']} m²",
+            "price_warehouse": f"{format_price(record['price_warehouse'])} euro",
+            "percent_w": f"{record['percent_w']} %",
+            "price_delivery": f"{format_price(record['price_delivery'] * record['exchange_rates_TO'])} грн",
+            "price_building": f"{format_price(record['price_building'] * record['exchange_rates_TO'])} грн",
+            "price_selling_UA": f"{format_price(record['price_selling_UA'])} грн",
+            "cost_square_meters_UA": f"{format_price(record['cost_square_meters_UA'])} грн",
+            "cost_foundation": f"{format_price(record['cost_foundation'])} грн",
+            "cost_sq_met_found": f"{format_price(record['cost_sq_met_found'])} грн",
+            "cost_option": f"{format_price(record['cost_option'])} грн",
+            "final_price_UA": f"{format_price(record['final_price_UA'])} грн",
+            "final_cost_sq_m_pr": f"{format_price(record['final_cost_sq_m_pr'])} грн",
+            "final_profit_UA": f"{format_price(record['final_profit_UA'])} грн",
+            "final_profit_percent": f"{format_price(record['final_profit_percent'])} %",
+            "comments": record['comments'],
+        }
+        body_table.append(mask_value_project_in_table)
 
     return title_table, body_table

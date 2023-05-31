@@ -1,1 +1,1 @@
-web: gunicorn app:Saleshelp
+web: gunicorn Saleshelp:app

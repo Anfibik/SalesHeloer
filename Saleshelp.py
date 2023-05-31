@@ -11,10 +11,9 @@ from Utils.UserLogin import UserLogin
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
 from Utils.View_final_calculation import view_table_warehouse
-from Utils.View_pricing import view_pricing
+# from Utils.View_pricing import view_pricing
 from Utils.form import LoginForm, RegistrationForm
 from datetime import datetime
-
 
 # Конфигурация
 DATABASE = '/tmp/SH_site.db'
@@ -203,7 +202,6 @@ def leads():
 def show_info_lead(alias):
     dbase = FDataBase(get_db())
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
-    print(dict(request.form))
 
     if current_lead['comments_history']:
         history_comments = current_lead['comments_history'].split(' $END_COMMENTS$ \n')
@@ -227,14 +225,15 @@ def show_info_lead(alias):
             if request.form.get('comment-for-lead').replace(' ', ''):
                 current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M")
                 event = request.form.get('event-comments')
-                history_comments.append(f"{current_datetime} ({event}): \n{request.form.get('comment-for-lead')}")
+                history_comments.append(
+                    f"<strong>{current_datetime} ({event}):</strong> \n{request.form.get('comment-for-lead')}")
                 history_event.append(request.form.get('input-field-event'))
                 comment = ' $END_COMMENTS$ \n'.join(history_comments)
                 lead_event = ' $END_EVENT$ \n'.join(history_event)
                 dbase.update_record('lead', 'id', current_lead['id'], {'comments_history': comment,
                                                                        'event': lead_event})
 
-    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead)
+    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead, 'show_info_lead')
     value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
 
     history_comments.reverse()
@@ -270,13 +269,29 @@ def calculation_product(alias):
 
             return calculate_BVZ(dbase, request_form, menu, current_user)
 
-    return view_pricing(menu)
+    return 'search'
+    # return view_pricing(menu)
 
 
 @app.route('/pricing', methods=["POST", "GET"])
 @login_required
 def pricing():
     dbase = FDataBase(get_db())
+
+    if request.method == 'POST':
+        checkbox_value = request.form.getlist('check-lead')
+        button_delete = request.form.get('button-delete-calc')
+        if checkbox_value and button_delete:
+            dbase.del_records('my_warehouse', checkbox_value)
+
+    choose_product = [
+        {"name": 'БВЗ', "product": 'BVZ'},
+        {"name": 'Стеллажи', "product": 'Racks'},
+        {"name": 'Мусорные баки', "product": 'Trash-can'},
+        {"name": 'Поддоны', "product": 'Pallets'},
+        {"name": 'Пластиковая тара', "product": 'Plastic-container'},
+        {"name": 'Техника', "product": 'Equipment'},
+    ]
     choose_project = []
     for row in dbase.get_info_records('lead', current_user.get_user_email()):
         if str(request.form.get('button-add-calculation')) == str(row['id']):
@@ -285,7 +300,16 @@ def pricing():
             choose_project.append(
                 {"project": row['project'], "lead": row['company'], "selected": 0})
 
-    return view_pricing(menu, choose_project)
+    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, page='pricing')
+    value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
+
+    return render_template('pricing.html', title='My PRICING', menu=menu,
+
+                           choose_product=choose_product,
+                           choose_project=choose_project,
+                           title_table_calc_BVZ=title_table_calc_BVZ,
+                           value_table_calc_BVZ=value_table_calc_BVZ
+                           )
 
 
 # <-------------------------------------------------------------------------------->
