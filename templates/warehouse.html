@@ -7,14 +7,30 @@
 
 {% block settings_product_project_temp %}
 
-<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting"
-  style="display: {{ accept_s }};">
+<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting" style="display: {{ accept_s }};">
   <div class="warehouse-setting">
+    
     <div class="temperature-radio">Температурный режим:
       <label> <input type="radio" name="temperature" value="Теплый" required> Теплый </label>
       <label> <input type="radio" name="temperature" value="Холодный" required> Холодный </label>
     </div>
+
+    <div class="temperature-radio">Поставщик материалов стен:
+      <label> <input type="radio" name="temperature" value="Теплый" required> Протан </label>
+      <label> <input type="radio" name="temperature" value="Холодный" required> Украина </label>
+    </div>
+
+    <div class="temperature-radio">Отметте наличие дополнительных опций:
+      <ul>
+        <li><input type="checkbox" name="option" value="option1"><label for="option1">Пол</label></li>
+        <li><input type="checkbox" name="option" value="option2"><label for="option2">Освещение</label></li>
+        <li><input type="checkbox" name="option" value="option3"><label for="option3">Стеллажи</label></li>
+        <li><input type="checkbox" name="option" value="option4"><label for="option4">Option4</label></li>
+        <li><input type="checkbox" name="option" value="option5"><label for="option5">Option5</label></li>
+      </ul>
+    </div>
     <button name="button-accept-temperature" class="button-accept" value="block">применить</button>
+  
   </div>
 </form>
 

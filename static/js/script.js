@@ -48,3 +48,23 @@ document.getElementById("apply-setting-button").addEventListener("click", functi
 function reloadPage() {
     location.reload();
 }
+
+
+document.getElementById("upload-layout-form").addEventListener("submit", function(event) {
+    event.preventDefault(); // Предотвращаем отправку формы по умолчанию
+
+    // Выполняем AJAX-запрос для отправки файла
+    var form = event.target;
+    var formData = new FormData(form);
+
+    var xhr = new XMLHttpRequest();
+    xhr.open(form.method, form.action);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            location.reload(); // Перезагружаем страницу после успешного сохранения
+        }
+    };
+    xhr.send(formData);
+});
+
+

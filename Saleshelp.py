@@ -2,7 +2,7 @@ import itertools
 import sqlite3
 import os
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 
@@ -11,7 +11,6 @@ from Utils.UserLogin import UserLogin
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
 from Utils.View_final_calculation import view_table_warehouse
-# from Utils.View_pricing import view_pricing
 from Utils.form import LoginForm, RegistrationForm
 from datetime import datetime
 
@@ -202,6 +201,17 @@ def leads():
 def show_info_lead(alias):
     dbase = FDataBase(get_db())
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
+    project_folder = os.path.join('Project_OFFERS', current_lead['company'])
+
+    try:
+        files_layout = os.listdir(project_folder + '/Layout')
+    except FileNotFoundError:
+        files_layout = []
+
+    try:
+        files_offer = os.listdir(project_folder + '/Offers')
+    except FileNotFoundError:
+        files_offer = []
 
     if current_lead['comments_history']:
         history_comments = current_lead['comments_history'].split(' $END_COMMENTS$ \n')
@@ -217,6 +227,10 @@ def show_info_lead(alias):
         checkbox_value = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-calc')
         button_lead_comment = request.form.get('button-accept-comments')
+        button_upload_layout = request.form.get('button-upload-layout')
+        button_upload_offer = request.form.get('button-upload-offer')
+        button_load_layout = request.form.get('button-load-layout')
+        button_load_offer = request.form.get('button-load-offer')
 
         if checkbox_value and button_delete:
             dbase.del_records('my_warehouse', checkbox_value)
@@ -232,8 +246,39 @@ def show_info_lead(alias):
                 lead_event = ' $END_EVENT$ \n'.join(history_event)
                 dbase.update_record('lead', 'id', current_lead['id'], {'comments_history': comment,
                                                                        'event': lead_event})
+        #  Выгрузка макета на сервер
+        if button_upload_layout:
+            layout = request.files['file-layout']
+            project_folder = os.path.join(project_folder, 'Layout')
+            os.makedirs(project_folder, exist_ok=True)
+            file_path = os.path.join(project_folder, layout.filename)
+            layout.save(file_path)
 
-    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead, 'show_info_lead')
+        #  Выгрузка офера на сервер
+        if button_upload_offer:
+            # request_form = dict(request.form)
+            offer = request.files['file-offer']
+            project_folder = os.path.join(project_folder, 'Offers')
+            os.makedirs(project_folder, exist_ok=True)
+            file_path = os.path.join(project_folder, offer.filename)
+            offer.save(file_path)
+
+        #  Загрузка файла с сервера на локальный ПК
+        if button_load_layout:
+            filename = request.form.get('button-load-layout')
+            project_folder = os.path.join('Project_OFFERS', alias, 'Layout')
+            file_path = os.path.join(project_folder, filename)
+            return send_file(file_path, as_attachment=True)
+
+        #  Загрузка файла с сервера на локальный ПК
+        if button_load_offer:
+            filename = request.form.get('button-load-offer')
+            project_folder = os.path.join('Project_OFFERS', alias, 'Offers')
+            file_path = os.path.join(project_folder, filename)
+            return send_file(file_path, as_attachment=True)
+
+    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead,
+                                                                      'show_info_lead')
     value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
 
     history_comments.reverse()
@@ -244,7 +289,18 @@ def show_info_lead(alias):
                            title_table_calc_BVZ=title_table_calc_BVZ,
                            value_table_calc_BVZ=value_table_calc_BVZ,
                            history_lead=history_lead,
+                           files_layout=files_layout,
+                           files_offer=files_offer
                            )
+
+#
+# @app.route('/download/<filename>')
+# def download_file(filename):
+#     dbase = FDataBase(get_db())
+#     print('dict(request.form)')
+#     project_folder = os.path.join('Project_OFFERS', request.form.get('company'))
+#     file_path = os.path.join(project_folder, filename)
+#     return send_file(file_path, as_attachment=True)
 
 
 # -----PRICING форма расчетов----------------------------------------------------->
@@ -255,7 +311,7 @@ def calculation_product(alias):
     calc_ID = request.args.get('calc_ID')
 
     if calc_ID:
-        request_form = dict(dbase.get_record('my_warehouse', ('id', calc_ID)))
+        request_form = dict(dbase.get_record('archive_calculating', ('id', calc_ID)))
         request_form['button_raw'] = 'button-raw-accept'
         return calculate_BVZ(dbase, request_form, menu, current_user)
 

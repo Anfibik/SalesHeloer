@@ -52,7 +52,9 @@
 
 <!--Блок добавления комментариев к истории общения с лидами-->
 <div class="lead-communication">
-    <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post">
+    <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
+        enctype="multipart/form-data">
+
         <div class="setting-lead-comments">
             <label for="event-comments">Выберете событие</label>
             <select name="event-comments" id="event-comments">
@@ -64,8 +66,52 @@
             </select>
         </div>
 
-        <div>
-            <textarea name="comment-for-lead" id="comment-for-lead" cols="200" rows="3" resize="none"></textarea>
+        <div class="comment-save_file">
+            <textarea name="comment-for-lead" id="comment-for-lead"></textarea>
+
+            <!----Блок сохранения и загрузки файлов-------->
+            <div class="load-save-file">
+                <!----Сохранение чертежа-------->
+                <div class="save-file-layout">
+                    <input type="file" name="file" accept=".jpg, .png, .pdf, .dwg" multiple>
+                    
+                </div>
+                <!----Сохранение коммерческого-------->
+                <div class="save-file-offer">
+                    <!--<input type="file" name="file-offer" accept=".jpg, .png, .pdf, .dwg" multiple>-->
+                    <input type="submit" value="Сохранить чертеж" name="button-upload-layout">
+                    <input type="submit" value="Сохранить КП" name="button-upload-offer">
+                </div>
+
+                <div class="load-layout-offer">
+                    <!----Загрузка чертежа-------->
+                    <div class="load-file-layout">
+                        <ul>
+                            <strong> Чертежи </strong>
+                            {% for file in files_layout %}
+                            <li>
+                                <button name="button-load-layout" value="{{ file }}">
+                                    {{ file }}
+                                </button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <!----Загрузка коммерческого-------->
+                    <div class="load-file-offer">
+                        <ul>
+                            <strong> Коммерческие предложения </strong>
+                            {% for file in files_offer %}
+                            <li>
+                                <button name="button-load-offer" value="{{ file }}">
+                                    {{ file }}
+                                </button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div>
@@ -99,7 +145,7 @@
             <div class="current-lead-comment">
                 <output>{{ history[0]|replace('\n', '<br>')|safe }}</output>
             </div>
-        
+
             <div class="current-lead-event">
                 Следующий шаг:
                 <br>
