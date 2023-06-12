@@ -71,16 +71,9 @@
 
             <!----Блок сохранения и загрузки файлов-------->
             <div class="load-save-file">
-                <!----Сохранение чертежа-------->
                 <div class="save-file-layout">
-                    <input type="file" name="file" accept=".jpg, .png, .pdf, .dwg" multiple>
-                    
-                </div>
-                <!----Сохранение коммерческого-------->
-                <div class="save-file-offer">
-                    <!--<input type="file" name="file-offer" accept=".jpg, .png, .pdf, .dwg" multiple>-->
-                    <input type="submit" value="Сохранить чертеж" name="button-upload-layout">
-                    <input type="submit" value="Сохранить КП" name="button-upload-offer">
+                    <label for="file-input" class="file-label">Выберите и сохраните файл</label>
+                    <input type="file" id="file-input" name="file" accept=".jpg, .png, .pdf, .dwg" style="display: none;">
                 </div>
 
                 <div class="load-layout-offer">

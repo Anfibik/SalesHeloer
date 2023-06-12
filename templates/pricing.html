@@ -16,7 +16,7 @@
       <div> <!---Выбор продукта-->
         <label for="product">Продукт</label>
         <select id="product" name="product" title="Выберете продукт, который требуется расчиать" required>
-          <option value="">-- Выберите продукт --</option>
+         
           {% for p in choose_product %}
           <option value="{{p.product}}"> {{ p.name }}</option>
           {% endfor %}

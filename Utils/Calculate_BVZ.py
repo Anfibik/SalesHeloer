@@ -175,6 +175,10 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
             warehouse_ID = dbase.get_last_record('warehouse')['id']
             if dbase.get_amount_records('my_warehouse', 'id', warehouse_ID):
                 dbase.update_record('my_warehouse', 'id', warehouse_ID, last_data)
+                try:
+                    dbase.update_record('archive_calculating', 'id', warehouse_ID, last_data)
+                except:
+                    dbase.save_warehouse('archive_calculating')
             else:
                 dbase.save_warehouse('my_warehouse')
                 dbase.save_warehouse('archive_calculating')
