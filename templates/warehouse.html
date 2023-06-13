@@ -7,9 +7,10 @@
 
 {% block settings_product_project_temp %}
 
-<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting" style="display: {{ accept_s }};">
+<form action="{{url_for('calculation_product', alias='BVZ')}}" method="POST" id="form-setting"
+  style="display: {{ accept_s }};">
   <div class="warehouse-setting">
-    
+
     <div class="temperature-radio">Температурный режим:
       <label> <input type="radio" name="temperature" value="Теплый" required> Теплый </label>
       <label> <input type="radio" name="temperature" value="Холодный" required> Холодный </label>
@@ -28,8 +29,9 @@
         <li><input type="checkbox" name="option" value="option5"><label for="option5">Option5</label></li>
       </ul>
     </div>
-    <button name="button-accept-temperature" class="button-accept" value="block">применить</button>
-  
+    <div>
+      <button name="button-accept-temperature" class="button-accept" value="block">применить</button>
+    </div>
   </div>
 </form>
 
@@ -268,7 +270,8 @@
 
       <form class="form-buttons-save" action="{{ url_for('calculation_product', alias='BVZ') }}" method="POST"
         style="display: {{ accept_6 }};">
-        <button type="button" class="button-accept" name="button-save-pricing" onclick="openModalCalc()">сохранить</button>
+        <button type="button" class="button-accept" name="button-save-pricing"
+          onclick="openModalCalc()">сохранить</button>
 
         <div id="myModalCalc" class="modalCalc">
           <div class="modal-content-Calc">

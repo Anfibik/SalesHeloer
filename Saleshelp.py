@@ -2,7 +2,8 @@ import itertools
 import sqlite3
 import os
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file, \
+    make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 
@@ -293,16 +294,6 @@ def show_info_lead(alias):
                            files_offer=files_offer
                            )
 
-#
-# @app.route('/download/<filename>')
-# def download_file(filename):
-#     dbase = FDataBase(get_db())
-#     print('dict(request.form)')
-#     project_folder = os.path.join('Project_OFFERS', request.form.get('company'))
-#     file_path = os.path.join(project_folder, filename)
-#     return send_file(file_path, as_attachment=True)
-
-
 # -----PRICING форма расчетов----------------------------------------------------->
 @app.route('/pricing/<alias>', methods=["POST", "GET"])
 @login_required
@@ -369,14 +360,13 @@ def pricing():
 
 
 # <-------------------------------------------------------------------------------->
-@app.route('/morzh', methods=["POST", "GET"])
-@login_required
-def morzh():
-    result = None
-    if request.method == 'POST':
-        result = {key: vol for key, vol in request.form.items()}
-
-    return render_template('morzh.html', title='My MONEY', menu=menu, result=result)
+# @app.route('/morzh', methods=["POST", "GET"])
+# @login_required
+# def morzh():
+#     img = None
+#     with app.open_resource(app.root_path + "Project")
+#     return res
+#     # return render_template('morzh.html', title='My MONEY', menu=menu, result=res)
 
 
 @app.route('/about')
@@ -392,6 +382,3 @@ def multiply_by_10():
     output_value = number_to_words(int(input_value))
     return jsonify({'result': output_value})
 
-
-if __name__ == "__main__":
-    app.run(debug=True)

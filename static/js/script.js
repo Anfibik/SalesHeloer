@@ -49,7 +49,6 @@ function reloadPage() {
     location.reload();
 }
 
-
 document.getElementById("upload-layout-form").addEventListener("submit", function(event) {
     event.preventDefault(); // Предотвращаем отправку формы по умолчанию
 
