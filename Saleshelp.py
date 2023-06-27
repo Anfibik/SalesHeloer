@@ -1,6 +1,7 @@
 import itertools
 import sqlite3
 import os
+from string import ascii_lowercase, digits
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file, \
     make_response
@@ -8,6 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 
 from Utils.Calculate_BVZ import calculate_BVZ
+from Utils.Calculate_Racks import calculate_Racks
 from Utils.UserLogin import UserLogin
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
@@ -73,7 +75,7 @@ menu = [
     {"url": '/', "name": 'Главная'},
     {"url": '/leads', "name": 'Сделки'},
     {"url": '/pricing', "name": 'Расчет стоимостей'},
-    {"url": '/morzh', "name": 'Личные финансы'},
+    {"url": '/testpage', "name": 'Тестовая среда'},
     {"url": '/about', "name": 'О программе'}
 ]
 
@@ -160,6 +162,11 @@ def leads():
 
         if checkbox_value_id_lead and button_delete:
             dbase.del_records('lead', checkbox_value_id_lead)
+            if len(checkbox_value_id_lead) > 1:
+                flash("Записи успешно удалены")
+            else:
+                flash("Запись успешно удалена")
+                
             records_del_calk = []
             for id_lead in checkbox_value_id_lead:
                 records_del_calk.append(dbase.get_info_records('my_warehouse',
@@ -170,19 +177,29 @@ def leads():
             if len(records_del_calk) > 0:
                 dbase.del_records('my_warehouse', records_del_calk)
 
+
         if button_add:
-            res = dbase.set_new_lead(request.form.get('company'), request.form.get('name'), request.form.get('phone'),
+            name_company = request.form.get('company')
+            symbols = ascii_lowercase + digits + "йцукенгшщзхъэждлорпавыфячсмитьбюёії'"
+            for s in name_company:
+                if s.lower() not in symbols:
+                    name_company = name_company.replace(s, ' ')
+            name_company = name_company.split()
+            name_company = "_".join(name_company)
+
+            res = dbase.set_new_lead(name_company, request.form.get('name'), request.form.get('phone'),
                                      request.form.get('mail'), request.form.get('project'),
                                      current_user.get_user_email(),
                                      )
             if not res:
-                flash('Ошибка добавления лида', category='error')
+                flash('Ошибка добавления сделки', category='error')
             else:
-                flash('Лид добавлен успешно', category='success')
+                flash(f'Сделка {name_company} добавлена успешно', category='success')
 
     # Чтение лидов из базы данных
     get_new_lead = dbase.get_info_records('lead', current_user.get_user_email())
     get_new_lead = [[row[column_name] for column_name in row.keys()] for row in get_new_lead]
+    get_new_lead.reverse()
 
     # Определение количества расчетов
     for lead in get_new_lead:
@@ -190,10 +207,10 @@ def leads():
         dbase.update_record("lead", 'id', lead[0], {'amount_calc': amount_calc})
         lead[7] = amount_calc
 
-    return render_template('leads.html', title='My LEADS', menu=menu,
+    return render_template('leads.html', title='My Trades', menu=menu,
                            title_table_leads=title_table_leads,
                            get_new_lead=get_new_lead,
-                           current_user=current_user.get_user_name(),
+                           current_user=current_user.get_user_name()
                            )
 
 
@@ -203,6 +220,7 @@ def show_info_lead(alias):
     dbase = FDataBase(get_db())
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
     project_folder = os.path.join('Project_OFFERS', current_lead['company'])
+    description = current_lead['description']
 
     try:
         files_layout = os.listdir(project_folder + '/Layout')
@@ -224,17 +242,20 @@ def show_info_lead(alias):
     if not current_lead:
         abort(404)
 
+    print(dict(request.form))
+
     if request.method == 'POST':
         checkbox_value = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-calc')
         button_lead_comment = request.form.get('button-accept-comments')
-        button_upload_layout = request.form.get('button-upload-layout')
-        button_upload_offer = request.form.get('button-upload-offer')
-        button_load_layout = request.form.get('button-load-layout')
-        button_load_offer = request.form.get('button-load-offer')
+        button_description_save = request.form.get('description')
 
         if checkbox_value and button_delete:
             dbase.del_records('my_warehouse', checkbox_value)
+
+        if button_description_save:
+            description = request.form.get('description')
+            dbase.update_record('lead', 'id', current_lead['id'], {'description': description})
 
         if button_lead_comment:
             if request.form.get('comment-for-lead').replace(' ', ''):
@@ -247,36 +268,6 @@ def show_info_lead(alias):
                 lead_event = ' $END_EVENT$ \n'.join(history_event)
                 dbase.update_record('lead', 'id', current_lead['id'], {'comments_history': comment,
                                                                        'event': lead_event})
-        #  Выгрузка макета на сервер
-        if button_upload_layout:
-            layout = request.files['file-layout']
-            project_folder = os.path.join(project_folder, 'Layout')
-            os.makedirs(project_folder, exist_ok=True)
-            file_path = os.path.join(project_folder, layout.filename)
-            layout.save(file_path)
-
-        #  Выгрузка офера на сервер
-        if button_upload_offer:
-            # request_form = dict(request.form)
-            offer = request.files['file-offer']
-            project_folder = os.path.join(project_folder, 'Offers')
-            os.makedirs(project_folder, exist_ok=True)
-            file_path = os.path.join(project_folder, offer.filename)
-            offer.save(file_path)
-
-        #  Загрузка файла с сервера на локальный ПК
-        if button_load_layout:
-            filename = request.form.get('button-load-layout')
-            project_folder = os.path.join('Project_OFFERS', alias, 'Layout')
-            file_path = os.path.join(project_folder, filename)
-            return send_file(file_path, as_attachment=True)
-
-        #  Загрузка файла с сервера на локальный ПК
-        if button_load_offer:
-            filename = request.form.get('button-load-offer')
-            project_folder = os.path.join('Project_OFFERS', alias, 'Offers')
-            file_path = os.path.join(project_folder, filename)
-            return send_file(file_path, as_attachment=True)
 
     title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, current_lead,
                                                                       'show_info_lead')
@@ -291,8 +282,10 @@ def show_info_lead(alias):
                            value_table_calc_BVZ=value_table_calc_BVZ,
                            history_lead=history_lead,
                            files_layout=files_layout,
-                           files_offer=files_offer
+                           files_offer=files_offer,
+                           description=description,
                            )
+
 
 # -----PRICING форма расчетов----------------------------------------------------->
 @app.route('/pricing/<alias>', methods=["POST", "GET"])
@@ -316,6 +309,10 @@ def calculation_product(alias):
 
             return calculate_BVZ(dbase, request_form, menu, current_user)
 
+        elif alias == 'Racks':
+            request_form = dict(request.form)
+            return calculate_Racks(dbase, request_form, menu, current_user)
+
     return 'search'
     # return view_pricing(menu)
 
@@ -325,7 +322,7 @@ def calculation_product(alias):
 def pricing():
     dbase = FDataBase(get_db())
 
-    if request.method == 'POST':
+    if request.method == 'POST':  # Удаление выбранных расчетов из архива
         checkbox_value = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-calc')
         if checkbox_value and button_delete:
@@ -349,6 +346,7 @@ def pricing():
 
     title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, page='pricing')
     value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
+    choose_project.reverse()
 
     return render_template('pricing.html', title='My PRICING', menu=menu,
 
@@ -359,14 +357,17 @@ def pricing():
                            )
 
 
-# <-------------------------------------------------------------------------------->
-# @app.route('/morzh', methods=["POST", "GET"])
-# @login_required
-# def morzh():
-#     img = None
-#     with app.open_resource(app.root_path + "Project")
-#     return res
-#     # return render_template('morzh.html', title='My MONEY', menu=menu, result=res)
+@app.route('/testpage', methods=['POST', 'GET'])
+def testpage():
+
+
+    return render_template('testpage.html', menu=menu)
+
+
+@app.errorhandler(404)
+def pageNot(error):
+    text = "You have to wright correctly site address"
+    return f"<h3>Page not found</h3>\n <p>{text}", 404
 
 
 @app.route('/about')
@@ -381,4 +382,3 @@ def multiply_by_10():
     input_value = data['input']
     output_value = number_to_words(int(input_value))
     return jsonify({'result': output_value})
-

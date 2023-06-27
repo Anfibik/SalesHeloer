@@ -59,5 +59,6 @@ def view_table_warehouse(dbase, current_user, current_lead=None, page=None):
             "comments": record['comments'],
         }
         body_table.append(mask_value_project_in_table)
+        body_table = sorted(body_table, key=lambda x: x["width"])
 
     return title_table, body_table

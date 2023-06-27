@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} {{title}} {% endblock %}
+{% block information %} This is my money {% endblock %}
+
+
+{% block content %}
+  <h1>{{menu[3].name}}</h1>
+  <!-- Code to display lead information here -->
+  <form action="{{ url_for('testpage') }}" method="post">
+    <input type="text" name="input field">
+    <button type="submit" name="button-test" value="check testing page"> TEST </button>
+    <output>{{ result }}</output>
+  </form>
+{% endblock %}

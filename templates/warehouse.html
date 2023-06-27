@@ -1,7 +1,9 @@
 {% extends 'pricing.html' %}
 
 {% block title %} {{title}} {% endblock %}
-{% block information %} Рассчет стоимости продукта {% endblock %}
+{% block information %} Рассчет стоимости продукта 
+<a href="{{url_for('logout')}}" class="button-logout">{{ current_user.get_user_name() }} Logout </a>
+{% endblock %}
 
 {% block content %}
 

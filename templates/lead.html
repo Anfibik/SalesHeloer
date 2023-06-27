@@ -2,7 +2,10 @@
 
 {% block title %} Компания: {{title}} {% endblock %}
 
-{% block information %} {{current_lead.company}} {% endblock %}
+{% block information %}
+{{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.project }}
+<a href="{{url_for('logout')}}" class="button-logout">{{ current_user.get_user_name() }} Logout </a>
+{% endblock %}
 
 {% block content %}
 
@@ -54,63 +57,43 @@
 <div class="lead-communication">
     <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
         enctype="multipart/form-data">
-
-        <div class="setting-lead-comments">
-            <label for="event-comments">Выберете событие</label>
-            <select name="event-comments" id="event-comments">
-                <option value="Комментарий">Комментарий</option>
-                <option value="Телефонный разговор">Телефонный разговор</option>
-                <option value="Ответ клиента">Ответ клиента</option>
-                <option value="Встреча">Встреча</option>
-                <option value="Первый контакт">Первый контакт</option>
-            </select>
-        </div>
-
-        <div class="comment-save_file">
-            <textarea name="comment-for-lead" id="comment-for-lead"></textarea>
-
-            <!----Блок сохранения и загрузки файлов-------->
-            <div class="load-save-file">
-                <div class="save-file-layout">
-                    <label for="file-input" class="file-label">Выберите и сохраните файл</label>
-                    <input type="file" id="file-input" name="file" accept=".jpg, .png, .pdf, .dwg" style="display: none;">
-                </div>
-
-                <div class="load-layout-offer">
-                    <!----Загрузка чертежа-------->
-                    <div class="load-file-layout">
-                        <ul>
-                            <strong> Чертежи </strong>
-                            {% for file in files_layout %}
-                            <li>
-                                <button name="button-load-layout" value="{{ file }}">
-                                    {{ file }}
-                                </button>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    <!----Загрузка коммерческого-------->
-                    <div class="load-file-offer">
-                        <ul>
-                            <strong> Коммерческие предложения </strong>
-                            {% for file in files_offer %}
-                            <li>
-                                <button name="button-load-offer" value="{{ file }}">
-                                    {{ file }}
-                                </button>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
+        <div class="title-comments-description">
+            <div class="setting-lead-comments">
+                <label for="event-comments">Выберете событие</label>
+                <select name="event-comments" id="event-comments">
+                    <option value="Комментарий">Комментарий</option>
+                    <option value="Телефонный разговор">Телефонный разговор</option>
+                    <option value="Ответ клиента">Ответ клиента</option>
+                    <option value="Встреча">Встреча</option>
+                    <option value="Первый контакт">Первый контакт</option>
+                </select>
+            </div>
+            <div>
+                <label for="description"><h4>Описание проекта</h4></label>
             </div>
         </div>
+        <div class="comment-save_file">
+            <textarea name="comment-for-lead" id="comment-for-lead"></textarea>
+            <textarea name="description" id="description" placeholder="Введите описание проекта" 
+            {% if description %} disabled {% endif %}>{% if description %} {{description}} {% endif %}</textarea>
+        </div>
 
-        <div>
-            <button type="button" name="button-accept-to-event" class="button-accept" value="button-accept-to-event"
-                onclick="openModalCalc()">
-                Сохранить коментарий </button>
+
+        <div class="title-comments-description">
+            <div class="setting-lead-comments">
+                <button type="button" name="button-accept-to-event" class="button-accept" value="button-accept-to-event"
+                    onclick="openModalCalc()">
+                    Сохранить коментарий
+                </button>
+            </div>
+
+            <div>
+                <button type="submit" name="description" class="button-accept"
+                    value="button-accept-description" onclick="reloadPage()" 
+                    {% if description %} style="display: none;" {% endif %}>
+                    Сохранить описание
+                </button>
+            </div>
         </div>
 
         <div id="myModalCalc" class="modalCalc">
@@ -118,7 +101,7 @@
                 <span class="closeCalc" onclick="closeModalCalc()">&times;</span>
 
                 <label for="input-field-Calc"> Введите описание следующего шага </label>
-                <textarea id="input-field-event" name="input-field-event">  </textarea>
+                <textarea id="input-field-event" name="input-field-event"></textarea>
                 <button type="submit" name="button-accept-comments" class="button-accept" value="save-lead-comments"
                     onclick="reloadPage()">
                     Поставить задачу

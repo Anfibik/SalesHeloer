@@ -2,7 +2,11 @@
 
 {% block title %} {{title}} {% endblock %}
 {% block information %}
-Profile: {{ current_user }} <a href="{{url_for('logout')}}" class="button-logout"> Logout </a>
+Информация: 
+{% for msg in get_flashed_messages() %}
+  {{ msg }}
+{% endfor %}
+<a href="{{url_for('logout')}}" class="button-logout"> {{ current_user }} Logout </a>
 {% endblock %}
 
 {% block content %}

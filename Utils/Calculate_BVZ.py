@@ -32,9 +32,9 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
     #  ----------------------Ввод размеров и вывод площадей---------------------------------------------------------
     if "button-accept-dimension" in request_form:
         dimension = dict(list(request_form.items())[:-1])
-        dimension['area'] = int(dimension['width']) * int(dimension['length'])
-        dimension['volume'] = int(dimension['width']) * int(dimension['length']) * float(dimension['height'])
-        value_S_H = calculate_S_panel(int(dimension['width']), int(dimension['length']), float(dimension['height']))
+        dimension['area'] = float(dimension['width']) * float(dimension['length'])
+        dimension['volume'] = float(dimension['width']) * float(dimension['length']) * float(dimension['height'])
+        value_S_H = calculate_S_panel(float(dimension['width']), float(dimension['length']), float(dimension['height']))
         dimension['S_panel'] = value_S_H[0]
         dimension['H_skate'] = value_S_H[1]
         dbase.update_record('warehouse', 'id', dbase.get_last_record("warehouse")['id'], dimension)

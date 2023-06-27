@@ -78,7 +78,7 @@
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	height: 30px;
+	height: 15px;
 	background-color: #00890099;
 	display: flex;
 	align-items: center;
@@ -498,7 +498,7 @@ h1 {
 	padding: 1px;
 	padding-left: 10px;
 	text-align: left;
-	font-size: 13px;
+	font-size: 12px;
 	vertical-align: top;
 	background-color: white;
 	/* цвет фона - белый */
@@ -866,7 +866,12 @@ hr {
 /*Стили для блока в pricing добавления коментариев к истории общения с лидом*/
 
 .setting-lead-comments {
-	margin: 10px;
+	margin: 5px;
+	width: 50%;
+}
+
+.setting-lead-comments h4 {
+	margin: 0;
 }
 
 .lead-communication {
@@ -878,11 +883,22 @@ hr {
 
 #comment-for-lead {
 	display: block;
-	width: 58%;
+	width: 50%;
 	height: 100px;
 	padding: 10px;
 	border: 2px solid #ccc;
 	resize: vertical;
+	margin-bottom: 10px;
+	margin-right: 10px;
+}
+#description {
+	display: block;
+	width: 50%;
+	height: 100px;
+	padding: 10px;
+	border: 2px solid #ccc;
+	resize: vertical;
+	margin-bottom: 10px;
 }
 
 .current-lead-comment {
@@ -906,7 +922,7 @@ hr {
 }
 
 .communication-history {
-	max-height: 300px;
+	max-height: 500px;
 	/* Примерное ограничение по высоте */
 	overflow-y: auto;
 	/* Добавление скролла при превышении ограничения */
@@ -939,4 +955,15 @@ hr {
 .load-save-file div {
 	max-height: 100px;
 	overflow-y: auto;
+}
+
+.title-comments-description {
+	display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.title-comments-description div h4 {
+	margin: 0;
 }
