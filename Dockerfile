@@ -1,13 +1,19 @@
-FROM python:3.10-slim-buster
+# Базовый образ
+FROM python
 
+# Установка зависимостей
 WORKDIR /app
-
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -r requirements.txt
+# Копирование кода приложения
+COPY . .
 
-COPY . /app
+# Установка переменных окружения
+ENV FLASK_APP=run.py
 
-ENTRYPOINT [ "python" ]
+# Открытие порта
+EXPOSE 5000
 
-CMD ["run.py" ]
+# Запуск приложения
+CMD ["flask", "run", "--host=0.0.0.0"]

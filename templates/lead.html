@@ -3,7 +3,14 @@
 {% block title %} Компания: {{title}} {% endblock %}
 
 {% block information %}
-{{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.project }}
+{{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.project }} |
+{% if current_lead.deal_win == 1 %}
+<div style="color: rgb(0, 0, 0); font-weight: bold; margin-left: 5px"> Теплый клиент, нужно дожать</div>
+{% endif %}
+{% if current_lead.deal_win == 2 %}
+<div style="color: rgb(0, 0, 0); font-weight: bold; margin-left: 5px;"> Сделка выиграна, договор подписан</div>
+{% endif %}
+
 <a href="{{url_for('logout')}}" class="button-logout">{{ current_user.get_user_name() }} Logout </a>
 {% endblock %}
 
@@ -49,37 +56,99 @@
     </table>
 </form>
 
-<form action="{{ url_for('pricing') }}" method="POST">
-    <button name="button-add-calculation" class="button-accept" value="{{current_lead['id']}}"> Новый расчет </button>
-</form>
+
+<div class="title-comments-description">
+    <form action="{{ url_for('pricing') }}" method="POST">
+        <button name="button-add-calculation" class="button-accept" value="{{current_lead['id']}}">
+            Новый расчет</button>
+    </form>
+
+    <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
+        enctype="multipart/form-data">
+        <div class="button-deal-win">
+            <button type="submit" name="deal-win" class="button-accept" value="1" onclick="reloadPage()" {% if deal %}
+                style="display: none;" {% endif %}>
+                Качественный лид
+            </button>
+        </div>
+
+        <div class="button-deal-win">
+            <button type="submit" name="deal-win" class="button-accept" value="2" onclick="reloadPage()" {% if deal !=1
+                %} style="display: none;" {% endif %}>
+                Сделка выиграна
+            </button>
+        </div>
+    </form>
+</div>
 
 <!--Блок добавления комментариев к истории общения с лидами-->
 <div class="lead-communication">
     <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
         enctype="multipart/form-data">
-        <div class="title-comments-description">
-            <div class="setting-lead-comments">
-                <label for="event-comments">Выберете событие</label>
-                <select name="event-comments" id="event-comments">
-                    <option value="Комментарий">Комментарий</option>
-                    <option value="Телефонный разговор">Телефонный разговор</option>
-                    <option value="Ответ клиента">Ответ клиента</option>
-                    <option value="Встреча">Встреча</option>
-                    <option value="Первый контакт">Первый контакт</option>
-                </select>
-            </div>
-            <div>
-                <label for="description"><h4>Описание проекта</h4></label>
-            </div>
-        </div>
-        <div class="comment-save_file">
-            <textarea name="comment-for-lead" id="comment-for-lead"></textarea>
-            <textarea name="description" id="description" placeholder="Введите описание проекта" 
-            {% if description %} disabled {% endif %}>{% if description %} {{description}} {% endif %}</textarea>
-        </div>
-
 
         <div class="title-comments-description">
+
+            <div class="comment-for-lead">
+                <div class="setting-lead-comments">
+                    <label for="event-comments">Выберете событие</label>
+                    <select name="event-comments" id="event-comments">
+                        <option value="Комментарий">Комментарий</option>
+                        <option value="Телефонный разговор">Телефонный разговор</option>
+                        <option value="Ответ клиента">Ответ клиента</option>
+                        <option value="Встреча">Встреча</option>
+                        <option value="Первый контакт">Первый контакт</option>
+                    </select>
+                </div>
+                <textarea class="comment-for-lead_text" name="comment-for-lead" id="comment-for-lead"></textarea>
+            </div>
+
+            <div class="file-area">
+                <div class="div-file-list">
+                    <input type="submit" value="Предложения" name="button-upload-offer" onclick="openModalCalc()">
+                    <div>
+                        <ul class="file-list">
+                            {% for offer in files_offer %}
+                            <li title="{{ offer }}">{{ offer }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="div-file-list">
+                    <input type="submit" value="Чертежи" name="button-upload-layout" onclick="openModalCalc()">
+                    <div>
+                        <ul class="file-list">
+                            {% for layout in files_layout %}
+                            <li title="{{ layout}}">{{ layout }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="div-file-list">
+                    <input type="submit" value="Договора" name="button-upload-contract" onclick="openModalCalc()">
+                    <div>
+                        <ul class="file-list">
+                            {% for contract in files_contract %}
+                            <li title="{{ contract }}">{{ contract }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comment-for-lead">
+                <div class="comment-save_file_title">
+                    <label for="description">
+                        <h4 style="margin-bottom: 5px;">Описание проекта</h4>
+                    </label>
+                </div>
+                <textarea class="comment-for-lead_text" name="description" id="description"
+                    placeholder="Введите описание проекта" {% if description %} disabled {% endif
+                    %}>{% if description %} {{description}} {% endif %}</textarea>
+            </div>
+
+        </div>
+
+        <div class="panel-buttons-save_file_desc">
             <div class="setting-lead-comments">
                 <button type="button" name="button-accept-to-event" class="button-accept" value="button-accept-to-event"
                     onclick="openModalCalc()">
@@ -87,12 +156,18 @@
                 </button>
             </div>
 
-            <div>
-                <button type="submit" name="description" class="button-accept"
-                    value="button-accept-description" onclick="reloadPage()" 
-                    {% if description %} style="display: none;" {% endif %}>
+            <!--Выбрать файл-->
+            <div class="choose-file">
+                <input type="file" name="file" accept=".jpg, .png, .pdf, .dwg, .doc, .docx" multiple>
+            </div>
+            <!---------------->
+
+            <div class="description-button-accept">
+                <button type="submit" name="description" class="button-accept" value="button-accept-description"
+                    onclick="reloadPage()" {% if description %} style="display: none;" {% endif %}>
                     Сохранить описание
                 </button>
+                <div></div>
             </div>
         </div>
 
@@ -102,8 +177,8 @@
 
                 <label for="input-field-Calc"> Введите описание следующего шага </label>
                 <textarea id="input-field-event" name="input-field-event"></textarea>
-                <button type="submit" name="button-accept-comments" class="button-accept" value="save-lead-comments"
-                    onclick="reloadPage()">
+                <button id="current-time-input" type="submit" name="button-accept-comments" class="button-accept"
+                    value="save-lead-comments" onclick="getCurrentTime()">
                     Поставить задачу
                 </button>
             </div>

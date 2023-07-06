@@ -1,3 +1,5 @@
+"""Форма расчета бюджета БВЗ, все ключевые расчетные процессы, происходящие под капотом. Результат выдается в View"""
+
 from math import ceil
 
 from Utils.Calculate_S_panel import calculate_S_panel

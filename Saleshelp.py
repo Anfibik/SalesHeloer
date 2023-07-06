@@ -1,21 +1,19 @@
 import itertools
-import sqlite3
 import os
+import sqlite3
 from string import ascii_lowercase, digits
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file, \
-    make_response
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from Utils.Calculate_BVZ import calculate_BVZ
 from Utils.Calculate_Racks import calculate_Racks
-from Utils.UserLogin import UserLogin
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
+from Utils.UserLogin import UserLogin
 from Utils.View_final_calculation import view_table_warehouse
 from Utils.form import LoginForm, RegistrationForm
-from datetime import datetime
 
 # Конфигурация
 DATABASE = '/tmp/SH_site.db'
@@ -154,6 +152,7 @@ title_table_leads = [
 @login_required
 def leads():
     dbase = FDataBase(get_db())
+
     # Добавление лидов в базу данных
     if request.method == "POST":
         checkbox_value_id_lead = request.form.getlist('check-lead')
@@ -177,7 +176,6 @@ def leads():
             if len(records_del_calk) > 0:
                 dbase.del_records('my_warehouse', records_del_calk)
 
-
         if button_add:
             name_company = request.form.get('company')
             symbols = ascii_lowercase + digits + "йцукенгшщзхъэждлорпавыфячсмитьбюёії'"
@@ -192,9 +190,9 @@ def leads():
                                      current_user.get_user_email(),
                                      )
             if not res:
-                flash('Ошибка добавления сделки', category='error')
+                flash('Ошибка добавления сделки')
             else:
-                flash(f'Сделка {name_company} добавлена успешно', category='success')
+                flash(f'Сделка {name_company} добавлена успешно')
 
     # Чтение лидов из базы данных
     get_new_lead = dbase.get_info_records('lead', current_user.get_user_email())
@@ -221,6 +219,7 @@ def show_info_lead(alias):
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
     project_folder = os.path.join('Project_OFFERS', current_lead['company'])
     description = current_lead['description']
+    button_deal = current_lead['deal_win']
 
     try:
         files_layout = os.listdir(project_folder + '/Layout')
@@ -232,6 +231,11 @@ def show_info_lead(alias):
     except FileNotFoundError:
         files_offer = []
 
+    try:
+        files_contract = os.listdir(project_folder + '/Contract')
+    except FileNotFoundError:
+        files_contract = []
+
     if current_lead['comments_history']:
         history_comments = current_lead['comments_history'].split(' $END_COMMENTS$ \n')
         history_event = current_lead['event'].split(' $END_EVENT$ \n')
@@ -242,13 +246,43 @@ def show_info_lead(alias):
     if not current_lead:
         abort(404)
 
-    print(dict(request.form))
-
     if request.method == 'POST':
         checkbox_value = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-calc')
         button_lead_comment = request.form.get('button-accept-comments')
         button_description_save = request.form.get('description')
+        button_deal = request.form.get('deal-win')
+
+        button_upload_layout = request.form.get('button-upload-layout')
+        button_upload_offer = request.form.get('button-upload-offer')
+        button_upload_contract = request.form.get('button-upload-contract')
+
+        #  Сохранение макета проекта на сервер
+        if button_upload_layout:
+            layout = request.files.getlist('file')
+            project_folder = os.path.join(project_folder, 'Layout')
+            os.makedirs(project_folder, exist_ok=True)
+            for file in layout:
+                file_path = os.path.join(project_folder, file.filename)
+                file.save(file_path)
+
+        #  Сохранение офера на сервер
+        if button_upload_offer:
+            offer = request.files.getlist('file')
+            project_folder = os.path.join(project_folder, 'Offers')
+            os.makedirs(project_folder, exist_ok=True)
+            for file in offer:
+                file_path = os.path.join(project_folder, file.filename)
+                file.save(file_path)
+
+        #  Сохранение контракта на сервер
+        if button_upload_contract:
+            contract = request.files.getlist('file')
+            project_folder = os.path.join(project_folder, 'Contract')
+            os.makedirs(project_folder, exist_ok=True)
+            for file in contract:
+                file_path = os.path.join(project_folder, file.filename)
+                file.save(file_path)
 
         if checkbox_value and button_delete:
             dbase.del_records('my_warehouse', checkbox_value)
@@ -257,12 +291,15 @@ def show_info_lead(alias):
             description = request.form.get('description')
             dbase.update_record('lead', 'id', current_lead['id'], {'description': description})
 
+        if button_deal:
+            dbase.update_record('lead', 'id', current_lead['id'], {'deal_win': button_deal})
+
         if button_lead_comment:
             if request.form.get('comment-for-lead').replace(' ', ''):
-                current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M")
+                current_datetime = button_lead_comment
                 event = request.form.get('event-comments')
                 history_comments.append(
-                    f"<strong>{current_datetime} ({event}):</strong> \n{request.form.get('comment-for-lead')}")
+                    f"<strong>[{current_datetime[:-3]}] {event}:</strong> \n{request.form.get('comment-for-lead')}")
                 history_event.append(request.form.get('input-field-event'))
                 comment = ' $END_COMMENTS$ \n'.join(history_comments)
                 lead_event = ' $END_EVENT$ \n'.join(history_event)
@@ -281,9 +318,11 @@ def show_info_lead(alias):
                            title_table_calc_BVZ=title_table_calc_BVZ,
                            value_table_calc_BVZ=value_table_calc_BVZ,
                            history_lead=history_lead,
+                           description=description,
+                           deal=button_deal,
                            files_layout=files_layout,
                            files_offer=files_offer,
-                           description=description,
+                           files_contract=files_contract
                            )
 
 

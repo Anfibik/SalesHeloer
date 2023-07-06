@@ -66,4 +66,11 @@ document.getElementById("upload-layout-form").addEventListener("submit", functio
     xhr.send(formData);
 });
 
+// Получение времени браузера пользователя
+
+function getCurrentTime() {
+    var currentTime = new Date().toLocaleString();
+    document.getElementById("current-time-input").value = currentTime;
+    location.reload();
+  }
 

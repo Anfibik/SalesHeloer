@@ -34,6 +34,7 @@ def view_table_warehouse(dbase, current_user, current_lead=None, page=None):
     elif page == 'pricing':
         if dbase.check_records('archive_calculating'):
             current_records = dbase.get_info_records('archive_calculating', current_user.get_user_email())
+            current_records = sorted(current_records, key=lambda x: x["width"])
 
     for record in current_records:
         mask_value_project_in_table = {
@@ -59,6 +60,5 @@ def view_table_warehouse(dbase, current_user, current_lead=None, page=None):
             "comments": record['comments'],
         }
         body_table.append(mask_value_project_in_table)
-        body_table = sorted(body_table, key=lambda x: x["width"])
 
     return title_table, body_table
