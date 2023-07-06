@@ -3,7 +3,7 @@ import os
 import sqlite3
 from string import ascii_lowercase, digits
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -24,6 +24,7 @@ PASSWORD = '123'
 
 # Инициализируем приложение
 app = Flask(__name__)
+app.static_folder = 'static'
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'SH_site.db')))
 
@@ -165,7 +166,7 @@ def leads():
                 flash("Записи успешно удалены")
             else:
                 flash("Запись успешно удалена")
-                
+
             records_del_calk = []
             for id_lead in checkbox_value_id_lead:
                 records_del_calk.append(dbase.get_info_records('my_warehouse',
@@ -212,27 +213,32 @@ def leads():
                            )
 
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    print()
+    return app.send_static_file(filename)
+
 # ---Экран информации о лиде----------------------------------
 @app.route("/lead/<alias>", methods=["POST", "GET"])
 def show_info_lead(alias):
     dbase = FDataBase(get_db())
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
-    project_folder = os.path.join('Project_OFFERS', current_lead['company'])
+    project_folder = os.path.join('Project_OFFERS', alias)
     description = current_lead['description']
     button_deal = current_lead['deal_win']
 
     try:
-        files_layout = os.listdir(project_folder + '/Layout')
+        files_layout = os.listdir('static/' + project_folder + '/Layout')
     except FileNotFoundError:
         files_layout = []
 
     try:
-        files_offer = os.listdir(project_folder + '/Offers')
+        files_offer = os.listdir('static/' + project_folder + '/Offers')
     except FileNotFoundError:
         files_offer = []
 
     try:
-        files_contract = os.listdir(project_folder + '/Contract')
+        files_contract = os.listdir('static/' + project_folder + '/Contract')
     except FileNotFoundError:
         files_contract = []
 
@@ -251,7 +257,9 @@ def show_info_lead(alias):
         button_delete = request.form.get('button-delete-calc')
         button_lead_comment = request.form.get('button-accept-comments')
         button_description_save = request.form.get('description')
-        button_deal = request.form.get('deal-win')
+
+        if request.form.get('deal-win'):
+            button_deal = request.form.get('deal-win')
 
         button_upload_layout = request.form.get('button-upload-layout')
         button_upload_offer = request.form.get('button-upload-offer')
@@ -260,7 +268,7 @@ def show_info_lead(alias):
         #  Сохранение макета проекта на сервер
         if button_upload_layout:
             layout = request.files.getlist('file')
-            project_folder = os.path.join(project_folder, 'Layout')
+            project_folder = os.path.join('static', project_folder, 'Layout')
             os.makedirs(project_folder, exist_ok=True)
             for file in layout:
                 file_path = os.path.join(project_folder, file.filename)
@@ -269,7 +277,7 @@ def show_info_lead(alias):
         #  Сохранение офера на сервер
         if button_upload_offer:
             offer = request.files.getlist('file')
-            project_folder = os.path.join(project_folder, 'Offers')
+            project_folder = os.path.join('static', project_folder, 'Offers')
             os.makedirs(project_folder, exist_ok=True)
             for file in offer:
                 file_path = os.path.join(project_folder, file.filename)
@@ -278,7 +286,7 @@ def show_info_lead(alias):
         #  Сохранение контракта на сервер
         if button_upload_contract:
             contract = request.files.getlist('file')
-            project_folder = os.path.join(project_folder, 'Contract')
+            project_folder = os.path.join('static', project_folder, 'Contract')
             os.makedirs(project_folder, exist_ok=True)
             for file in contract:
                 file_path = os.path.join(project_folder, file.filename)
@@ -312,6 +320,8 @@ def show_info_lead(alias):
 
     history_comments.reverse()
     history_event.reverse()
+    project_folder = project_folder.replace('\\', '/')
+
 
     history_lead = list(zip(history_comments, history_event))
     return render_template('lead.html', menu=menu, title=current_lead['company'], current_lead=current_lead,
@@ -322,7 +332,8 @@ def show_info_lead(alias):
                            deal=button_deal,
                            files_layout=files_layout,
                            files_offer=files_offer,
-                           files_contract=files_contract
+                           files_contract=files_contract,
+                           project_folder=project_folder
                            )
 
 
@@ -398,8 +409,6 @@ def pricing():
 
 @app.route('/testpage', methods=['POST', 'GET'])
 def testpage():
-
-
     return render_template('testpage.html', menu=menu)
 
 

@@ -66,15 +66,15 @@
     <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
         enctype="multipart/form-data">
         <div class="button-deal-win">
-            <button type="submit" name="deal-win" class="button-accept" value="1" onclick="reloadPage()" {% if deal %}
-                style="display: none;" {% endif %}>
+            <button type="submit" name="deal-win" class="button-accept" value="1" onclick="reloadPage()" 
+            {% if deal %} style="display: none;" {% endif %}>
                 Качественный лид
             </button>
         </div>
 
         <div class="button-deal-win">
-            <button type="submit" name="deal-win" class="button-accept" value="2" onclick="reloadPage()" {% if deal !=1
-                %} style="display: none;" {% endif %}>
+            <button type="submit" name="deal-win" class="button-accept" value="2" onclick="reloadPage()" 
+            {% if deal !=1 %} style="display: none;" {% endif %}>
                 Сделка выиграна
             </button>
         </div>
@@ -104,7 +104,7 @@
 
             <div class="file-area">
                 <div class="div-file-list">
-                    <input type="submit" value="Предложения" name="button-upload-offer" onclick="openModalCalc()">
+                    <input type="submit" value="Предложения" name="button-upload-offer" onclick="reloadPage()">
                     <div>
                         <ul class="file-list">
                             {% for offer in files_offer %}
@@ -114,17 +114,19 @@
                     </div>
                 </div>
                 <div class="div-file-list">
-                    <input type="submit" value="Чертежи" name="button-upload-layout" onclick="openModalCalc()">
+                    <input type="submit" value="Чертежи" name="button-upload-layout" onclick="reloadPage()">
                     <div>
                         <ul class="file-list">
                             {% for layout in files_layout %}
-                            <li title="{{ layout}}">{{ layout }}</li>
+                            <li title="{{ layout}}">
+                                <a href="{{ url_for('static', filename=project_folder + '/Layout/' + layout) }}" target="_blank">{{ layout }}</a>
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>
                 </div>
                 <div class="div-file-list">
-                    <input type="submit" value="Договора" name="button-upload-contract" onclick="openModalCalc()">
+                    <input type="submit" value="Договора" name="button-upload-contract" onclick="reloadPage()">
                     <div>
                         <ul class="file-list">
                             {% for contract in files_contract %}
@@ -159,7 +161,7 @@
             <!--Выбрать файл-->
             <div class="choose-file">
                 <input type="file" name="file" accept=".jpg, .png, .pdf, .dwg, .doc, .docx" multiple>
-            </div>
+            </div>  
             <!---------------->
 
             <div class="description-button-accept">
