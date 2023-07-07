@@ -916,12 +916,11 @@ hr {
 }
 
 .div-file-list {
-	flex: 1;
-	display: flex;
-	align-items: center;
-	border: 1px solid #ccc;
-	padding: 3px;
-	flex-direction: column;
+    flex: 1;
+    display: flex;
+    border: 1px solid #ccc;
+    padding: 5px;
+    flex-direction: column;
 }
 
 .div-file-list div {
@@ -929,12 +928,17 @@ hr {
 }
 
 .file-list {
-	overflow: auto;
-	max-height: 150px;
-	max-width: 150px;
-	list-style-type: none;
-	padding: 0;
+    display: flex;
+    /* margin-top: 10px; */
+    overflow: auto;
+    max-height: 150px;
+    max-width: 150px;
+    list-style-type: none;
+    padding-left: 0;
+    flex-direction: row;
+    flex-wrap: nowrap;
 }
+
 
 .file-list li {
 	white-space: nowrap;

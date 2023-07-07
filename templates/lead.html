@@ -104,11 +104,15 @@
 
             <div class="file-area">
                 <div class="div-file-list">
-                    <input type="submit" value="Предложения" name="button-upload-offer" onclick="reloadPage()">
+                    <input type="submit" value="Коммерческое" name="button-upload-offer" onclick="reloadPage()">
                     <div>
                         <ul class="file-list">
                             {% for offer in files_offer %}
-                            <li title="{{ offer }}">{{ offer }}</li>
+                            <li title="{{ offer }}">
+                                <a href="{{ url_for('static', filename=project_folder + '/Offers/' + offer) }}" target="_blank">
+                                    <img src="{{ url_for('static', filename='images/file_offer_1.png') }}" alt="File Icon" width="32" height="32">
+                                </a>
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>
@@ -119,7 +123,9 @@
                         <ul class="file-list">
                             {% for layout in files_layout %}
                             <li title="{{ layout}}">
-                                <a href="{{ url_for('static', filename=project_folder + '/Layout/' + layout) }}" target="_blank">{{ layout }}</a>
+                                <a href="{{ url_for('static', filename=project_folder + '/Layout/' + layout) }}" target="_blank">
+                                    <img src="{{ url_for('static', filename='images/file_layout_1.png') }}" alt="File Icon" width="32" height="32">
+                                </a>
                             </li>
                             {% endfor %}
                         </ul>
@@ -130,7 +136,11 @@
                     <div>
                         <ul class="file-list">
                             {% for contract in files_contract %}
-                            <li title="{{ contract }}">{{ contract }}</li>
+                            <li title="{{ contract }}">
+                                <a href="{{ url_for('static', filename=project_folder + '/Contract/' + contract) }}" target="_blank">
+                                    <img src="{{ url_for('static', filename='images/file_contract_1.png') }}" alt="File Icon" width="32" height="32">
+                                </a>
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>

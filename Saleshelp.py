@@ -1,6 +1,8 @@
 import itertools
 import os
 import sqlite3
+import time
+from datetime import datetime
 from string import ascii_lowercase, digits
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file
@@ -213,32 +215,38 @@ def leads():
                            )
 
 
-@app.route('/static/<path:filename>')
-def serve_static(filename):
-    print()
-    return app.send_static_file(filename)
+# @app.route('/static/<path:filename>')
+# def serve_static(filename):
+#     print()
+#     return app.send_static_file(filename)
 
 # ---Экран информации о лиде----------------------------------
 @app.route("/lead/<alias>", methods=["POST", "GET"])
 def show_info_lead(alias):
     dbase = FDataBase(get_db())
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
-    project_folder = os.path.join('Project_OFFERS', alias)
+    project_folder = '/'.join(['Project_OFFERS', alias])
     description = current_lead['description']
     button_deal = current_lead['deal_win']
 
     try:
-        files_layout = os.listdir('static/' + project_folder + '/Layout')
+        folder_path = 'static/' + project_folder + '/Layout'
+        files_layout = os.listdir(folder_path)
+        files_layout = sorted(files_layout, key=lambda x: os.path.getctime(os.path.join(folder_path, x)), reverse=True)
     except FileNotFoundError:
         files_layout = []
 
     try:
+        folder_path = 'static/' + project_folder + '/Offers'
         files_offer = os.listdir('static/' + project_folder + '/Offers')
+        files_offer = sorted(files_offer, key=lambda x: os.path.getctime(os.path.join(folder_path, x)), reverse=True)
     except FileNotFoundError:
         files_offer = []
 
     try:
+        folder_path = 'static/' + project_folder + '/Contract'
         files_contract = os.listdir('static/' + project_folder + '/Contract')
+        files_contract = sorted(files_contract, key=lambda x: os.path.getctime(os.path.join(folder_path, x)), reverse=True)
     except FileNotFoundError:
         files_contract = []
 
@@ -320,8 +328,6 @@ def show_info_lead(alias):
 
     history_comments.reverse()
     history_event.reverse()
-    project_folder = project_folder.replace('\\', '/')
-
 
     history_lead = list(zip(history_comments, history_event))
     return render_template('lead.html', menu=menu, title=current_lead['company'], current_lead=current_lead,
