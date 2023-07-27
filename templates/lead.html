@@ -4,10 +4,10 @@
 
 {% block information %}
 {{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.project }} |
-{% if current_lead.deal_win == 1 %}
-<div style="color: rgb(0, 0, 0); font-weight: bold; margin-left: 5px"> Теплый клиент, нужно дожать</div>
+{% if current_lead.lead_qualiti == 1 %}
+<div style="color: rgb(0, 0, 0); font-weight: bold; margin-left: 5px"> Теплый клиент, уделяем внимание</div>
 {% endif %}
-{% if current_lead.deal_win == 2 %}
+{% if current_lead.lead_qualiti == 2 %}
 <div style="color: rgb(0, 0, 0); font-weight: bold; margin-left: 5px;"> Сделка выиграна, договор подписан</div>
 {% endif %}
 
@@ -63,19 +63,26 @@
             Новый расчет</button>
     </form>
 
-    <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
+    <form class="form-button-status" action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
         enctype="multipart/form-data">
         <div class="button-deal-win">
-            <button type="submit" name="deal-win" class="button-accept" value="1" onclick="reloadPage()" 
-            {% if deal %} style="display: none;" {% endif %}>
+            <button type="submit" name="lead_qualiti" value="1" {% if lead_qualiti==1 %} disabled class="disabled" {%
+                else %} class="button-accept" {% endif %}>
                 Качественный лид
             </button>
         </div>
 
         <div class="button-deal-win">
-            <button type="submit" name="deal-win" class="button-accept" value="2" onclick="reloadPage()" 
-            {% if deal !=1 %} style="display: none;" {% endif %}>
+            <button type="submit" name="lead_qualiti" value="2" {% if lead_qualiti==2 %} disabled class="disabled" {%
+                else %} class="button-accept" {% endif %}>
                 Сделка выиграна
+            </button>
+        </div>
+
+        <div class="button-deal-win">
+            <button type="submit" name="lead_qualiti" class="button-accept" value="3" {% if lead_qualiti==3 %}
+                style="display: none;" {% endif %}>
+                Сбросить
             </button>
         </div>
     </form>
@@ -103,46 +110,109 @@
             </div>
 
             <div class="file-area">
+
                 <div class="div-file-list">
-                    <input type="submit" value="Коммерческое" name="button-upload-offer" onclick="reloadPage()">
-                    <div>
-                        <ul class="file-list">
-                            {% for offer in files_offer %}
-                            <li title="{{ offer }}">
-                                <a href="{{ url_for('static', filename=project_folder + '/Offers/' + offer) }}" target="_blank">
-                                    <img src="{{ url_for('static', filename='images/file_offer_1.png') }}" alt="File Icon" width="32" height="32">
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                    <div class="div-file-list">
+                        <input type="submit" value="Коммерческое" name="button-upload-offer" onclick="reloadPage()">
+                        <div>
+                            <ul class="file-list">
+                                {% for offer in files_offer %}
+                                <li title="{{ offer }}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Offers/' + offer) }}"
+                                        target="_blank">
+                                        <img src="{{ url_for('static', filename='images/file_offer_1.png') }}"
+                                            alt="File Icon" width="32" height="32">
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="div-file-list">
+                        <input type="submit" value="Инфо от клиента" name="button-upload-offer" onclick="reloadPage()">
+                        <div>
+                            <ul class="file-list">
+                                {% for offer in files_offer %}
+                                <li title="{{ offer }}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Offers/' + offer) }}"
+                                        target="_blank">
+                                        <img src="{{ url_for('static', filename='images/file_offer_1.png') }}"
+                                            alt="File Icon" width="32" height="32">
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
+
                 <div class="div-file-list">
-                    <input type="submit" value="Чертежи" name="button-upload-layout" onclick="reloadPage()">
-                    <div>
-                        <ul class="file-list">
-                            {% for layout in files_layout %}
-                            <li title="{{ layout}}">
-                                <a href="{{ url_for('static', filename=project_folder + '/Layout/' + layout) }}" target="_blank">
-                                    <img src="{{ url_for('static', filename='images/file_layout_1.png') }}" alt="File Icon" width="32" height="32">
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                    <div class="div-file-list">
+                        <input type="submit" value="Чертежи Серега" name="button-upload-layout" onclick="reloadPage()">
+                        <div>
+                            <ul class="file-list">
+                                {% for layout in files_layout %}
+                                <li title="{{ layout}}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Layout/' + layout) }}"
+                                        target="_blank">
+                                        <img src="{{ url_for('static', filename='images/file_layout_1.png') }}"
+                                            alt="File Icon" width="32" height="32">
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="div-file-list">
+                        <input type="submit" value="Чертежи Protan" name="button-upload-layout" onclick="reloadPage()">
+                        <div>
+                            <ul class="file-list">
+                                {% for layout in files_layout %}
+                                <li title="{{ layout}}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Layout/' + layout) }}"
+                                        target="_blank">
+                                        <img src="{{ url_for('static', filename='images/file_layout_1.png') }}"
+                                            alt="File Icon" width="32" height="32">
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
+
                 <div class="div-file-list">
-                    <input type="submit" value="Договора" name="button-upload-contract" onclick="reloadPage()">
-                    <div>
-                        <ul class="file-list">
-                            {% for contract in files_contract %}
-                            <li title="{{ contract }}">
-                                <a href="{{ url_for('static', filename=project_folder + '/Contract/' + contract) }}" target="_blank">
-                                    <img src="{{ url_for('static', filename='images/file_contract_1.png') }}" alt="File Icon" width="32" height="32">
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                    <div class="div-file-list">
+                        <input type="submit" value="Фото разное" name="button-upload-contract" onclick="reloadPage()">
+                        <div>
+                            <ul class="file-list">
+                                {% for contract in files_contract %}
+                                <li title="{{ contract }}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Contract/' + contract) }}"
+                                        target="_blank">
+                                        <img src="{{ url_for('static', filename='images/file_contract_1.png') }}"
+                                            alt="File Icon" width="32" height="32">
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="div-file-list">
+                        <input type="submit" value="Договора" name="button-upload-contract" onclick="reloadPage()">
+                        <div>
+                            <ul class="file-list">
+                                {% for contract in files_contract %}
+                                <li title="{{ contract }}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Contract/' + contract) }}"
+                                        target="_blank">
+                                        <img src="{{ url_for('static', filename='images/file_contract_1.png') }}"
+                                            alt="File Icon" width="32" height="32">
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -171,7 +241,7 @@
             <!--Выбрать файл-->
             <div class="choose-file">
                 <input type="file" name="file" accept=".jpg, .png, .pdf, .dwg, .doc, .docx" multiple>
-            </div>  
+            </div>
             <!---------------->
 
             <div class="description-button-accept">

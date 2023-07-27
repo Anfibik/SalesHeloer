@@ -1,8 +1,6 @@
 import itertools
 import os
 import sqlite3
-import time
-from datetime import datetime
 from string import ascii_lowercase, digits
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file
@@ -155,12 +153,19 @@ title_table_leads = [
 @login_required
 def leads():
     dbase = FDataBase(get_db())
+    button_sort_company = dbase.get_record('users', ('email', current_user.get_user_email()))['sort_value']
+    check_filter = False
 
     # Добавление лидов в базу данных
     if request.method == "POST":
         checkbox_value_id_lead = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-lead')
         button_add = request.form.get('button-add-lead')
+        if request.form.get('lead_qualiti'):
+            dbase.update_record('users', 'sort_value', button_sort_company,
+                                {'sort_value': request.form.get('lead_qualiti')})
+            button_sort_company = request.form.get('lead_qualiti')
+        check_filter = request.form.get('filter')
 
         if checkbox_value_id_lead and button_delete:
             dbase.del_records('lead', checkbox_value_id_lead)
@@ -168,14 +173,12 @@ def leads():
                 flash("Записи успешно удалены")
             else:
                 flash("Запись успешно удалена")
-
             records_del_calk = []
             for id_lead in checkbox_value_id_lead:
                 records_del_calk.append(dbase.get_info_records('my_warehouse',
                                                                current_user.get_user_email(),
                                                                ('lead_ID', id_lead)))
             records_del_calk = list(map(lambda x: x['id'], itertools.chain.from_iterable(records_del_calk)))
-
             if len(records_del_calk) > 0:
                 dbase.del_records('my_warehouse', records_del_calk)
 
@@ -187,7 +190,6 @@ def leads():
                     name_company = name_company.replace(s, ' ')
             name_company = name_company.split()
             name_company = "_".join(name_company)
-
             res = dbase.set_new_lead(name_company, request.form.get('name'), request.form.get('phone'),
                                      request.form.get('mail'), request.form.get('project'),
                                      current_user.get_user_email(),
@@ -208,17 +210,32 @@ def leads():
         dbase.update_record("lead", 'id', lead[0], {'amount_calc': amount_calc})
         lead[7] = amount_calc
 
+    #  Сортировка сделок по их значимости
+
+    if int(button_sort_company) == 1:
+        if check_filter:
+            get_new_lead = sorted(filter(lambda x: x[10] == 1, get_new_lead), reverse=True)
+        else:
+            get_new_lead = sorted(get_new_lead, key=lambda x: x[10])
+
+    if int(button_sort_company) == 2:
+        if check_filter:
+            get_new_lead = sorted(filter(lambda x: x[10] == 2, get_new_lead), reverse=True)
+        else:
+            get_new_lead = sorted(get_new_lead, key=lambda x: x[10])
+
+    if int(button_sort_company) == 3:
+        if check_filter:
+            get_new_lead = sorted(filter(lambda x: x[10] == 3, get_new_lead), reverse=True)
+        else:
+            get_new_lead = sorted(get_new_lead, key=lambda x: x[10], reverse=True)
+
     return render_template('leads.html', title='My Trades', menu=menu,
                            title_table_leads=title_table_leads,
                            get_new_lead=get_new_lead,
                            current_user=current_user.get_user_name()
                            )
 
-
-# @app.route('/static/<path:filename>')
-# def serve_static(filename):
-#     print()
-#     return app.send_static_file(filename)
 
 # ---Экран информации о лиде----------------------------------
 @app.route("/lead/<alias>", methods=["POST", "GET"])
@@ -227,7 +244,7 @@ def show_info_lead(alias):
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
     project_folder = '/'.join(['Project_OFFERS', alias])
     description = current_lead['description']
-    button_deal = current_lead['deal_win']
+    lead_qualiti = current_lead['lead_qualiti']
 
     try:
         folder_path = 'static/' + project_folder + '/Layout'
@@ -246,7 +263,8 @@ def show_info_lead(alias):
     try:
         folder_path = 'static/' + project_folder + '/Contract'
         files_contract = os.listdir('static/' + project_folder + '/Contract')
-        files_contract = sorted(files_contract, key=lambda x: os.path.getctime(os.path.join(folder_path, x)), reverse=True)
+        files_contract = sorted(files_contract, key=lambda x: os.path.getctime(os.path.join(folder_path, x)),
+                                reverse=True)
     except FileNotFoundError:
         files_contract = []
 
@@ -266,8 +284,9 @@ def show_info_lead(alias):
         button_lead_comment = request.form.get('button-accept-comments')
         button_description_save = request.form.get('description')
 
-        if request.form.get('deal-win'):
-            button_deal = request.form.get('deal-win')
+        if request.form.get('lead_qualiti'):
+            lead_qualiti = request.form.get('lead_qualiti')
+            dbase.update_record('lead', 'id', current_lead['id'], {'lead_qualiti': lead_qualiti})
 
         button_upload_layout = request.form.get('button-upload-layout')
         button_upload_offer = request.form.get('button-upload-offer')
@@ -307,9 +326,6 @@ def show_info_lead(alias):
             description = request.form.get('description')
             dbase.update_record('lead', 'id', current_lead['id'], {'description': description})
 
-        if button_deal:
-            dbase.update_record('lead', 'id', current_lead['id'], {'deal_win': button_deal})
-
         if button_lead_comment:
             if request.form.get('comment-for-lead').replace(' ', ''):
                 current_datetime = button_lead_comment
@@ -335,7 +351,7 @@ def show_info_lead(alias):
                            value_table_calc_BVZ=value_table_calc_BVZ,
                            history_lead=history_lead,
                            description=description,
-                           deal=button_deal,
+                           lead_qualiti=lead_qualiti,
                            files_layout=files_layout,
                            files_offer=files_offer,
                            files_contract=files_contract,
@@ -382,7 +398,7 @@ def pricing():
         checkbox_value = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-calc')
         if checkbox_value and button_delete:
-            dbase.del_records('my_warehouse', checkbox_value)
+            dbase.del_records('archive_calculating', checkbox_value)
 
     choose_product = [
         {"name": 'БВЗ', "product": 'BVZ'},

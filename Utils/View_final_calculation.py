@@ -1,5 +1,5 @@
 def format_price(price):
-    return '{:,.2f}'.format(price).replace(',', " ")
+    return '{:,.2f}'.format(int(price)).replace(',', " ")
 
 
 title_table = [
@@ -48,7 +48,7 @@ def view_table_warehouse(dbase, current_user, current_lead=None, page=None):
             "percent_w": f"{record['percent_w']} %",
             "price_delivery": f"{format_price(record['price_delivery'] * record['exchange_rates_TO'])} грн",
             "price_building": f"{format_price(record['price_building'] * record['exchange_rates_TO'])} грн",
-            "price_selling_UA": f"{format_price(record['price_selling_UA'])} грн",
+            "price_selling_UA": f"{format_price(record['price_sell_warehouse_UA'])} грн",
             "cost_square_meters_UA": f"{format_price(record['cost_square_meters_UA'])} грн",
             "cost_foundation": f"{format_price(record['cost_foundation'])} грн",
             "cost_sq_met_found": f"{format_price(record['cost_sq_met_found'])} грн",

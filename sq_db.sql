@@ -1,6 +1,6 @@
-CREATE TABLE IF NOT EXISTS project_comments (
+CREATE TABLE IF NOT EXISTS sort_value (
 id integer PRIMARY KEY AUTOINCREMENT,
-leads_email TEXT,
+lead_qualiti INTEGER,
 warehouse_ID TEXT,
 comments TEXT
 );

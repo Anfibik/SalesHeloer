@@ -32,7 +32,15 @@
           <input type="submit" name="button-delete-lead" value="удалить" class="button-delete-lead">
         </th>
         <th>№</th>
-        {% for title_col in title_table_leads %}
+        <th class="button_sort_qualiti">
+          <input type="checkbox" name="filter" id="filter" value="True">
+          <label for="filter">Компания</label>
+          <button type="submit" name="lead_qualiti" value="1"></button>
+          <button type="submit" name="lead_qualiti" value="2"></button>
+          <button type="submit" name="lead_qualiti" value="3"></button>
+  
+        </th>
+        {% for title_col in title_table_leads[1::] %}
         <th>{{ title_col.placeholder }}</th>
         {% endfor %}
 

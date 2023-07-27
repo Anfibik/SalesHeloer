@@ -455,6 +455,18 @@ h1 {
 	white-space: nowrap;
 }
 
+.button-delete-lead-company {
+	width: 100px;
+	height: 20px;
+	border-radius: 1px;
+	font-size: 12px;
+	padding: 0;
+	border-radius: 5px;
+	margin-bottom: 2px;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
 .button-delete-lead {
 	width: 45px;
 	height: 20px;
@@ -467,12 +479,23 @@ h1 {
 	margin-right: 2px;
 }
 
-.button-delete-lead :hover {
-	background-color: #007FFF;
+.button-delete-lead-company:hover {
+	background-color: #ff0000;
+	color: white;
+}
+
+.button-delete-lead-company:active {
+	background-color: #000000;
+	color: white;
+}
+
+.button-delete-lead:hover {
+	background-color: #ff0000;
+	color: white;
 }
 
 .button-delete-lead:active {
-	background-color: #003366;
+	background-color: #000000;
 	color: white;
 }
 
@@ -561,19 +584,20 @@ table td a:hover {
 .vertical-line::before {
 	content: "";
 	display: block;
-	height: 168px;
+	height: 100%;
 	border-left: 2px solid rgb(186, 179, 179);
 }
 
 .vertical-line2::before {
 	content: "";
 	display: block;
-	height: 120px;
+	height: 100%;
 	border-left: 2px solid rgb(186, 179, 179);
 }
 
 hr {
 	margin: 0;
+
 }
 
 .output-forms-pricing-page hr {
@@ -598,6 +622,11 @@ hr {
 .input-forms-pricing-page,
 .div-precent-input {
 	width: 45%;
+	display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-items: stretch;
 }
 
 #form-precent-cost {
@@ -660,6 +689,11 @@ hr {
 	width: 55%;
 }
 
+.output-cost hr {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
 /* Стили для форм ввода */
 .form-inpute-dimension,
 .form-inpute-pricing,
@@ -678,6 +712,7 @@ hr {
 .form-inpute-option input {
 	width: 60px;
 	margin-right: 5px;
+	margin-left: 5px;
 }
 
 .form-inpute-dimension label,
@@ -706,7 +741,7 @@ hr {
 	background-color: #113ec7;
 	cursor: pointer;
 	transition: all 0.2s ease;
-	margin-bottom: 8px;
+	margin-bottom: 2px;
 	margin-right: 15px;
 	margin-left: 15px;
 	/* Добавляем анимацию для всех свойств */
@@ -737,7 +772,7 @@ hr {
 .title {
 	display: flex;
 	flex-direction: column;
-	width: 32%;
+	width: 35%;
 	flex-wrap: wrap;
 	align-content: flex-start;
 	justify-content: flex-start;
@@ -750,7 +785,7 @@ hr {
 
 
 .title b {
-	width: 112px;
+	width: 120px;
 	text-align: left;
 	margin-right: 5px;
 }
@@ -881,7 +916,8 @@ hr {
 	display: flex;
 	margin-bottom: 5px;
 	width: 300px;
-	justify-content: flex-end;;
+	justify-content: flex-end;
+	;
 }
 
 .description-button-accept div {
@@ -901,42 +937,47 @@ hr {
 
 .panel-buttons-save_file_desc {
 	display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: space-between
+	height: 100%;
+	align-items: center;
+	justify-content: space-between
 }
 
 .file-area {
 	display: flex;
 	width: 50%;
 	flex-direction: row;
-	height: 200px;
-	padding: 5px;
+	height: 220px;
 	justify-content: space-between;
 }
 
 .div-file-list {
-    flex: 1;
-    display: flex;
-    border: 1px solid #ccc;
-    padding: 5px;
-    flex-direction: column;
+	flex: 1;
+	display: flex;
+	padding: 5px;
+	flex-direction: column;
 }
 
+.div-file-list div div {
+	margin-top: 2px;
+	padding: 2px;
+	border: 1px solid #ccc;
+}
+
+
 .div-file-list div {
-	height: 121px;
+	height: 60px;
 }
 
 .file-list {
-    display: flex;
-    /* margin-top: 10px; */
-    overflow: auto;
-    max-height: 150px;
-    max-width: 150px;
-    list-style-type: none;
-    padding-left: 0;
-    flex-direction: row;
-    flex-wrap: nowrap;
+	display: flex;
+	/* margin-top: 10px; */
+	overflow: auto;
+	max-height: 150px;
+	max-width: 150px;
+	list-style-type: none;
+	padding-left: 0;
+	flex-direction: row;
+	flex-wrap: nowrap;
 }
 
 
@@ -954,12 +995,6 @@ hr {
 	background-color: transparent;
 	/* Устанавливаем прозрачный фон скроллбара */
 }
-
-.file-area .div-file-list:nth-child(2) {
-	margin-left: 5px;
-	margin-right: 5px;
-}
-
 .comment-for-lead {
 	display: flex;
 	width: 40%;
@@ -1042,6 +1077,7 @@ hr {
 	height: auto;
 	display: flex;
 	justify-content: space-between;
+	margin-bottom: 4px;
 }
 
 .choose-file {
@@ -1064,3 +1100,65 @@ hr {
 .flash {
 	margin-left: 4px;
 }
+
+.form-button-status {
+	display: flex;
+}
+
+.button_sort_qualiti>button {
+	width: 20px;
+	height: 15px;
+}
+
+.button_sort_qualiti>button :hover {
+	cursor: pointer;
+}
+
+
+
+/* Стили для инпута с именем lead_qualiti_1 */
+.button_sort_qualiti :nth-child(3) {
+	background-color: rgba(150, 233, 233, 0.971);
+
+}
+
+/* Стили для инпута с именем lead_qualiti_2 */
+.button_sort_qualiti :nth-child(4) {
+	background-color: rgba(119, 237, 92, 0.971);
+}
+
+/* Стили для инпута с именем lead_qualiti_3 */
+.button_sort_qualiti :last-child {
+	background-color: rgb(255, 255, 255);
+}
+
+.disabled {
+	background-color: gray;
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+
+.input-parametrs {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: flex-end;
+	align-items: center;
+	justify-content: space-around;
+}
+
+.form-advance-setting-input {
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	justify-content: flex-end;
+}
+
+.input-field-disabled {
+	cursor: not-allowed; /* Запретить указатель при наведении */
+	opacity: 0.5; /* Установить прозрачность на 50% */
+	color: #b6b1b1; /* Задать бледный цвет текста */
+	pointer-events: none; /* Запретить события указателя (нельзя нажать или выбрать текст) */
+	width: 20%;
+  }

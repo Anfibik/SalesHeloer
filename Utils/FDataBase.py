@@ -25,13 +25,13 @@ class FDataBase:
 
         return []
 
-    def set_new_lead(self, company, name, phone, mail, project, user_email, job_title='', price='', deal_win=''):
+    def set_new_lead(self, company, name, phone, mail, project, user_email, job_title='', price='', lead_qualiti=3):
         uniqueID = string_to_ID(company + name + user_email)
         try:
             self.__cur.execute(
-                "INSERT INTO lead (unique_ID, company, name, phone, mail, project, job_title, price, deal_win, user_email)"
+                "INSERT INTO lead (unique_ID, company, name, phone, mail, project, job_title, price, lead_qualiti, user_email)"
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (uniqueID, company, name, phone, mail, project, job_title, price, deal_win, user_email))
+                (uniqueID, company, name, phone, mail, project, job_title, price, lead_qualiti, user_email))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Ошибка добавления статьи в БД " + str(e))
@@ -195,7 +195,7 @@ class FDataBase:
             self.__cur.execute(f"SELECT * FROM {name_table} WHERE {query};")
             res = self.__cur.fetchone()
             if not res:
-                print("Запись не найден")
+                print("Запись не найденa")
                 return False
             return res
         except sqlite3.Error as e:
