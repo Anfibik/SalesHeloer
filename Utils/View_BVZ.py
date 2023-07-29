@@ -34,8 +34,9 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
               'sendvich': False, 'gates': False, 'price_sq_met_sendvich': False, 'profit_warehouse_UA': 0,
               'price_sell_sendvich_UA': 0, 'price_sell_light_UA': 0, 'price_sell_gate_UA': 0, 'price_sell_rack_UA': 0,
               'profit_sendvich_UA': 0,  'profit_light_UA': 0, 'profit_gate_UA': 0, 'profit_rack_UA': 0,
-              'price_sell_warehouse_UA': 0, 'price_sell_warehouse_option_UA': 0,
+              'price_sell_warehouse_UA': 0, 'price_sell_warehouse_EU': 0,
               'price_sell_warehouse_option_EU': 0, 'profit_warehouse_option_EU': 0,
+              'price_sell_warehouse_option_UA': 0, 'profit_warehouse_option_UA': 0,
               }
 
     if update_dict is not None:
@@ -136,8 +137,8 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
         {"name": 'price_square_meters', "title": '1 [m²] с НДС: ', "result": f"{format_price(m_dict['price_square_meters'])} €"},
         {"name": 'price_cubic_meters', "title": '1 [m³] с НДС: ', "result": f"{format_price(m_dict['price_cubic_meters'])} €"},
 
-        {"name": 'price_project', "title": 'На локации: ',
-         "result": f"{format_price(m_dict['price_project'])} €"},
+        {"name": 'price_project', "title": 'Доп затраты ',
+         "result": f"{format_price(m_dict['price_delivery'] + m_dict['price_building'])} €"},
         {"name": 'price_delivery', "title": 'Доставка: ', "result": f"{format_price(m_dict['price_delivery'])} €"},
         {"name": 'price_building', "title": 'Монтаж: ', "result": f"{format_price(m_dict['price_building'])} €"},
     ]
@@ -180,11 +181,11 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
 
 
         {"name": 'price_selling_UA', "title": 'Склад UA: ', "result": f"{format_price(m_dict['price_sell_warehouse_option_UA'])} грн"},
-        {"name": 'profit_UA', "title": 'Маржа UA: ', "result": f"{format_price(m_dict['profit_UA'])} грн"},
+        {"name": 'profit_UA', "title": 'Маржа UA: ', "result": f"{format_price(m_dict['profit_warehouse_option_UA'])} грн"},
         {"name": 'cost_square_meters_UA', "title": 'цена 1 [m²]: ', "result": f"{format_price(m_dict['cost_square_meters_UA'])} грн"},
 
-        {"name": 'cost_option', "title": 'Опции ', "result": f"{format_price(m_dict['cost_option'])} грн"},
         {"name": 'cost_foundation', "title": 'Фундамент: ', "result": f"{format_price(m_dict['cost_foundation'])} грн"},
+        {"name": 'cost_option', "title": 'Маржа: ', "result": f"{format_price(m_dict['cost_option'])} грн"},
         {"name": 'cost_sq_met_found', "title": 'цена 1 [m²]: ', "result": f"{format_price(m_dict['cost_sq_met_found'])} грн"},
     ]
 

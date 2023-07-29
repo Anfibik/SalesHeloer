@@ -83,44 +83,32 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
     if "button-accept-percent" in request_form:
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])  # словарь данных
 
-        percent_w = int(request_form["percent_w"]) if request_form["percent_w"] != '' else 0  # Процент моржи склада
-        percent_f = int(request_form["percent_f"]) if request_form["percent_f"] != '' else 0  # Процент моржи фундамента
-        percent_o = int(request_form["percent_o"]) if request_form["percent_o"] != '' else 0  # Процент моржи опций
-        exch_rate_from = int(request_form['exchange_rates_from'])  # Курс поставщика
-        exch_rate_to = int(request_form['exchange_rates_TO'])  # Курс клиента
+        percent_w = int(request_form["percent_w"]) if request_form["percent_w"] != '' else 0
+        percent_f = int(request_form["percent_f"]) if request_form["percent_f"] != '' else 0
+        percent_o = int(request_form["percent_o"]) if request_form["percent_o"] != '' else 0
+        exch_rate_from = int(request_form['exchange_rates_from'])
+        exch_rate_to = int(request_form['exchange_rates_TO'])
 
         #  ----------- Расчет стоимости склада в ЕВРО для клиента (стоит на локации)------------------------------------
-        # блок расчета финальной стоимости склада в ЕВРО от Протана, без опций, без сендвича
-        # Цена 1м.кв. сырая ЕВРО: КОНСТРУКЦИЯ
-        price_w_sq_m_EU = round((last_data["price_square_meters"] * percent_w / 100) + last_data["price_square_meters"], 2)
-        # Преобразование цены 1м ЕВРО с учетом курсовой разницы: КОНСТРУКЦИЯ
-        price_w_sq_m_EU = round(price_w_sq_m_EU * exch_rate_to / exch_rate_from, 2)
-        # Цена СКЛАДА в ЕВРО для клиента, стоящего на локации без опций с учетом курсовой разницы
-        price_w_EU = price_w_sq_m_EU * last_data["area"] + last_data["price_delivery"] + last_data["price_building"]
-        # Цена СКЛАДА за 1 кв.м стоящего на локации - ПРОДАЖА КЛИЕНТУ (доставка и монтаж)
-        price_sell_w_sq_m_EU = round(price_w_EU / last_data["area"], 2)
-        # Цена склада финал ЕВРО (монтаж, логистика)
-        price_sell_warehouse_EU = round(price_sell_w_sq_m_EU * last_data["area"], 2)
-        # Моржа на складе в ЕВРО
-        profit_warehouse_EU = price_sell_warehouse_EU - last_data["price_project"]
+        price_sell_w_sq_m_EU = round((last_data["price_square_meters"] * percent_w / 100) + last_data["price_square_meters"], 2)
+        price_sell_w_sq_m_EU = round(price_sell_w_sq_m_EU * exch_rate_to / exch_rate_from, 3)  # курсовая разница
+        price_sell_wdb_EU = price_sell_w_sq_m_EU * last_data["area"] + last_data["price_delivery"] + last_data["price_building"]
+        price_sell_wdb_sq_m_EU = round(price_sell_wdb_EU / last_data["area"], 2)
+        price_sell_wdb_EU = price_sell_wdb_sq_m_EU * last_data["area"]
+        profit_wdb_EU = round(price_sell_wdb_EU - last_data["price_project"], 2)
 
         #  ----------- Расчет стоимости склада в ГРН для клиента (стоит на локации)-------------------------------------
         # блок расчета финальной стоимости склада в ГРН от Протана, без опций, без сендвича на основе цены евро
-        # Цена 1м.кв склада ГРН
-        price_sell_w_sq_m_UA = price_sell_w_sq_m_EU * exch_rate_to
-        # Цена СКЛАДА финал ГРН
-        price_sell_warehouse_UA = int(price_sell_w_sq_m_UA) * int(last_data["area"])
-        # Моржа склад финал ГРН
-        profit_warehouse_UA = price_sell_warehouse_UA - (last_data["price_project"] * exch_rate_from)
+        price_sell_wdb_sq_m_UA = round(price_sell_wdb_sq_m_EU * exch_rate_to, 2)
+        price_sell_wdb_UA = round(price_sell_wdb_sq_m_UA * last_data["area"], 2)
+        profit_wdb_UA = profit_wdb_EU * exch_rate_to
 
         #  ----------- Расчет стоимости СЭНДВИЧ ПАНЕЛЕЙ ----------------------------------------------------------------
         # блок расчета финальной стоимости СЭНДВИЧ ПАНЕЛЕЙ ГРН
         if last_data["price_sendvich"] > 0:
             price_sell_sendvich_EU = (last_data["price_sendvich"] * percent_w / 100) + last_data["price_sendvich"]
-            # цена
             price_sell_sendvich_EU = round(price_sell_sendvich_EU * exch_rate_to / exch_rate_from, 2)
             price_sell_sendvich_UA = ceil(price_sell_sendvich_EU * exch_rate_to)
-            # моржа
             profit_sendvich_EU = price_sell_sendvich_EU - last_data["price_sendvich"]
             profit_sendvich_UA = profit_sendvich_EU * exch_rate_from
         else:
@@ -130,10 +118,8 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         # блок расчета финальной стоимости ОСВЕЩЕНИЯ ГРН
         if last_data["price_light"] > 0:
             price_sell_light_EU = (last_data["price_light"] * percent_o / 100) + last_data["price_light"]
-            # цена
             price_sell_light_EU = round(price_sell_light_EU * exch_rate_to / exch_rate_from, 2)
             price_sell_light_UA = ceil(price_sell_light_EU * exch_rate_to)
-            # моржа
             profit_light_EU = price_sell_light_EU - last_data["price_light"]
             profit_light_UA = profit_light_EU * exch_rate_from
         else:
@@ -143,10 +129,8 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         # блок расчета финальной стоимости ВОРОТ ГРН
         if last_data["price_gate"] > 0:
             price_sell_gate_EU = (last_data["price_gate"] * percent_o / 100) + last_data["price_gate"]
-            # цена
             price_sell_gate_EU = round(price_sell_gate_EU * exch_rate_to / exch_rate_from, 2)
             price_sell_gate_UA = ceil(price_sell_gate_EU * exch_rate_to)
-            # моржа
             profit_gate_EU = price_sell_gate_EU - last_data["price_gate"]
             profit_gate_UA = profit_gate_EU * exch_rate_from
         else:
@@ -156,10 +140,8 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         # блок расчета финальной стоимости СТЕЛЛАЖЕЙ ГРН
         if last_data["price_rack"] > 0:
             price_sell_rack_EU = (last_data["price_rack"] * percent_o / 100) + last_data["price_rack"]
-            # цена
             price_sell_rack_EU = round(price_sell_rack_EU * exch_rate_to / exch_rate_from, 2)
             price_sell_rack_UA = ceil(price_sell_rack_EU * exch_rate_to)
-            # моржа
             profit_rack_EU = price_sell_rack_EU - last_data["price_rack"]
             profit_rack_UA = profit_rack_EU * exch_rate_from
         else:
@@ -168,20 +150,25 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         #  ----------- Расчет стоимости ФУНДАМЕНТА ---------------------------------------------------------------------
         # Цена 1м.кв фундамент ЕВРО
         price_f_sq_m_EU = (last_data["price_sq_met_found"] * percent_f / 100) + last_data["price_sq_met_found"]
-        # Цена 1м финал фундамент ЕВРО
         price_sell_f_sq_m_EU = ceil(price_f_sq_m_EU * exch_rate_to / exch_rate_from)
-        # Цена 1м.кв финал фундамент ГРН
         price_sell_f_sq_m_UA = price_sell_f_sq_m_EU * exch_rate_from
-        # Цена фундамент финал ГРН
         price_sell_f_UA = price_sell_f_sq_m_UA * last_data["area_found"]
-        # Моржа фундамент финал ГРН
         profit_f_UA = price_sell_f_UA - (last_data["price_foundation"] * exch_rate_from)
 
-        # расчеты по опциям
-        price_sell_option_EU = price_sell_sendvich_EU + price_sell_gate_EU + price_sell_light_EU
-        profit_option_EU = profit_sendvich_EU + profit_gate_EU + profit_light_EU
-        price_sell_option_UA = price_sell_sendvich_UA + price_sell_gate_UA + price_sell_light_UA
-        profit_o = profit_warehouse_option_UA = profit_sendvich_UA + profit_gate_UA + profit_light_UA
+
+        final_sell_wsdbo_EU = price_sell_wdb_EU + price_sell_sendvich_EU + price_sell_light_EU + price_sell_gate_EU
+        final_sell_wsdbo_sq_m_EU = round(final_sell_wsdbo_EU / last_data["area"], 2)
+        final_sell_wsdbo_EU = final_sell_wsdbo_sq_m_EU * last_data["area"]
+        final_profit_wsdbo_EU = profit_wdb_EU + profit_sendvich_EU + profit_light_EU + profit_gate_EU
+
+        final_sell_wsdbo_UA = final_sell_wsdbo_EU * exch_rate_to
+        final_sell_wsdbo_sq_m_UA = final_sell_wsdbo_sq_m_EU * exch_rate_to
+        final_profit_wsdbo_UA = final_profit_wsdbo_EU * exch_rate_to
+
+        project_sell_UA_1 = final_sell_wsdbo_UA + price_sell_rack_UA + price_sell_f_UA
+        project_sell_sq_m_UA = ceil(project_sell_UA_1 / last_data["area"])
+        project_sell_UA = project_sell_sq_m_UA * last_data["area"]
+        project_profit_UA = final_profit_wsdbo_UA + profit_rack_UA + profit_f_UA + (project_sell_UA - project_sell_UA_1)
 
 
         # ---------- Добавляем в словарь данные -------------------------------------------------------------
@@ -192,28 +179,28 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         last_data["exchange_rates_TO"] = exch_rate_to  # Добавляем в словарь Курс клиента
 
         #  Блок с расчетами по стоимости и морже опций и склада отдельно
-        last_data["price_sell_warehouse_UA"] = price_sell_warehouse_UA
+        last_data["price_sell_warehouse_UA"] = price_sell_wdb_UA
         last_data["price_sell_sendvich_UA"] = price_sell_sendvich_UA
         last_data["price_sell_light_UA"] = price_sell_light_UA
         last_data["price_sell_gate_UA"] = price_sell_gate_UA
         last_data["price_sell_rack_UA"] = price_sell_rack_UA
 
-        last_data["profit_warehouse_UA"] = profit_warehouse_UA
+        last_data["profit_warehouse_UA"] = profit_wdb_UA
         last_data["profit_sendvich_UA"] = profit_sendvich_UA
         last_data["profit_light_UA"] = profit_light_UA
         last_data["profit_gate_UA"] = profit_gate_UA
         last_data["profit_rack_UA"] = profit_rack_UA
 
         #  Колонка стоимости склада в ЕВРО с опциями (склад, сэндвич, свет, ворота)
-        last_data["price_sell_warehouse_option_EU"] = round(price_sell_warehouse_EU + price_sell_option_EU, 2)
-        last_data["profit_warehouse_option_EU"] = round(profit_warehouse_EU + profit_option_EU, 2)
-        last_data["cost_square_meters_EU"] = price_sell_w_sq_m_EU
-        last_data["cost_cubic_meters_EU"] = round(price_sell_warehouse_EU / last_data["volume"], 2)
+        last_data["price_sell_warehouse_option_EU"] = final_sell_wsdbo_EU
+        last_data["profit_warehouse_option_EU"] = final_profit_wsdbo_EU
+        last_data["cost_square_meters_EU"] = final_sell_wsdbo_sq_m_EU
+        last_data["cost_cubic_meters_EU"] = round(price_sell_wdb_EU / last_data["volume"], 2)
 
         #  Колонка стоимости склада в ГРН с опциями (склад, сэндвич, свет, ворота)
-        last_data["price_sell_warehouse_option_UA"] = price_sell_warehouse_UA + price_sell_option_UA
-        last_data["profit_warehouse_option_UA"] = round(profit_warehouse_UA + profit_warehouse_option_UA, 2)
-        last_data["cost_square_meters_UA"] = price_sell_w_sq_m_UA
+        last_data["price_sell_warehouse_option_UA"] = final_sell_wsdbo_UA
+        last_data["profit_warehouse_option_UA"] = final_profit_wsdbo_UA
+        last_data["cost_square_meters_UA"] = final_sell_wsdbo_sq_m_UA
         last_data["cost_cubic_meters_UA"] = round(last_data["price_sell_warehouse_option_UA"] / last_data["volume"], 2)
 
         last_data["cost_foundation"] = price_sell_f_UA
@@ -224,14 +211,11 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         else:
             last_data["profit_percent"] = 0
 
-        last_data["cost_option"] = price_sell_gate_UA + price_sell_light_UA + price_sell_rack_UA
+        last_data["cost_option"] = profit_f_UA
 
-        profit_o_UA = profit_o * int(last_data["exchange_rates_TO"])
-
-        final_price_UA = price_sell_warehouse_UA + price_sell_f_UA + last_data["cost_option"]
-        last_data['final_cost_sq_m_pr'] = round(final_price_UA / last_data["area_found"])
-        last_data['final_price_UA'] = last_data['final_cost_sq_m_pr'] * last_data["area"]
-        last_data['final_profit_UA'] = round(profit_warehouse_UA + profit_f_UA + profit_o_UA, 2)
+        last_data['final_cost_sq_m_pr'] = project_sell_sq_m_UA
+        last_data['final_price_UA'] = project_sell_UA
+        last_data['final_profit_UA'] = project_profit_UA
         if last_data['final_price_UA'] > 0:
             last_data['final_profit_percent'] = round(last_data['final_profit_UA'] / last_data['final_price_UA'] * 100,
                                                       2)
