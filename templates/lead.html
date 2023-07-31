@@ -129,14 +129,14 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <input type="submit" value="Инфо от клиента" name="button-upload-offer" onclick="reloadPage()">
+                        <input type="submit" value="Информация" name="button-upload-info" onclick="reloadPage()">
                         <div>
                             <ul class="file-list">
-                                {% for offer in files_offer %}
-                                <li title="{{ offer }}">
-                                    <a href="{{ url_for('static', filename=project_folder + '/Offers/' + offer) }}"
+                                {% for info in files_client_info %}
+                                <li title="{{ info }}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Client_Info/' + info) }}"
                                         target="_blank">
-                                        <img src="{{ url_for('static', filename='images/file_offer_1.png') }}"
+                                        <img src="{{ url_for('static', filename='images/file_info_client_1.png') }}"
                                             alt="File Icon" width="32" height="32">
                                     </a>
                                 </li>
@@ -164,12 +164,12 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <input type="submit" value="Чертежи Protan" name="button-upload-layout" onclick="reloadPage()">
+                        <input type="submit" value="Чертежи Protan" name="button-upload-layout-Protan" onclick="reloadPage()">
                         <div>
                             <ul class="file-list">
-                                {% for layout in files_layout %}
+                                {% for layout in files_layout_protan %}
                                 <li title="{{ layout}}">
-                                    <a href="{{ url_for('static', filename=project_folder + '/Layout/' + layout) }}"
+                                    <a href="{{ url_for('static', filename=project_folder + '/Layout_Protan/' + layout) }}"
                                         target="_blank">
                                         <img src="{{ url_for('static', filename='images/file_layout_1.png') }}"
                                             alt="File Icon" width="32" height="32">
@@ -183,14 +183,14 @@
 
                 <div class="div-file-list">
                     <div class="div-file-list">
-                        <input type="submit" value="Фото разное" name="button-upload-contract" onclick="reloadPage()">
+                        <input type="submit" value="Фото разное" name="button-upload-photos" onclick="reloadPage()">
                         <div>
                             <ul class="file-list">
-                                {% for contract in files_contract %}
-                                <li title="{{ contract }}">
-                                    <a href="{{ url_for('static', filename=project_folder + '/Contract/' + contract) }}"
+                                {% for photo in files_photos %}
+                                <li title="{{ photo }}">
+                                    <a href="{{ url_for('static', filename=project_folder + '/Photos/' + photo) }}"
                                         target="_blank">
-                                        <img src="{{ url_for('static', filename='images/file_contract_1.png') }}"
+                                        <img src="{{ url_for('static', filename='images/file_photo_1.png') }}"
                                             alt="File Icon" width="32" height="32">
                                     </a>
                                 </li>
