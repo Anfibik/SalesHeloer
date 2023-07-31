@@ -240,6 +240,15 @@ def leads():
 # ---Экран информации о лиде----------------------------------
 @app.route("/lead/<alias>", methods=["POST", "GET"])
 def show_info_lead(alias):
+
+    def download_files(project_path, work_folder):
+        layout = request.files.getlist('file')
+        project_path = os.path.join('static', project_path, work_folder)
+        os.makedirs(project_path, exist_ok=True)
+        for file in layout:
+            file_path = os.path.join(project_path, file.filename)
+            file.save(file_path)
+
     dbase = FDataBase(get_db())
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
     project_folder = '/'.join(['Project_OFFERS', alias])
@@ -270,21 +279,24 @@ def show_info_lead(alias):
     try:
         folder_path = 'static/' + project_folder + '/Client_Info'
         files_client_info = os.listdir(folder_path)
-        files_client_info = sorted(files_client_info, key=lambda x: os.path.getctime(os.path.join(folder_path, x)), reverse=True)
+        files_client_info = sorted(files_client_info, key=lambda x: os.path.getctime(os.path.join(folder_path, x)),
+                                   reverse=True)
     except FileNotFoundError:
         files_client_info = []
 
     try:
         folder_path = 'static/' + project_folder + '/Layout_Protan'
         files_layout_protan = os.listdir(folder_path)
-        files_layout_protan = sorted(files_layout_protan, key=lambda x: os.path.getctime(os.path.join(folder_path, x)), reverse=True)
+        files_layout_protan = sorted(files_layout_protan, key=lambda x: os.path.getctime(os.path.join(folder_path, x)),
+                                     reverse=True)
     except FileNotFoundError:
         files_layout_protan = []
 
     try:
         folder_path = 'static/' + project_folder + '/Contract'
         files_contract = os.listdir(folder_path)
-        files_contract = sorted(files_contract, key=lambda x: os.path.getctime(os.path.join(folder_path, x)), reverse=True)
+        files_contract = sorted(files_contract, key=lambda x: os.path.getctime(os.path.join(folder_path, x)),
+                                reverse=True)
     except FileNotFoundError:
         files_contract = []
 
@@ -308,66 +320,9 @@ def show_info_lead(alias):
             lead_qualiti = request.form.get('lead_qualiti')
             dbase.update_record('lead', 'id', current_lead['id'], {'lead_qualiti': lead_qualiti})
 
-        button_upload_layout = request.form.get('button-upload-layout')
-        button_upload_offer = request.form.get('button-upload-offer')
-        button_upload_contract = request.form.get('button-upload-contract')
-        button_upload_info = request.form.get('button-upload-info')
-        button_upload_photos = request.form.get('button-upload-photos')
-        button_upload_layout_protan = request.form.get('button-upload-layout-Protan')
-
-        #  Сохранение макета проекта на сервер
-        if button_upload_layout:
-            layout = request.files.getlist('file')
-            project_folder = os.path.join('static', project_folder, 'Layout')
-            os.makedirs(project_folder, exist_ok=True)
-            for file in layout:
-                file_path = os.path.join(project_folder, file.filename)
-                file.save(file_path)
-
-        #  Сохранение фотографий
-        if button_upload_photos:
-            photos = request.files.getlist('file')
-            project_folder = os.path.join('static', project_folder, 'Photos')
-            os.makedirs(project_folder, exist_ok=True)
-            for file in photos:
-                file_path = os.path.join(project_folder, file.filename)
-                file.save(file_path)
-
-        #  Сохранение чертежей от Протана
-        if button_upload_layout_protan:
-            layout_protan = request.files.getlist('file')
-            project_folder = os.path.join('static', project_folder, 'Layout_Protan')
-            os.makedirs(project_folder, exist_ok=True)
-            for file in layout_protan:
-                file_path = os.path.join(project_folder, file.filename)
-                file.save(file_path)
-
-        #  Сохранение информации от клиента на сервер
-        if button_upload_info:
-            info_client = request.files.getlist('file')
-            project_folder = os.path.join('static', project_folder, 'Client_Info')
-            os.makedirs(project_folder, exist_ok=True)
-            for file in info_client:
-                file_path = os.path.join(project_folder, file.filename)
-                file.save(file_path)
-
-        #  Сохранение офера на сервер
-        if button_upload_offer:
-            offer = request.files.getlist('file')
-            project_folder = os.path.join('static', project_folder, 'Offers')
-            os.makedirs(project_folder, exist_ok=True)
-            for file in offer:
-                file_path = os.path.join(project_folder, file.filename)
-                file.save(file_path)
-
-        #  Сохранение контракта на сервер
-        if button_upload_contract:
-            contract = request.files.getlist('file')
-            project_folder = os.path.join('static', project_folder, 'Contract')
-            os.makedirs(project_folder, exist_ok=True)
-            for file in contract:
-                file_path = os.path.join(project_folder, file.filename)
-                file.save(file_path)
+        button_upload = request.form.get('button-upload')
+        if button_upload:
+            download_files(project_folder, button_upload)
 
         if checkbox_value and button_delete:
             dbase.del_records('my_warehouse', checkbox_value)

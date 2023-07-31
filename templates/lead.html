@@ -97,7 +97,7 @@
 
             <div class="comment-for-lead">
                 <div class="setting-lead-comments">
-                    <label for="event-comments">Выберете событие</label>
+                    <label for="event-comments" style="margin-right: 5px;">Выберете событие</label>
                     <select name="event-comments" id="event-comments">
                         <option value="Комментарий">Комментарий</option>
                         <option value="Телефонный разговор">Телефонный разговор</option>
@@ -113,7 +113,9 @@
 
                 <div class="div-file-list">
                     <div class="div-file-list">
-                        <input type="submit" value="Коммерческое" name="button-upload-offer" onclick="reloadPage()">
+                        <button type="submit" value="Offers" name="button-upload" title="{{'\n'.join(files_offer)}}" onclick="reloadPage()">
+                            Коммерческое
+                        </button>
                         <div>
                             <ul class="file-list">
                                 {% for offer in files_offer %}
@@ -129,7 +131,9 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <input type="submit" value="Информация" name="button-upload-info" onclick="reloadPage()">
+                        <button type="submit" value="Client_Info" name="button-upload" title="{{'\n'.join(files_client_info)}}" onclick="reloadPage()">
+                            Информация
+                        </button>
                         <div>
                             <ul class="file-list">
                                 {% for info in files_client_info %}
@@ -148,7 +152,9 @@
 
                 <div class="div-file-list">
                     <div class="div-file-list">
-                        <input type="submit" value="Чертежи Серега" name="button-upload-layout" onclick="reloadPage()">
+                        <button type="submit" value="Layout" name="button-upload" title="{{'\n'.join(files_layout)}}" onclick="reloadPage()">
+                            Чертежи Серега
+                        </button>
                         <div>
                             <ul class="file-list">
                                 {% for layout in files_layout %}
@@ -164,7 +170,9 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <input type="submit" value="Чертежи Protan" name="button-upload-layout-Protan" onclick="reloadPage()">
+                        <button type="submit" value="Layout_Protan" name="button-upload" title="{{'\n'.join(files_layout_protan)}}" onclick="reloadPage()">
+                           Чертежи Protan 
+                        </button>
                         <div>
                             <ul class="file-list">
                                 {% for layout in files_layout_protan %}
@@ -183,7 +191,9 @@
 
                 <div class="div-file-list">
                     <div class="div-file-list">
-                        <input type="submit" value="Фото разное" name="button-upload-photos" onclick="reloadPage()">
+                        <button type="submit" value="Photos" name="button-upload" title="{{'\n'.join(files_photos)}}" onclick="reloadPage()">
+                            Фото разное
+                        </button>
                         <div>
                             <ul class="file-list">
                                 {% for photo in files_photos %}
@@ -199,7 +209,9 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <input type="submit" value="Договора" name="button-upload-contract" onclick="reloadPage()">
+                        <button type="submit" value="Contract" name="button-upload" title="{{'\n'.join(files_contract)}}" onclick="reloadPage()">
+                            Договора
+                        </button>
                         <div>
                             <ul class="file-list">
                                 {% for contract in files_contract %}
