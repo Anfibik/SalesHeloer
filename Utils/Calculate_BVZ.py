@@ -235,8 +235,12 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
 
     #  -------Сохраняем полученный результат в постоянную БД-----------------------------------------------
     if "button-save-pricing" in request_form:
+        current_calc = dict(dbase.get_last_record("warehouse"))
+        title_comment = (f"{current_calc['client']} {current_calc['project']} "
+                         f"{current_calc['temperature']} {current_calc['wall']} \n")
+        body_comment = request_form['input-field-comment-calc']
         dbase.update_record('warehouse', 'id', dbase.get_last_record("warehouse")['id'],
-                            {'comments': request_form['input-field-comment-calc']})
+                            {'comments': title_comment + body_comment})
 
         last_data = dict(list(dict(dbase.get_last_record("warehouse")).items())[1::])
 
