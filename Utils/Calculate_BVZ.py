@@ -86,8 +86,8 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         percent_w = int(request_form["percent_w"]) if request_form["percent_w"] != '' else 0
         percent_f = int(request_form["percent_f"]) if request_form["percent_f"] != '' else 0
         percent_o = int(request_form["percent_o"]) if request_form["percent_o"] != '' else 0
-        exch_rate_from = int(request_form['exchange_rates_from'])
-        exch_rate_to = int(request_form['exchange_rates_TO'])
+        exch_rate_from = float(request_form['exchange_rates_from'])
+        exch_rate_to = float(request_form['exchange_rates_TO'])
 
         #  ----------- Расчет стоимости склада в ЕВРО для клиента (стоит на локации)------------------------------------
         price_sell_w_sq_m_EU = round((last_data["price_square_meters"] * percent_w / 100) + last_data["price_square_meters"], 2)
@@ -178,7 +178,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         last_data["exchange_rates_from"] = exch_rate_from  # Добавляем в словарь Курс поставщика
         last_data["exchange_rates_TO"] = exch_rate_to  # Добавляем в словарь Курс клиента
 
-        #  Блок с расчетами по стоимости и морже опций и склада отдельно
+        #  Блок с расчетами по стоимости и марже опций и склада отдельно
         last_data["price_sell_warehouse_UA"] = price_sell_wdb_UA
         last_data["price_sell_sendvich_UA"] = price_sell_sendvich_UA
         last_data["price_sell_light_UA"] = price_sell_light_UA
@@ -236,8 +236,10 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
     #  -------Сохраняем полученный результат в постоянную БД-----------------------------------------------
     if "button-save-pricing" in request_form:
         current_calc = dict(dbase.get_last_record("warehouse"))
-        title_comment = (f"{current_calc['client']} {current_calc['project']} "
-                         f"{current_calc['temperature']} {current_calc['wall']} \n")
+
+        title_comment = (f"{current_calc['client']} {current_calc['project']}\n"
+                        f"Температура: {current_calc['temperature']}, Стены: {current_calc['wall']} \n")
+
         body_comment = request_form['input-field-comment-calc']
         dbase.update_record('warehouse', 'id', dbase.get_last_record("warehouse")['id'],
                             {'comments': title_comment + body_comment})

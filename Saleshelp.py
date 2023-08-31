@@ -8,7 +8,11 @@ from flask_login import LoginManager, login_user, login_required, current_user, 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Utils.Calculate_BVZ import calculate_BVZ
+from Utils.Calculate_Equipment import calculate_Equipment
+from Utils.Calculate_Pallets import calculate_Pallets
 from Utils.Calculate_Racks import calculate_Racks
+from Utils.Calculate_Plastic_container import calculate_Plastic_container
+from Utils.Calculate_Trash_can import calculate_Trash_can
 from Utils.FDataBase import FDataBase
 from Utils.NumConvert import number_to_words
 from Utils.UserLogin import UserLogin
@@ -251,6 +255,7 @@ def show_info_lead(alias):
 
     dbase = FDataBase(get_db())
     current_lead = dbase.get_lead(alias, current_user.get_user_email())
+
     project_folder = '/'.join(['Project_OFFERS', alias])
     description = current_lead['description']
     lead_qualiti = current_lead['lead_qualiti']
@@ -306,9 +311,6 @@ def show_info_lead(alias):
     else:
         history_comments = []
         history_event = []
-
-    if not current_lead:
-        abort(404)
 
     if request.method == 'POST':
         checkbox_value = request.form.getlist('check-lead')
@@ -393,8 +395,22 @@ def calculation_product(alias):
             request_form = dict(request.form)
             return calculate_Racks(dbase, request_form, menu, current_user)
 
-    return 'search'
-    # return view_pricing(menu)
+        elif alias == 'Equipment':
+            request_form = dict(request.form)
+            return calculate_Equipment(dbase, request_form, menu, current_user)
+
+        elif alias == 'Plastic_container':
+            request_form = dict(request.form)
+            return calculate_Plastic_container(dbase, request_form, menu, current_user)
+
+        elif alias == 'Pallets':
+            request_form = dict(request.form)
+            return calculate_Pallets(dbase, request_form, menu, current_user)
+
+        elif alias == 'Trash_can':
+            request_form = dict(request.form)
+            return calculate_Trash_can(dbase, request_form, menu, current_user)
+
 
 
 @app.route('/pricing', methods=["POST", "GET"])
@@ -411,9 +427,9 @@ def pricing():
     choose_product = [
         {"name": 'БВЗ', "product": 'BVZ'},
         {"name": 'Стеллажи', "product": 'Racks'},
-        {"name": 'Мусорные баки', "product": 'Trash-can'},
+        {"name": 'Мусорные баки', "product": 'Trash_can'},
         {"name": 'Поддоны', "product": 'Pallets'},
-        {"name": 'Пластиковая тара', "product": 'Plastic-container'},
+        {"name": 'Пластиковая тара', "product": 'Plastic_container'},
         {"name": 'Техника', "product": 'Equipment'},
     ]
     choose_project = []

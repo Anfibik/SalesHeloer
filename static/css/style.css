@@ -623,10 +623,10 @@ hr {
 .div-precent-input {
 	width: 45%;
 	display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    align-items: stretch;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: space-around;
+	align-items: stretch;
 }
 
 #form-precent-cost {
@@ -891,14 +891,38 @@ hr {
 #myModalCalc input[type="text"],
 #myModalCalc textarea {
 	width: 70%;
-	height: 100px;
 	padding: 10px;
 	border: 1px solid #ccc;
 	resize: vertical;
 }
 
 #myModalCalc textarea {
-	min-height: 100px;
+	min-height: 250px;
+}
+
+.lead-task-list {
+	list-style: none;
+	padding: 0;
+}
+
+.lead-task-list li {
+	counter-increment: step-counter;
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.lead-task-list li::before {
+	content: counter(step-counter);
+	font-weight: bold;
+	margin-right: 10px;
+	text-align: center;
+	width: 20px;
+}
+
+.lead-task-list textarea {
+	width: 100%;
+	padding: 5px;
 }
 
 
@@ -995,6 +1019,7 @@ hr {
 	background-color: transparent;
 	/* Устанавливаем прозрачный фон скроллбара */
 }
+
 .comment-for-lead {
 	display: flex;
 	width: 40%;
@@ -1156,9 +1181,13 @@ hr {
 }
 
 .input-field-disabled {
-	cursor: not-allowed; /* Запретить указатель при наведении */
-	opacity: 0.5; /* Установить прозрачность на 50% */
-	color: #b6b1b1; /* Задать бледный цвет текста */
-	pointer-events: none; /* Запретить события указателя (нельзя нажать или выбрать текст) */
+	cursor: not-allowed;
+	/* Запретить указатель при наведении */
+	opacity: 0.5;
+	/* Установить прозрачность на 50% */
+	color: #b6b1b1;
+	/* Задать бледный цвет текста */
+	pointer-events: none;
+	/* Запретить события указателя (нельзя нажать или выбрать текст) */
 	width: 20%;
-  }
+}

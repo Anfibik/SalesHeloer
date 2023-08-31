@@ -169,11 +169,11 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
         {"name": 'price_sell_gate', "title": 'Ворота: ', "result": f"{format_price(m_dict['price_sell_gate_UA'])} грн"},
         {"name": 'price_sell_rack_UA', "title": 'Стеллажи: ', "result": f"{format_price(m_dict['price_sell_rack_UA'])} грн"},
 
-        {"name": 'profit_warehouse_UA', "title": 'моржа: ', "result": f"{format_price(m_dict['profit_warehouse_UA'])} грн"},
-        {"name": 'profit_sendvich_UA', "title": 'моржа: ', "result": f"{format_price(m_dict['profit_sendvich_UA'])} грн"},
-        {"name": 'profit_light_UA', "title": 'моржа: ', "result": f"{format_price(m_dict['profit_light_UA'])} грн"},
-        {"name": 'profit_gate_UA', "title": 'моржа: ', "result": f"{format_price(m_dict['profit_gate_UA'])} грн"},
-        {"name": 'profit_rack_UA', "title": 'моржа: ', "result": f"{format_price(m_dict['profit_rack_UA'])} грн"},
+        {"name": 'profit_warehouse_UA', "title": 'маржа: ', "result": f"{format_price(m_dict['profit_warehouse_UA'])} грн"},
+        {"name": 'profit_sendvich_UA', "title": 'маржа: ', "result": f"{format_price(m_dict['profit_sendvich_UA'])} грн"},
+        {"name": 'profit_light_UA', "title": 'маржа: ', "result": f"{format_price(m_dict['profit_light_UA'])} грн"},
+        {"name": 'profit_gate_UA', "title": 'маржа: ', "result": f"{format_price(m_dict['profit_gate_UA'])} грн"},
+        {"name": 'profit_rack_UA', "title": 'маржа: ', "result": f"{format_price(m_dict['profit_rack_UA'])} грн"},
 
         {"name": 'price_selling_EU', "title": 'Склад EU: ', "result": f"{format_price(m_dict['price_sell_warehouse_option_EU'])} €"},
         {"name": 'profit_EU', "title": 'Маржа EU: ', "result": f"{format_price(m_dict['profit_warehouse_option_EU'])} €"},
@@ -191,7 +191,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
 
     final_price_warehouse = [
         {"name": 'final_price_UA', "title": 'СТОИМОСТЬ ПРОЕКТА', "result": f"{format_price(m_dict['final_price_UA'])} грн"},
-        {"name": 'final_profit_UA', "title": 'МОРЖИНАЛЬНОСТЬ ПРОЕКТА', "result": f"{format_price(m_dict['final_profit_UA'])} грн"},
+        {"name": 'final_profit_UA', "title": 'МАРЖИНАЛЬНОСТЬ ПРОЕКТА', "result": f"{format_price(m_dict['final_profit_UA'])} грн"},
         {"name": 'final_cost_sq_m_pr', "title": 'Цена 1 [m²]', "result": f"{format_price(m_dict['final_cost_sq_m_pr'])} грн"},
         {"name": 'final_profit_percent', "title": 'ДОХОДНОСТЬ', "result": f"{format_price(m_dict['final_profit_percent'])} %"},
     ]
@@ -206,7 +206,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
         {"name": 'price_building', "title": 'Цена монтажа'},
         {"name": 'cost_foundation', "title": 'Цена фундамента'},
         {"name": 'cost_option', "title": 'Цена опций'},
-        {"name": 'final_profit_UA', "title": 'Моржа'},
+        {"name": 'final_profit_UA', "title": 'Маржа'},
         {"name": 'final_price_UA', "title": 'Цена проекта'},
         {"name": 'cost_square_meters_UA', "title": 'Цена 1 [m²]'},
         {"name": 'final_profit_percent', "title": 'Доход'},
