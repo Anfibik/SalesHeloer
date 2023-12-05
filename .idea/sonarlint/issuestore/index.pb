@@ -39,3 +39,7 @@ F
 Utils/Calculate_BVZ.py,d\c\dc7318af28d6a873f0a52f5cdeb120a7ed2c8587
 A
 Utils/View_BVZ.py,4\4\44bb398dc858a213047154eca5771735e2ed9871
+E
+Utils/View_pricing.py,5\d\5d4ae3a4ca14fbd1b626c17bddc79fa5e3e45b19
+K
+Utils/Final_data_project.py,7\2\72029db6f9aefb40a7fcf50c1727d85cb94a1a0e

@@ -78,7 +78,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
         {"name": 'price_rack', "title": 'стеллажи', "placeholder": 'евро',
          "current_vol": m_dict['price_rack'], "display": bool(m_dict['racks'])},
 
-        {"name": 'price_sq_met_sendvich', "title": 'сендвич 1m²', "placeholder": 'евро',
+        {"name": 'price_sq_met_sendvich', "title": 'стены 1m²', "placeholder": 'евро',
          "current_vol": m_dict['price_sq_met_sendvich'], "display": bool(m_dict['sendvich'])},
 
         {"name": 'price_gate', "title": 'ворота', "placeholder": 'евро',
@@ -151,12 +151,15 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
         {"name": 'price_foundation', "title": 'Фундамент: ', "result": f"{format_price(m_dict['price_foundation'])} €"},
         {"name": 'price_sq_met_found', "title": '1 [m²] с НДС: ', "result": f"{m_dict['price_sq_met_found']} €"},
 
-        {"name": 'price_sendvich', "title": 'Сендвич: ', "result": f"{format_price(m_dict['price_sendvich'])} €",
+        {"name": 'price_sendvich', "title": 'Стены: ', "result": f"{format_price(m_dict['price_sendvich'])} €",
          "display": bool(m_dict['price_sendvich'])},
+
         {"name": 'price_light', "title": 'Освещение: ', "result": f"{format_price(m_dict['price_light'])} €",
          "display": bool(m_dict['lighting'])},
+
         {"name": 'price_gate', "title": 'Ворота: ', "result": f"{format_price(m_dict['price_gate'])} €",
          "display": bool(m_dict['price_gate'])},
+
         {"name": 'price_rack', "title": 'Стеллажи: ', "result": f"{format_price(m_dict['price_rack'])} €",
          "display": bool(m_dict['price_rack'])}
     ]
@@ -164,7 +167,7 @@ def view_BVZ(menu, update_dict=None, accept_index=None):
     # 4 - блок с результатами расчетов цены продажи
     get_title_table_total_coast = [
         {"name": 'price_sell_warehouse_UA', "title": 'Склад: ', "result": f"{format_price(m_dict['price_sell_warehouse_UA'])} грн"},
-        {"name": 'price_sell_sendvich', "title": 'Сендвич: ', "result": f"{format_price(m_dict['price_sell_sendvich_UA'])} грн"},
+        {"name": 'price_sell_sendvich', "title": 'Стены: ', "result": f"{format_price(m_dict['price_sell_sendvich_UA'])} грн"},
         {"name": 'price_sell_light', "title": 'Освещение: ', "result": f"{format_price(m_dict['price_sell_light_UA'])} грн"},
         {"name": 'price_sell_gate', "title": 'Ворота: ', "result": f"{format_price(m_dict['price_sell_gate_UA'])} грн"},
         {"name": 'price_sell_rack_UA', "title": 'Стеллажи: ', "result": f"{format_price(m_dict['price_sell_rack_UA'])} грн"},

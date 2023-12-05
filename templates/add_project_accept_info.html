@@ -1,0 +1,186 @@
+{% extends 'lead.html' %}
+
+{% block title %} {{title}} {% endblock %}
+{% block information %} Заполните поля финальной информацией по проекту {% endblock %}
+
+{% block content %}
+
+<div class="project-accept-add-main-field">
+    <div class="information">
+        <div>
+            <table id="my-table">
+                <tr>
+                    <th>№</th>
+                    {% for t in title_table_calc_BVZ %}
+                    <th>{{ t.title }}</th>
+                    {% endfor %}
+                </tr>
+
+                <tbody class="table-result">
+                    {% for record in value_table_calc_BVZ %}
+                    <tr>
+                        <td>{{ value_table_calc_BVZ.index(record)+1 }}</td>
+                        {% for cell in record[2:-1:] %}
+                        <td>
+                            <a href="{{ url_for('calculation_product', alias='BVZ', calc_ID=record[0]) }}"
+                                title="{{ record[-1] }}">
+                                {{ cell }}
+                            </a>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="final-information-project">
+            <h2>Final information project</h2>
+        </div>
+    </div>
+
+    <div class="payment-terms">
+        <div class="providers-and-implementation">
+            <h3>Providers</h3>
+
+
+            <form action="{{ url_for('add_project_accept_info') }}" class="providers-and-stages">
+                <table>
+                    <thead id="my-table">
+                        <tr>
+                            <th>Name</th>
+                            <th><input type="text"><button type="submit" name="test" value="1">ok</button></th>
+                            <th>%</th>
+                            <th>%</th>
+                            <th>100%</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-result">
+                        <tr>
+                            <th>Protan-Elmark</th>
+                            <th>stage 1</th>
+                            <th>stage 2</th>
+                            <th>stage 3</th>
+                            <th>TOTAL</th>
+                        </tr>
+                        <tr>
+                            <th>Фундамент</th>
+                            <th>stage 1</th>
+                            <th>stage 2</th>
+                            <th>stage 3</th>
+                            <th>TOTAL</th>
+                        </tr>
+                        <tr>
+                            <th>Стены</th>
+                            <th>stage 1</th>
+                            <th>stage 2</th>
+                            <th>stage 3</th>
+                            <th>TOTAL</th>
+                        </tr>
+                        <tr>
+                            <th>Освещение</th>
+                            <th>stage 1</th>
+                            <th>stage 2</th>
+                            <th>stage 3</th>
+                            <th>TOTAL</th>
+                        </tr>
+                        <tr>
+                            <th>Ворота</th>
+                            <th>stage 1</th>
+                            <th>stage 2</th>
+                            <th>stage 3</th>
+                            <th>TOTAL</th>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </form>
+
+            <h3>Implementation</h3>
+
+            <div class="implementation">
+
+                <table>
+                    <thead id="my-table">
+                        <tr>
+                            <th>монтаж</th>
+                            <th>аренда техники</th>
+                            <th>проживание</th>
+                            <th>доп затраты</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>10000</th>
+                            <th>10000</th>
+                            <th>10000</th>
+                            <th>10000</th>
+                            <th>10000</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="client-stages">
+            <h3>Whayting clients paynting</h3>
+            <form action="">
+                <div class="whayting-clients-paynting">
+                    <table>
+                        <thead id="my-table">
+                            <tr>
+                                <th>Name</th>
+                                <th></th>
+                                <th>%</th>
+                                <th>%</th>
+                                <th>%</th>
+                                <th>100%</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-result">
+                            <tr>
+                                <th>Protan-Elmark</th>
+                                <th>stage 1</th>
+                                <th>stage 2</th>
+                                <th>stage 3</th>
+                                <th>stage 4</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+            <h3>Fact clients paynting</h3>
+            <div class="fact-clients-paynting">
+                <table>
+                    <thead id="my-table">
+                        <tr>
+                            <th>Name</th>
+                            <th>%</th>
+                            <th>%</th>
+                            <th>%</th>
+                            <th>%</th>
+                            <th>100%</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-result">
+                        <tr>
+                            <th>Protan-Elmark</th>
+                            <th>stage 1</th>
+                            <th>stage 2</th>
+                            <th>stage 3</th>
+                            <th>stage 4</th>
+                            <th>TOTAL</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}

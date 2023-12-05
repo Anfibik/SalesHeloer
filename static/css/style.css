@@ -1191,3 +1191,71 @@ hr {
 	/* Запретить события указателя (нельзя нажать или выбрать текст) */
 	width: 20%;
 }
+
+/* Экран добавления финальных данных выигранного проекта */
+.project-accept-add-main-field {
+	padding: 2px;
+	display: flex;
+	/* Используем flex-контейнер для равномерного разделения пространства */
+	flex-direction: column;
+	border: 2px solid black;
+}
+
+.information {
+	margin: 2px;
+	display: flex;
+	flex-direction: column;
+}
+
+.payment-terms {
+	margin: 2px;
+	display: flex;
+	border: 1px solid black;
+
+}
+
+.information>div,
+.payment-terms>div {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.final-information-project {
+	border: 1px solid black;
+}
+
+.providers-and-stages,
+.implementation,
+.whayting-clients-paynting,
+.fact-clients-paynting {
+	display: flex;
+	flex-direction: column;
+	margin: 10px;
+	width: 100%;
+}
+
+.providers-and-stages > table,
+.implementation > table,
+.whayting-clients-paynting > table,
+.fact-clients-paynting > table {
+	width: 100%;
+}
+
+.implementation > div {
+	margin: 5px;
+	display: flex;
+}
+
+.providers-and-implementation,
+.client-stages {
+	display: flex;
+	flex-direction: column;
+	margin: 5px;
+	margin-right: 10px;
+}
+
+.providers-and-implementation > h3 {
+	margin: 0;
+}

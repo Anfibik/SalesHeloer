@@ -3,7 +3,7 @@ import os
 import sqlite3
 from string import ascii_lowercase, digits
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, abort, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, session
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -78,6 +78,7 @@ menu = [
     {"url": '/', "name": 'Главная'},
     {"url": '/leads', "name": 'Сделки'},
     {"url": '/pricing', "name": 'Расчет стоимостей'},
+    {"url": '/project_accept', "name": 'Запущенные проекты'},
     {"url": '/testpage', "name": 'Тестовая среда'},
     {"url": '/about', "name": 'О программе'}
 ]
@@ -259,6 +260,7 @@ def show_info_lead(alias):
     project_folder = '/'.join(['Project_OFFERS', alias])
     description = current_lead['description']
     lead_qualiti = current_lead['lead_qualiti']
+    button_add_final_data_project = None
 
     try:
         folder_path = 'static/' + project_folder + '/Offers'
@@ -314,15 +316,19 @@ def show_info_lead(alias):
 
     if request.method == 'POST':
         checkbox_value = request.form.getlist('check-lead')
+
         button_delete = request.form.get('button-delete-calc')
         button_lead_comment = request.form.get('button-accept-comments')
         button_description_save = request.form.get('description')
+        button_upload = request.form.get('button-upload')
+
+        button_add_final_data_project = request.form.get('add-final-data-project', )
+        button_watch_final_data_project = request.form.get('watch-final-data-project')
 
         if request.form.get('lead_qualiti'):
             lead_qualiti = request.form.get('lead_qualiti')
             dbase.update_record('lead', 'id', current_lead['id'], {'lead_qualiti': lead_qualiti})
 
-        button_upload = request.form.get('button-upload')
         if button_upload:
             download_files(project_folder, button_upload)
 
@@ -351,6 +357,13 @@ def show_info_lead(alias):
 
     history_comments.reverse()
     history_event.reverse()
+
+    if button_add_final_data_project:
+        return render_template('add_project_accept_info.html', menu=menu, title=current_lead['company'],
+                               current_lead=current_lead,
+                               title_table_calc_BVZ=title_table_calc_BVZ,
+                               value_table_calc_BVZ=value_table_calc_BVZ,
+                               )
 
     history_lead = list(zip(history_comments, history_event))
     return render_template('lead.html', menu=menu, title=current_lead['company'], current_lead=current_lead,
@@ -412,7 +425,6 @@ def calculation_product(alias):
             return calculate_Trash_can(dbase, request_form, menu, current_user)
 
 
-
 @app.route('/pricing', methods=["POST", "GET"])
 @login_required
 def pricing():
@@ -453,6 +465,17 @@ def pricing():
                            )
 
 
+@app.route('/project_accept', methods=['POST', 'GET'])
+def project_accept():
+    return render_template('project_accept.html', menu=menu)
+
+
+@app.route('/add_project_accept_info', methods=['POST', 'GET'])
+def add_project_accept_info():
+    print('test', request.form.get('test'))
+    return render_template('add_project_accept_info.html', menu=menu)
+
+
 @app.route('/testpage', methods=['POST', 'GET'])
 def testpage():
     return render_template('testpage.html', menu=menu)
@@ -466,7 +489,10 @@ def pageNot(error):
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title='ABOUT', menu=menu)
+
+    about_page = render_template('about.html', title='ABOUT', menu=menu)
+    print(about_page)
+    return about_page
 
 
 # -----------------Модальное окно----------------------------------------

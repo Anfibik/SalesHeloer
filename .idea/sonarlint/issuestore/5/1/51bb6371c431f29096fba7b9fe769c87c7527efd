@@ -1,6 +1,13 @@
 
-Tpython:S1066ê"/Merge this if statement with the enclosing one.(÷Şüÿÿÿÿ8£üõ‚1
-Jpython:S5806x"+Rename this variable; it shadows a builtin.(œ¨‡Ô8£üõ‚1
-‰python:S117Ô"eRename this local variable "title_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(ë€ÛÕúÿÿÿÿ8£üõ‚1
-‰python:S117Ô"eRename this local variable "value_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(ë€ÛÕúÿÿÿÿ8£üõ‚1
-wpython:S117â"XRename this local variable "calc_ID" to match the regular expression ^[_a-z][a-z0-9_]*$.(ªûÂ¥8£üõ‚1
+mpython:S1192ˆ"HDefine a constant instead of duplicating this literal 'static/' 6 times.(½ÛŸ‹şÿÿÿÿ8Á”ó¶1
+Jpython:S5806~"+Rename this variable; it shadows a builtin.(œ¨‡Ô8£üõ‚1
+tpython:S3776"TRefactor this function to reduce its Cognitive Complexity from 42 to the 15 allowed.(áŸ§İ8Æ”ó¶1
+‰python:S117à"eRename this local variable "title_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(àÖŞİÿÿÿÿÿ8Ç”ó¶1
+‰python:S117à"eRename this local variable "value_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(àÖŞİÿÿÿÿÿ8Ç”ó¶1
+apython:S1481Ã"ARemove the unused local variable "button_add_final_data_project".(áË²ç8Ç”ó¶1
+hpython:S1481Ä"CRemove the unused local variable "button_watch_final_data_project".(ıÈå´úÿÿÿÿ8È”ó¶1
+ypython:S3776ö"TRefactor this function to reduce its Cognitive Complexity from 25 to the 15 allowed.(ÉèİÇûÿÿÿÿ8É”ó¶1
+wpython:S117ı"XRename this local variable "calc_ID" to match the regular expression ^[_a-z][a-z0-9_]*$.(ªûÂ¥8£üõ‚1
+‰python:S117¾"eRename this local variable "title_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(½œùùøÿÿÿÿ8Ê”ó¶1
+‰python:S117¾"eRename this local variable "value_table_calc_BVZ" to match the regular expression ^[_a-z][a-z0-9_]*$.(½œùùøÿÿÿÿ8Ê”ó¶1
+rpython:S1542Ñ"MRename function "pageNot" to match the regular expression ^[a-z_][a-z0-9_]*$.(Ø¾öŠÿÿÿÿÿ8Ê”ó¶1

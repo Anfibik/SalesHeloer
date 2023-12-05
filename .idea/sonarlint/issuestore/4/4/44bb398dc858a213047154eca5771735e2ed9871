@@ -1,3 +1,5 @@
 
-bpython:S11923"KDefine a constant instead of duplicating this literal 'Ð¼ÐµÑ‚Ñ€Ñ‹' 3 times.(ÒÑÙA
+xpython:S1192´"SDefine a constant instead of duplicating this literal 'Ñ†ÐµÐ½Ð° 1 [mÂ²]: ' 3 times.(ññâùýÿÿÿÿ8È•óŽ¶1
+mpython:S1192¬"MDefine a constant instead of duplicating this literal 'Ð¼Ð°Ñ€Ð¶Ð°: ' 5 times.(—Ÿ÷©8È•óŽ¶1
+bpython:S1192:"KDefine a constant instead of duplicating this literal 'Ð¼ÐµÑ‚Ñ€Ñ‹' 3 times.(ÒÑÙA
 fpython:S1542"NRename function "view_BVZ" to match the regular expression ^[a-z_][a-z0-9_]*$.(É¸Â¡

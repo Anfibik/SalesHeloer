@@ -63,6 +63,25 @@
             Новый расчет</button>
     </form>
 
+    <!-----
+    <div class="block-final-data">
+        <div class="block-add-final-data" style="display: none;">
+            <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="POST">
+                <button name="add-final-data-project" class="button-accept" value="{{current_lead['id']}}">
+                    Внесите финальные данные проекта
+                </button>
+            </form>
+        </div>
+        <div class="block-watch-final-data" style="display: none;">
+            <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="POST">
+                <button name="watch-final-data-project" class="button-accept" value="{{current_lead['id']}}"> 
+                    Просмотреть финальные данные проекта
+                </button>
+            </form>
+        </div>
+    </div>
+    -->
+    
     <form class="form-button-status" action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
         enctype="multipart/form-data">
         <div class="button-deal-win">
@@ -87,6 +106,8 @@
         </div>
     </form>
 </div>
+
+{% endblock view_calculations %}
 
 <!--Блок добавления комментариев к истории общения с лидами-->
 <div class="lead-communication">
@@ -113,7 +134,8 @@
 
                 <div class="div-file-list">
                     <div class="div-file-list">
-                        <button type="submit" value="Offers" name="button-upload" title="{{'\n'.join(files_offer)}}" onclick="reloadPage()">
+                        <button type="submit" value="Offers" name="button-upload" title="{{'\n'.join(files_offer)}}"
+                            onclick="reloadPage()">
                             Коммерческое
                         </button>
                         <div>
@@ -131,7 +153,8 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <button type="submit" value="Client_Info" name="button-upload" title="{{'\n'.join(files_client_info)}}" onclick="reloadPage()">
+                        <button type="submit" value="Client_Info" name="button-upload"
+                            title="{{'\n'.join(files_client_info)}}" onclick="reloadPage()">
                             Информация
                         </button>
                         <div>
@@ -152,7 +175,8 @@
 
                 <div class="div-file-list">
                     <div class="div-file-list">
-                        <button type="submit" value="Layout" name="button-upload" title="{{'\n'.join(files_layout)}}" onclick="reloadPage()">
+                        <button type="submit" value="Layout" name="button-upload" title="{{'\n'.join(files_layout)}}"
+                            onclick="reloadPage()">
                             Чертежи Серега
                         </button>
                         <div>
@@ -170,8 +194,9 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <button type="submit" value="Layout_Protan" name="button-upload" title="{{'\n'.join(files_layout_protan)}}" onclick="reloadPage()">
-                           Чертежи Protan 
+                        <button type="submit" value="Layout_Protan" name="button-upload"
+                            title="{{'\n'.join(files_layout_protan)}}" onclick="reloadPage()">
+                            Чертежи Protan
                         </button>
                         <div>
                             <ul class="file-list">
@@ -191,7 +216,8 @@
 
                 <div class="div-file-list">
                     <div class="div-file-list">
-                        <button type="submit" value="Photos" name="button-upload" title="{{'\n'.join(files_photos)}}" onclick="reloadPage()">
+                        <button type="submit" value="Photos" name="button-upload" title="{{'\n'.join(files_photos)}}"
+                            onclick="reloadPage()">
                             Фото разное
                         </button>
                         <div>
@@ -209,7 +235,8 @@
                         </div>
                     </div>
                     <div class="div-file-list">
-                        <button type="submit" value="Contract" name="button-upload" title="{{'\n'.join(files_contract)}}" onclick="reloadPage()">
+                        <button type="submit" value="Contract" name="button-upload"
+                            title="{{'\n'.join(files_contract)}}" onclick="reloadPage()">
                             Договора
                         </button>
                         <div>
@@ -275,8 +302,6 @@
                     value="save-lead-comments" onclick="getCurrentTime()"> Поставить задачу </button>
             </div>
         </div>
-
-
     </form>
 
     <!-----Область вывода сохораненных сообщений. История коммуникации с клиентом---->
@@ -300,8 +325,5 @@
 
     </div>
 </div>
-
-
-{% endblock view_calculations %}
 
 {% endblock %}

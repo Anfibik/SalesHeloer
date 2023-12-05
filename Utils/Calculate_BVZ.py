@@ -73,7 +73,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
             area_found = last_data['area_found'] = wf * lf
             last_data['price_foundation'] = last_data["price_sq_met_found"] * area_found
 
-        if last_data['price_sq_met_sendvich']:
+        if last_data['price_sq_met_sendvich'] >= 0:
             last_data['price_sendvich'] = last_data['price_sq_met_sendvich'] * last_data['S_panel']
 
         dbase.update_record("warehouse", 'id', dbase.get_last_record("warehouse")['id'], last_data)
@@ -141,7 +141,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         if last_data["price_rack"] > 0:
             price_sell_rack_EU = (last_data["price_rack"] * percent_o / 100) + last_data["price_rack"]
             price_sell_rack_EU = round(price_sell_rack_EU * exch_rate_to / exch_rate_from, 2)
-            price_sell_rack_UA = ceil(price_sell_rack_EU * exch_rate_to)
+            price_sell_rack_UA = round(price_sell_rack_EU * exch_rate_to, 2)
             profit_rack_EU = price_sell_rack_EU - last_data["price_rack"]
             profit_rack_UA = profit_rack_EU * exch_rate_from
         else:
@@ -150,7 +150,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         #  ----------- Расчет стоимости ФУНДАМЕНТА ---------------------------------------------------------------------
         # Цена 1м.кв фундамент ЕВРО
         price_f_sq_m_EU = (last_data["price_sq_met_found"] * percent_f / 100) + last_data["price_sq_met_found"]
-        price_sell_f_sq_m_EU = ceil(price_f_sq_m_EU * exch_rate_to / exch_rate_from)
+        price_sell_f_sq_m_EU = round(price_f_sq_m_EU * exch_rate_to / exch_rate_from, 2)
         price_sell_f_sq_m_UA = price_sell_f_sq_m_EU * exch_rate_from
         price_sell_f_UA = price_sell_f_sq_m_UA * last_data["area_found"]
         profit_f_UA = price_sell_f_UA - (last_data["price_foundation"] * exch_rate_from)
