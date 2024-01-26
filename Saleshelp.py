@@ -326,6 +326,7 @@ def show_info_lead(alias):
 
         button_add_final_data_project = request.form.get('add-final-data-project', )
         button_watch_final_data_project = request.form.get('watch-final-data-project')
+        button_delete_comment = request.form.get('delete_comment')
 
         if request.form.get('lead_qualiti'):
             lead_qualiti = request.form.get('lead_qualiti')
@@ -343,6 +344,14 @@ def show_info_lead(alias):
 
         if button_description_edit:
             edit_description_on = 1
+
+        if button_delete_comment:
+            history_comments.pop()
+            history_event.pop()
+            comment = ' $END_COMMENTS$ \n'.join(history_comments)
+            lead_event = ' $END_EVENT$ \n'.join(history_event)
+            dbase.update_record('lead', 'id', current_lead['id'], {'comments_history': comment,
+                                                                   'event': lead_event})
 
         if button_lead_comment:
             if request.form.get('comment-for-lead').replace(' ', ''):

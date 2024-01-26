@@ -1263,3 +1263,8 @@ hr {
 .output-comments {
     margin-top: 5px;
 }
+
+.area-comment {
+	display: flex;
+    justify-content: space-between;
+}

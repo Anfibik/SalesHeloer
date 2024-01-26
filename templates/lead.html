@@ -3,7 +3,8 @@
 {% block title %} Компания: {{title}} {% endblock %}
 
 {% block information %}
-{{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.mail }} | {{ current_lead.project }} |
+{{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.mail }} | {{
+current_lead.project }} |
 {% if current_lead.lead_qualiti == 1 %}
 <div style="color: rgb(0, 0, 0); font-weight: bold; margin-left: 5px"> Теплый клиент, уделяем внимание</div>
 {% endif %}
@@ -63,7 +64,7 @@
             Новый расчет</button>
     </form>
 
-<!--
+    <!--
     <div class="block-final-data">
         <div class="block-add-final-data" style="display: block;">
             <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="POST">
@@ -264,8 +265,8 @@
                     </label>
                 </div>
                 <textarea class="comment-for-lead_text" name="description" id="description"
-                    placeholder="Введите описание проекта" {% if description and not edit_description_on %} disabled {% endif
-                    %}>{% if description %} {{description}} {% endif %}</textarea>
+                    placeholder="Введите описание проекта" {% if description and not edit_description_on %} disabled {%
+                    endif %}>{% if description %} {{description}} {% endif %}</textarea>
             </div>
 
         </div>
@@ -286,7 +287,8 @@
 
             <div class="description-button-accept">
                 <button type="submit" name="description" class="button-accept" value="button-accept-description"
-                    onclick="reloadPage()" {% if description and not edit_description_on %} style="display: none;" {% endif %}>
+                    onclick="reloadPage()" {% if description and not edit_description_on %} style="display: none;" {%
+                    endif %}>
                     Сохранить описание
                 </button>
 
@@ -319,7 +321,19 @@
         <div class="history-list">
 
             <div class="current-lead-comment">
-                <output>{{ history[0]|replace('\n', '<br>')|safe }}</output>
+                <output class="area-comment">
+                    <div>
+                        {{ history[0]|replace('\n', '<br>')|safe }}
+                    </div>
+                    {% if history_lead[0] == history %}
+                    <div>
+                        <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
+                            enctype="multipart/form-data">
+                            <button type="submit" name="delete_comment" value="delete_comment">x</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </output>
             </div>
 
             <div class="current-lead-event">
