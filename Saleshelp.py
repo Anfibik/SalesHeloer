@@ -3,8 +3,9 @@ import os
 import sqlite3
 from string import ascii_lowercase, digits
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, session
+from flask import Flask, render_template, request, redirect, url_for, jsonify, flash, g, session, json
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
+from pip._vendor import requests
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from Utils.Calculate_BVZ import calculate_BVZ
@@ -245,7 +246,6 @@ def leads():
 # ---Экран информации о лиде----------------------------------
 @app.route("/lead/<alias>", methods=["POST", "GET"])
 def show_info_lead(alias):
-
     def download_files(project_path, work_folder):
         layout = request.files.getlist('file')
         project_path = os.path.join('static', project_path, work_folder)
@@ -261,6 +261,7 @@ def show_info_lead(alias):
     description = current_lead['description']
     lead_qualiti = current_lead['lead_qualiti']
     button_add_final_data_project = None
+    edit_description_on = 0
 
     try:
         folder_path = 'static/' + project_folder + '/Offers'
@@ -320,6 +321,7 @@ def show_info_lead(alias):
         button_delete = request.form.get('button-delete-calc')
         button_lead_comment = request.form.get('button-accept-comments')
         button_description_save = request.form.get('description')
+        button_description_edit = request.form.get('edit_description')
         button_upload = request.form.get('button-upload')
 
         button_add_final_data_project = request.form.get('add-final-data-project', )
@@ -338,6 +340,9 @@ def show_info_lead(alias):
         if button_description_save:
             description = request.form.get('description')
             dbase.update_record('lead', 'id', current_lead['id'], {'description': description})
+
+        if button_description_edit:
+            edit_description_on = 1
 
         if button_lead_comment:
             if request.form.get('comment-for-lead').replace(' ', ''):
@@ -363,6 +368,7 @@ def show_info_lead(alias):
                                current_lead=current_lead,
                                title_table_calc_BVZ=title_table_calc_BVZ,
                                value_table_calc_BVZ=value_table_calc_BVZ,
+
                                )
 
     history_lead = list(zip(history_comments, history_event))
@@ -371,6 +377,7 @@ def show_info_lead(alias):
                            value_table_calc_BVZ=value_table_calc_BVZ,
                            history_lead=history_lead,
                            description=description,
+                           edit_description_on=edit_description_on,
                            lead_qualiti=lead_qualiti,
                            files_layout=files_layout,
                            files_client_info=files_client_info,
@@ -478,6 +485,39 @@ def add_project_accept_info():
 
 @app.route('/testpage', methods=['POST', 'GET'])
 def testpage():
+    dbase = FDataBase(get_db())
+    button_currency = request.form.get('button-currency')
+
+    if button_currency:
+        url = 'https://api.minfin.com.ua/mb/08eebcff8f19d7a8d3cbb28bb80a9a8c96fa98cd/'
+        try:
+            response = requests.get(url).json()
+            euro_sell = response[0]['ask']
+            euro_buy = response[0]['bid']
+            usd_sell = response[1]['ask']
+            usd_buy = response[1]['bid']
+
+            dbase.add_record('updated_information',
+                             {
+                                 'currency_euro_sell': euro_sell,
+                                 'currency_euro_buy': euro_buy,
+                                 'currency_usd_sell': usd_sell,
+                                 'currency_usd_buy': usd_buy
+                             })
+
+            result = (f"Курсы валют: евро продажа: {euro_sell}, покупка {euro_buy} "
+                      f"доллар продажа: {usd_sell}, покупка {usd_buy}")
+
+            return render_template('testpage.html', menu=menu, result=result)
+
+        except Exception as e:
+            error = f'Данные от минфин не получены'
+            res = dbase.get_all_value('updated_information')
+            result = (
+                f"Архив курса валют: евро продажа: {res['currency_euro_sell']}, покупка {res['currency_euro_buy']} "
+                f"доллар продажа: {res['currency_usd_sell']}, покупка {res['currency_usd_buy']} <p>{error}</p>")
+            return render_template('testpage.html', menu=menu, result=result)
+
     return render_template('testpage.html', menu=menu)
 
 
@@ -489,7 +529,6 @@ def pageNot(error):
 
 @app.route('/about')
 def about():
-
     about_page = render_template('about.html', title='ABOUT', menu=menu)
     print(about_page)
     return about_page

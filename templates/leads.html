@@ -55,7 +55,12 @@
         <td><input type="checkbox" name="check-lead" id="check-lead" value="{{ row[0] }}"></td>
         <td><a href="{{ url_for('show_info_lead', alias=row[2] ) }}">{{ get_new_lead.index(row)+1 }}</a></td>
         {% for cell in row[2:8] %}
-        <td><a href="{{ url_for('show_info_lead', alias=row[2] ) }}">{{ cell }}</a></td>
+        {% if row[-4] %}
+        {% set substrings = row[-4].split('$END_EVENT$') %}
+        {% else %}
+        {% set substrings = ['-------'] %}
+        {% endif %}
+        <td><a href="{{ url_for('show_info_lead', alias=row[2] ) }}" title="{{'Описание: \n'~row[-1]~'\n\nСледующий шаг:\n'~substrings[-1] }}">{{ cell }}</a></td>
         {% endfor %}
       </tr>
       {% endfor %}

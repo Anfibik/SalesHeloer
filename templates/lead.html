@@ -3,7 +3,7 @@
 {% block title %} Компания: {{title}} {% endblock %}
 
 {% block information %}
-{{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.project }} |
+{{ current_lead.company }} | {{ current_lead.name }} | {{ current_lead.phone }} | {{ current_lead.mail }} | {{ current_lead.project }} |
 {% if current_lead.lead_qualiti == 1 %}
 <div style="color: rgb(0, 0, 0); font-weight: bold; margin-left: 5px"> Теплый клиент, уделяем внимание</div>
 {% endif %}
@@ -63,15 +63,16 @@
             Новый расчет</button>
     </form>
 
-    <!-----
+<!--
     <div class="block-final-data">
-        <div class="block-add-final-data" style="display: none;">
+        <div class="block-add-final-data" style="display: block;">
             <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="POST">
                 <button name="add-final-data-project" class="button-accept" value="{{current_lead['id']}}">
                     Внесите финальные данные проекта
                 </button>
             </form>
         </div>
+        
         <div class="block-watch-final-data" style="display: none;">
             <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="POST">
                 <button name="watch-final-data-project" class="button-accept" value="{{current_lead['id']}}"> 
@@ -80,8 +81,8 @@
             </form>
         </div>
     </div>
-    -->
-    
+-->
+
     <form class="form-button-status" action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
         enctype="multipart/form-data">
         <div class="button-deal-win">
@@ -263,7 +264,7 @@
                     </label>
                 </div>
                 <textarea class="comment-for-lead_text" name="description" id="description"
-                    placeholder="Введите описание проекта" {% if description %} disabled {% endif
+                    placeholder="Введите описание проекта" {% if description and not edit_description_on %} disabled {% endif
                     %}>{% if description %} {{description}} {% endif %}</textarea>
             </div>
 
@@ -285,9 +286,16 @@
 
             <div class="description-button-accept">
                 <button type="submit" name="description" class="button-accept" value="button-accept-description"
-                    onclick="reloadPage()" {% if description %} style="display: none;" {% endif %}>
+                    onclick="reloadPage()" {% if description and not edit_description_on %} style="display: none;" {% endif %}>
                     Сохранить описание
                 </button>
+
+                {% if description and not edit_description_on%}
+                <button type="submit" name="edit_description" class="button-accept" value="button-edit-description"
+                    onclick="reloadPage()">
+                    Редактировать
+                </button>
+                {% endif %}
                 <div></div>
             </div>
         </div>

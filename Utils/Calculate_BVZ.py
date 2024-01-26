@@ -170,7 +170,6 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         project_sell_UA = project_sell_sq_m_UA * last_data["area"]
         project_profit_UA = final_profit_wsdbo_UA + profit_rack_UA + profit_f_UA + (project_sell_UA - project_sell_UA_1)
 
-
         # ---------- Добавляем в словарь данные -------------------------------------------------------------
         last_data["percent_w"] = int(percent_w)  # Добавляем в словарь Процент склада
         last_data["percent_f"] = int(percent_f)  # Добавляем в словарь Процент фундамента

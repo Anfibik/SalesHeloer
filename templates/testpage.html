@@ -9,7 +9,8 @@
   <!-- Code to display lead information here -->
   <form action="{{ url_for('testpage') }}" method="post">
     <input type="text" name="input field">
-    <button type="submit" name="button-test" value="check testing page"> TEST </button>
-    <output>{{ result }}</output>
+    <button type="submit" name="button-test" value="check test"> TEST </button>
+    <button type="submit" name="button-currency" value="check currency"> Курс валют </button>
+    <output><p>{{ result|safe }}</p></output>
   </form>
 {% endblock %}

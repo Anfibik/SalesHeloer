@@ -81,7 +81,7 @@ class FDataBase:
                 print("Пользователь с таким email уже существует")
                 return False
 
-            self.__cur.execute("INSERT INTO users VALUES(NULL, ?, ?, ?)", (name, email, hpsw))
+            self.__cur.execute("INSERT INTO users VALUES(NULL, ?, ?, ?, ?)", (name, email, hpsw, 3))
             self.__db.commit()
         except sqlite3.Error as e:
             print("Ошибка добавления пользователя в БД " + str(e))
@@ -211,3 +211,8 @@ class FDataBase:
         except sqlite3.Error as e:
             print("Ошибка получения записей из БД " + str(e))
             return False
+
+    def get_all_value(self, name_table):
+        self.__cur.execute(f"SELECT * FROM {name_table}")
+        records = dict(self.__cur.fetchone())
+        return records

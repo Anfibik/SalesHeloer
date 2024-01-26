@@ -1259,3 +1259,7 @@ hr {
 .providers-and-implementation > h3 {
 	margin: 0;
 }
+
+.output-comments {
+    margin-top: 5px;
+}
