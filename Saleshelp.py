@@ -445,10 +445,14 @@ def calculation_product(alias):
 @login_required
 def pricing():
     dbase = FDataBase(get_db())
-
+    sort_info = 'height'
     if request.method == 'POST':  # Удаление выбранных расчетов из архива
         checkbox_value = request.form.getlist('check-lead')
         button_delete = request.form.get('button-delete-calc')
+        if not request.form.get('button-sort'):
+            sort_info = 'height'
+        else:
+            sort_info = request.form.get('button-sort')
         if checkbox_value and button_delete:
             dbase.del_records('archive_calculating', checkbox_value)
 
@@ -468,7 +472,10 @@ def pricing():
             choose_project.append(
                 {"project": row['project'], "lead": row['company'], "selected": 0})
 
-    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, page='pricing')
+    print(sort_info)
+
+    title_table_calc_BVZ, value_table_calc_BVZ = view_table_warehouse(dbase, current_user, page='pricing',
+                                                                      sort_info=sort_info)
     value_table_calc_BVZ = [list(record.values()) for record in value_table_calc_BVZ]
     choose_project.reverse()
 
@@ -498,9 +505,12 @@ def testpage():
     button_currency = request.form.get('button-currency')
 
     if button_currency:
-        url = 'https://api.minfin.com.ua/mb/08eebcff8f19d7a8d3cbb28bb80a9a8c96fa98cd/'
+        print(button_currency)
+        url = 'http://api.minfin.com.ua/summary/0353484a4845311e26f59a3296e6b297655e3736/'
+
         try:
             response = requests.get(url).json()
+            print(response)
             euro_sell = response[0]['ask']
             euro_buy = response[0]['bid']
             usd_sell = response[1]['ask']

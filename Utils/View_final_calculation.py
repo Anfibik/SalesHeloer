@@ -3,9 +3,9 @@ def format_price(price):
 
 
 title_table = [
-    {"name": 'width', "title": 'Шир'},
-    {"name": 'length', "title": 'Дл'},
-    {"name": 'height', "title": 'Выс'},
+    {"name": 'width', "title": 'Ширина'},
+    {"name": 'length', "title": 'Длинна'},
+    {"name": 'height', "title": 'Высота'},
     {"name": 'area', "title": 'Площадь'},
     {"name": 'price_warehouse', "title": 'Склад нетто'},
     {"name": 'percent_w', "title": 'Маржа %'},
@@ -23,7 +23,7 @@ title_table = [
 ]
 
 
-def view_table_warehouse(dbase, current_user, current_lead=None, page=None):
+def view_table_warehouse(dbase, current_user, current_lead=None, page=None, sort_info='height'):
     body_table = []
     current_records = {}
     if page == 'show_info_lead':
@@ -34,7 +34,7 @@ def view_table_warehouse(dbase, current_user, current_lead=None, page=None):
     elif page == 'pricing':
         if dbase.check_records('archive_calculating'):
             current_records = dbase.get_info_records('archive_calculating', current_user.get_user_email())
-            current_records = sorted(current_records, key=lambda x: x["width"])
+            current_records = sorted(current_records, key=lambda x: x[sort_info])
 
     for record in current_records:
         mask_value_project_in_table = {

@@ -64,7 +64,7 @@ current_lead.project }} |
             Новый расчет</button>
     </form>
 
-    <!--
+   
     <div class="block-final-data">
         <div class="block-add-final-data" style="display: block;">
             <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="POST">
@@ -73,6 +73,7 @@ current_lead.project }} |
                 </button>
             </form>
         </div>
+    
         
         <div class="block-watch-final-data" style="display: none;">
             <form action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="POST">
@@ -82,7 +83,7 @@ current_lead.project }} |
             </form>
         </div>
     </div>
--->
+
 
     <form class="form-button-status" action="{{ url_for('show_info_lead', alias=current_lead.company) }}" method="post"
         enctype="multipart/form-data">

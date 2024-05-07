@@ -50,7 +50,8 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
 
         last_data["cost_sq_m_w"] = last_data["price_warehouse"] / last_data["area"]
         last_data["price_VAT"] = last_data["price_warehouse"] * 20 / 100
-        last_data["cost_price"] = last_data["price_warehouse"] + (last_data["price_warehouse"] * 1 / 100) + last_data["price_VAT"]
+        last_data["cost_price"] = last_data["price_warehouse"] + (last_data["price_warehouse"] * 1 / 100) + last_data[
+            "price_VAT"]
         last_data["price_square_meters"] = round(last_data["cost_price"] / last_data['area'], 2)
         last_data["price_cubic_meters"] = round(last_data["cost_price"] / last_data['volume'], 2)
         last_data["price_project"] = last_data["cost_price"] + last_data["price_delivery"] + last_data["price_building"]
@@ -90,9 +91,11 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         exch_rate_to = float(request_form['exchange_rates_TO'])
 
         #  ----------- Расчет стоимости склада в ЕВРО для клиента (стоит на локации)------------------------------------
-        price_sell_w_sq_m_EU = round((last_data["price_square_meters"] * percent_w / 100) + last_data["price_square_meters"], 2)
+        price_sell_w_sq_m_EU = round(
+            (last_data["price_square_meters"] * percent_w / 100) + last_data["price_square_meters"], 2)
         price_sell_w_sq_m_EU = round(price_sell_w_sq_m_EU * exch_rate_to / exch_rate_from, 3)  # курсовая разница
-        price_sell_wdb_EU = price_sell_w_sq_m_EU * last_data["area"] + last_data["price_delivery"] + last_data["price_building"]
+        price_sell_wdb_EU = price_sell_w_sq_m_EU * last_data["area"] + last_data["price_delivery"] + last_data[
+            "price_building"]
         price_sell_wdb_sq_m_EU = round(price_sell_wdb_EU / last_data["area"], 2)
         price_sell_wdb_EU = price_sell_wdb_sq_m_EU * last_data["area"]
         profit_wdb_EU = round(price_sell_wdb_EU - last_data["price_project"], 2)
@@ -134,7 +137,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
             profit_gate_EU = price_sell_gate_EU - last_data["price_gate"]
             profit_gate_UA = profit_gate_EU * exch_rate_from
         else:
-             price_sell_gate_EU = price_sell_gate_UA = profit_gate_EU = profit_gate_UA = 0
+            price_sell_gate_EU = price_sell_gate_UA = profit_gate_EU = profit_gate_UA = 0
 
         #  ----------- Расчет стоимости СТЕЛЛАЖЕЙ-----------------------------------------------------------
         # блок расчета финальной стоимости СТЕЛЛАЖЕЙ ГРН
@@ -155,7 +158,6 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         price_sell_f_UA = price_sell_f_sq_m_UA * last_data["area_found"]
         profit_f_UA = price_sell_f_UA - (last_data["price_foundation"] * exch_rate_from)
 
-
         final_sell_wsdbo_EU = price_sell_wdb_EU + price_sell_sendvich_EU + price_sell_light_EU + price_sell_gate_EU
         final_sell_wsdbo_sq_m_EU = round(final_sell_wsdbo_EU / last_data["area"], 2)
         final_sell_wsdbo_EU = final_sell_wsdbo_sq_m_EU * last_data["area"]
@@ -169,6 +171,9 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         project_sell_sq_m_UA = ceil(project_sell_UA_1 / last_data["area"])
         project_sell_UA = project_sell_sq_m_UA * last_data["area"]
         project_profit_UA = final_profit_wsdbo_UA + profit_rack_UA + profit_f_UA + (project_sell_UA - project_sell_UA_1)
+        instrument_fund = project_sell_UA / 100
+        price_delivery = (last_data["price_delivery"] * 0.2) * exch_rate_to
+        project_profit_UA = project_profit_UA - instrument_fund - price_delivery
 
         # ---------- Добавляем в словарь данные -------------------------------------------------------------
         last_data["percent_w"] = int(percent_w)  # Добавляем в словарь Процент склада
@@ -206,7 +211,8 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         last_data["cost_sq_met_found"] = price_sell_f_sq_m_UA
 
         if last_data["price_sell_warehouse_option_EU"] > 0:
-            last_data["profit_percent"] = round(last_data["profit_warehouse_option_EU"] / last_data["price_sell_warehouse_option_EU"] * 100, 2)
+            last_data["profit_percent"] = round(
+                last_data["profit_warehouse_option_EU"] / last_data["price_sell_warehouse_option_EU"] * 100, 2)
         else:
             last_data["profit_percent"] = 0
 
@@ -237,7 +243,7 @@ def calculate_BVZ(dbase, request_form, menu, current_user):
         current_calc = dict(dbase.get_last_record("warehouse"))
 
         title_comment = (f"{current_calc['client']} {current_calc['project']}\n"
-                        f"Температура: {current_calc['temperature']}, Стены: {current_calc['wall']} \n")
+                         f"Температура: {current_calc['temperature']}, Стены: {current_calc['wall']} \n")
 
         body_comment = request_form['input-field-comment-calc']
         dbase.update_record('warehouse', 'id', dbase.get_last_record("warehouse")['id'],
