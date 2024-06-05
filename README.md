@@ -20,3 +20,12 @@ python -m venv venv # Создание виртуального окружени
 Приложение будет запущено на локальном сервере, и вы сможете получить доступ к нему через веб-браузер по адресу http://localhost:5000.
 
 ![image](https://github.com/Anfibik/SalesHelper/assets/46054987/96228bf4-6699-4f5e-ba83-2420f748f1aa)
+
+![image](https://github.com/Anfibik/SalesHelper/assets/46054987/2144181f-422e-4a82-b47b-7d78e5e536cc)
+
+![image](https://github.com/Anfibik/SalesHelper/assets/46054987/f307b566-a715-4d9b-af7c-8164a6e77d84)
+
+![image](https://github.com/Anfibik/SalesHelper/assets/46054987/9fb50ff4-6e73-46c3-9f36-42e437867f88)
+
+
+
